@@ -942,4 +942,59 @@ CREATE TABLE `testimonial_field` (
 INSERT INTO `testimonial_field` VALUES (1,'textarea','any','Address','','rows=3 cols=34','','',2,0,1),(2,'text','any','Company','','size=34','','',1,0,1);
 
 
+CREATE TABLE interns (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT,
+  name VARCHAR(100),
+  school VARCHAR(100),
+  major VARCHAR(100),
+  start_date DATE,
+  end_date DATE,
+  created DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES user(id)
+);
+
+CREATE TABLE tasks (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(255),
+  description TEXT,
+  created DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE intern_task_list (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  intern_id INT,
+  task_id INT,
+  subtitle VARCHAR(255),
+  status ENUM('pending','revision','completed') DEFAULT 'pending',
+  approved TINYINT(1) DEFAULT 0,
+  created DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (intern_id) REFERENCES interns(id),
+  FOREIGN KEY (task_id) REFERENCES tasks(id)
+);
+
+CREATE TABLE task_revision (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  intern_task_list_id INT,
+  note TEXT,
+  revised_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+  created DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (intern_task_list_id) REFERENCES intern_task_list(id)
+);
+
+CREATE TABLE certificate (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  intern_id INT,
+  number VARCHAR(100),
+  signed_by VARCHAR(100),
+  created DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (intern_id) REFERENCES interns(id)
+);
+
+
 SET foreign_key_checks = 1;
