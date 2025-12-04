@@ -639,14 +639,14 @@ DROP TABLE IF EXISTS `certificate`;
 CREATE TABLE `certificate` (
   `id` int NOT NULL AUTO_INCREMENT,
   `intern_id` int DEFAULT NULL,
-  `number` varchar(100) DEFAULT NULL,
-  `signed_by` varchar(100) DEFAULT NULL,
+  `number` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `signed_by` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `intern_id` (`intern_id`),
   CONSTRAINT `certificate_ibfk_1` FOREIGN KEY (`intern_id`) REFERENCES `interns` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `contact`;
 CREATE TABLE `contact` (
@@ -768,8 +768,8 @@ CREATE TABLE `intern_task_list` (
   `id` int NOT NULL AUTO_INCREMENT,
   `intern_id` int DEFAULT NULL,
   `task_id` int DEFAULT NULL,
-  `subtitle` varchar(255) DEFAULT NULL,
-  `status` enum('pending','submitted','revised','approved') DEFAULT 'pending',
+  `subtitle` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` enum('pending','submitted','revised','approved') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'pending',
   `approved` tinyint(1) DEFAULT '0',
   `created` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -778,22 +778,22 @@ CREATE TABLE `intern_task_list` (
   KEY `task_id` (`task_id`),
   CONSTRAINT `intern_task_list_ibfk_1` FOREIGN KEY (`intern_id`) REFERENCES `interns` (`id`),
   CONSTRAINT `intern_task_list_ibfk_2` FOREIGN KEY (`task_id`) REFERENCES `tasks` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `interns`;
 CREATE TABLE `interns` (
   `id` int NOT NULL AUTO_INCREMENT,
   `bbc_user_id` int DEFAULT NULL,
-  `name` varchar(100) DEFAULT NULL,
-  `school` varchar(100) DEFAULT NULL,
-  `major` varchar(100) DEFAULT NULL,
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `school` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `major` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `start_date` date DEFAULT NULL,
   `end_date` date DEFAULT NULL,
   `created` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `user_id` (`bbc_user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `interns_report`;
 CREATE TABLE `interns_report` (
@@ -813,7 +813,7 @@ CREATE TABLE `interns_task_list` (
   `id` int NOT NULL AUTO_INCREMENT,
   `interns_task_id` int DEFAULT NULL,
   `date` date DEFAULT NULL,
-  `status` enum('pending','submitted','revised','approved') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'pending',
+  `status` tinyint(1) DEFAULT '0',
   `submit` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `approved` datetime DEFAULT NULL,
   `created` datetime DEFAULT NULL,
@@ -1037,23 +1037,23 @@ DROP TABLE IF EXISTS `task_revision`;
 CREATE TABLE `task_revision` (
   `id` int NOT NULL AUTO_INCREMENT,
   `intern_task_list_id` int DEFAULT NULL,
-  `note` text,
+  `note` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `revised_date` datetime DEFAULT CURRENT_TIMESTAMP,
   `created` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `intern_task_list_id` (`intern_task_list_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `tasks`;
 CREATE TABLE `tasks` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) DEFAULT NULL,
-  `description` text,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `created` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `testimonial`;
 CREATE TABLE `testimonial` (
