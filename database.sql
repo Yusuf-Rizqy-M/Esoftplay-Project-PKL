@@ -763,23 +763,6 @@ CREATE TABLE `imageslider_text` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `imageslider_text` VALUES (1,'Gedung',1),(2,'Praktikum',1),(3,'Kelas',1),(4,'Laboratorium',1),(5,'Praktek',1),(6,'Penyerahan Hadiah',1),(7,'Pengajaran',1),(8,'Belajar Kelompok',1),(9,'Perpustakaan',1),(10,'Wisuda',1);
-DROP TABLE IF EXISTS `intern_task_list`;
-CREATE TABLE `intern_task_list` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `intern_id` int DEFAULT NULL,
-  `task_id` int DEFAULT NULL,
-  `subtitle` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `status` enum('pending','submitted','revised','approved') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'pending',
-  `approved` tinyint(1) DEFAULT '0',
-  `created` datetime DEFAULT CURRENT_TIMESTAMP,
-  `updated` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `intern_id` (`intern_id`),
-  KEY `task_id` (`task_id`),
-  CONSTRAINT `intern_task_list_ibfk_1` FOREIGN KEY (`intern_id`) REFERENCES `interns` (`id`),
-  CONSTRAINT `intern_task_list_ibfk_2` FOREIGN KEY (`task_id`) REFERENCES `tasks` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 DROP TABLE IF EXISTS `interns`;
 CREATE TABLE `interns` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -808,33 +791,6 @@ CREATE TABLE `interns_report` (
   CONSTRAINT `interns_report_ibfk_2` FOREIGN KEY (`interns_tasks_id`) REFERENCES `interns_tasks` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `interns_task_list`;
-CREATE TABLE `interns_task_list` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `interns_task_id` int DEFAULT NULL,
-  `date` date DEFAULT NULL,
-  `status` tinyint(1) DEFAULT '0',
-  `submit` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `approved` datetime DEFAULT NULL,
-  `created` datetime DEFAULT NULL,
-  `updated` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `interns_task_id` (`interns_task_id`),
-  CONSTRAINT `interns_task_list_ibfk_1` FOREIGN KEY (`interns_task_id`) REFERENCES `interns_tasks` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-DROP TABLE IF EXISTS `interns_task_list_history`;
-CREATE TABLE `interns_task_list_history` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `interns_task_list_id` int DEFAULT NULL,
-  `revisedbefore` datetime DEFAULT NULL,
-  `created` datetime DEFAULT NULL,
-  `updated` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `interns_task_list_id` (`interns_task_list_id`),
-  CONSTRAINT `interns_task_list_history_ibfk_1` FOREIGN KEY (`interns_task_list_id`) REFERENCES `interns_task_list` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 DROP TABLE IF EXISTS `interns_tasks`;
 CREATE TABLE `interns_tasks` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -846,6 +802,33 @@ CREATE TABLE `interns_tasks` (
   PRIMARY KEY (`id`),
   KEY `interns_id` (`interns_id`),
   CONSTRAINT `interns_tasks_ibfk_1` FOREIGN KEY (`interns_id`) REFERENCES `interns` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `interns_tasks_list`;
+CREATE TABLE `interns_tasks_list` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `interns_tasks_id` int DEFAULT NULL,
+  `date` date DEFAULT NULL,
+  `status` tinyint(1) DEFAULT '0',
+  `submit` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `approved` datetime DEFAULT NULL,
+  `created` datetime DEFAULT NULL,
+  `updated` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `interns_tasks_id` (`interns_tasks_id`),
+  CONSTRAINT `interns_tasks_list_ibfk_1` FOREIGN KEY (`interns_tasks_id`) REFERENCES `interns_tasks` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `interns_tasks_list_history`;
+CREATE TABLE `interns_tasks_list_history` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `interns_tasks_list_id` int DEFAULT NULL,
+  `revisedbefore` datetime DEFAULT NULL,
+  `created` datetime DEFAULT NULL,
+  `updated` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `interns_tasks_list_id` (`interns_tasks_list_id`),
+  CONSTRAINT `interns_tasks_list_history_ibfk_1` FOREIGN KEY (`interns_tasks_list_id`) REFERENCES `interns_tasks_list` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `links`;
@@ -1036,13 +1019,13 @@ INSERT INTO `survey_questionary` VALUES (1,1,'Saya dengan mudah dapat mengakses 
 DROP TABLE IF EXISTS `task_revision`;
 CREATE TABLE `task_revision` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `intern_task_list_id` int DEFAULT NULL,
+  `interns_task_list_id` int DEFAULT NULL,
   `note` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `revised_date` datetime DEFAULT CURRENT_TIMESTAMP,
   `created` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `intern_task_list_id` (`intern_task_list_id`)
+  KEY `interns_task_list_id` (`interns_task_list_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `tasks`;
