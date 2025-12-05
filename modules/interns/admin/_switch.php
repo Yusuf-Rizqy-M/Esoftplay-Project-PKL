@@ -12,6 +12,14 @@ switch( $Bbc->mod['task'] )
     include 'interns_edit.php';
     break;
 
+    case 'interns_tasks':
+    include 'interns_tasks.php';
+    break;
+
+    case 'interns_tasks_edit':
+    include 'interns_tasks_edit.php';
+    break;
+
 	default:
 		echo 'Invalid action <b>'.$Bbc->mod['task'].'</b> has been received...';
 		break;
