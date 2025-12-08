@@ -80,7 +80,7 @@ $formList->roll->input->bbc_user_id->setReferenceTable('bbc_user');
   VALUE = id
   DISPLAY = username
 */
-$formList->roll->input->bbc_user_id->setReferenceField('id','username');
+$formList->roll->input->bbc_user_id->setReferenceField('username','id');
 
 /* NAME */
 $formList->roll->addInput('name','text');
