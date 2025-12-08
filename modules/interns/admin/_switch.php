@@ -8,16 +8,14 @@ switch( $Bbc->mod['task'] )
     include 'interns.php';
     break;
 
-    case 'interns_edit':
-    include 'interns_edit.php';
-    break;
 
     case 'interns_tasks':
     include 'interns_tasks.php';
     break;
 
-    case 'interns_tasks_edit':
-    include 'interns_tasks_edit.php';
+
+    case 'interns_tasks_master':
+    include 'interns_tasks_master.php';
     break;
 
 	default:
