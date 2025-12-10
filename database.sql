@@ -504,9 +504,9 @@ CREATE TABLE `bbc_menu` (
   KEY `is_admin` (`is_admin`),
   KEY `is_shortcut` (`is_shortcut`),
   KEY `active` (`active`)
-) ENGINE=MyISAM AUTO_INCREMENT=76 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=82 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `bbc_menu` VALUES (1,0,4,'','index.php?mod=content.main',1,1,1,1,0,0,0,0,0,1),(2,1,4,'','index.php?mod=content.content',1,1,1,1,1,0,0,0,0,1),(3,1,4,'','index.php?mod=content.content_add',2,1,1,1,1,0,0,0,0,1),(4,1,4,'','index.php?mod=content.category',3,1,1,1,0,0,0,0,0,1),(5,1,4,'','index.php?mod=content.comment',4,1,1,1,0,0,0,0,0,1),(6,1,4,'','index.php?mod=content.type',5,1,1,1,0,0,0,0,0,1),(7,1,4,'','index.php?mod=content.tag',6,1,1,1,0,0,0,0,0,1),(8,1,4,'','index.php?mod=content.config',7,1,1,1,0,0,0,0,0,1),(9,0,5,'','index.php?mod=agenda.main',2,1,1,1,0,0,0,0,0,1),(10,0,6,'','index.php?mod=contact.main',3,1,1,1,0,0,0,0,0,1),(11,10,6,'','index.php?mod=contact.posted',1,1,1,1,0,0,0,0,0,1),(12,10,6,'','index.php?mod=contact.messenger',2,1,1,1,0,0,0,0,0,1),(13,10,6,'','index.php?mod=contact.setting',3,1,1,1,0,0,0,0,0,1),(14,0,7,'','index.php?mod=guestbook.main',4,1,1,1,0,0,0,0,0,1),(15,14,7,'','index.php?mod=guestbook.list',1,1,1,1,0,0,0,0,0,1),(16,14,7,'','index.php?mod=guestbook.setting',2,1,1,1,0,0,0,0,0,1),(17,0,11,'','index.php?mod=imageslider.main',5,1,1,1,0,0,0,0,0,1),(18,17,11,'','index.php?mod=imageslider.list',1,1,1,1,0,0,0,0,0,1),(19,17,11,'','index.php?mod=imageslider.category',2,1,1,1,0,0,0,0,0,1),(20,0,8,'','index.php?mod=links.main',6,1,1,1,0,0,0,0,0,1),(21,20,8,'','index.php?mod=links.list',1,1,1,1,0,0,0,0,0,1),(22,20,8,'','index.php?mod=links.share',2,1,1,1,0,0,0,0,0,1),(23,20,8,'','index.php?mod=links.advertise',3,1,1,1,0,0,0,0,0,1),(24,0,9,'','index.php?mod=survey.main',7,1,1,1,0,0,0,0,0,1),(25,24,9,'','index.php?mod=survey.posted',1,1,1,1,0,0,0,0,0,1),(26,24,9,'','index.php?mod=survey.question',2,1,1,1,0,0,0,0,0,1),(27,24,9,'','index.php?mod=survey.polling',3,1,1,1,0,0,0,0,0,1),(28,24,9,'','index.php?mod=survey.config',4,1,1,1,0,0,0,0,0,1),(29,0,10,'','index.php?mod=testimonial.main',8,1,1,1,0,0,0,0,0,1),(30,29,10,'','index.php?mod=testimonial.list',1,1,1,1,0,0,0,0,0,1),(31,29,10,'','index.php?mod=testimonial.add',2,1,1,1,0,0,0,0,0,1),(32,29,10,'','index.php?mod=testimonial.setting',3,1,1,1,0,0,0,0,0,1),(33,0,3,'','index.php?mod=search.main',9,1,1,1,0,0,0,0,0,1),(34,0,2,'','index.php?mod=user.password',10,1,1,1,0,0,0,0,0,0),(35,0,1,'','index.php?mod=_cpanel.main',11,1,1,1,0,0,0,0,0,1),(36,0,5,'home','',1,1,0,0,0,0,0,0,0,1),(37,0,10,'testimonial','index.php?mod=testimonial.main',1,2,0,0,0,0,0,0,0,1),(38,0,2,'my-profile','index.php?mod=user.account',1,3,1,0,0,0,0,0,0,1),(39,0,4,'my-content','index.php?mod=content.posted',2,3,1,0,0,0,0,0,0,1),(40,0,5,'agenda','index.php?mod=agenda.main',2,2,0,0,0,0,0,0,0,1),(41,40,5,'kalender','index.php?mod=agenda.calendar',1,2,0,0,0,0,0,0,0,1),(42,40,5,'rutinitas','index.php?mod=agenda.routine',2,2,0,0,0,0,0,0,0,1),(43,40,5,'event','index.php?mod=agenda.events',3,2,0,0,0,0,0,0,0,1),(44,40,5,'harian','index.php?mod=agenda.daily',4,2,0,0,0,0,0,0,0,1),(45,40,5,'mingguan','index.php?mod=agenda.weekly',5,2,0,0,0,0,0,0,0,1),(46,40,5,'bulanan','index.php?mod=agenda.monthly',6,2,0,0,0,0,0,0,0,1),(47,40,5,'tahunan','index.php?mod=agenda.yearly',7,2,0,0,0,0,0,0,0,1),(48,0,4,'about-us','index.php?mod=content.detail&id=14&title=Penandatanganan Bantuan Kapal Penyebrangan',2,1,0,0,0,1,0,0,14,1),(49,0,4,'content','index.php?mod=content.latest',3,1,0,0,0,0,0,0,0,1),(50,49,4,'artikel','index.php?mod=content.article',1,1,0,0,0,0,0,0,0,1),(51,49,4,'gallery','index.php?mod=content.gallery',2,1,0,0,0,0,0,0,0,1),(52,49,4,'download','index.php?mod=content.download',3,1,0,0,0,0,0,0,0,1),(53,49,4,'video','index.php?mod=content.video',4,1,0,0,0,0,0,0,0,1),(54,49,4,'audio','index.php?mod=content.audio',5,1,0,0,0,0,0,0,0,1),(55,0,4,'create-content','index.php?mod=content.posted_form',3,3,1,0,0,0,0,0,0,1),(56,0,9,'survey','index.php?mod=survey.main',3,2,0,0,0,0,0,0,0,1),(57,0,2,'change-password','index.php?mod=user.password',4,3,1,0,0,0,0,0,0,1),(58,0,4,'pencarian','index.php?mod=content.search',4,1,0,0,0,0,0,0,0,1),(59,0,6,'contact-us','index.php?mod=contact.main',4,2,0,0,0,0,0,0,0,1),(60,0,2,'logout','index.php?mod=user.logout',5,3,1,0,0,0,0,0,0,1),(61,0,4,'berita','index.php?mod=content.list&id=6&title=Berita',5,1,0,0,0,0,1,6,0,1),(62,61,4,'hot-list','index.php?mod=content.list&id=9&title=Hot+List',1,1,0,0,0,0,1,9,0,1),(63,61,4,'information','index.php?mod=content.list&id=8&title=Information',2,1,0,0,0,0,1,8,0,1),(64,61,4,'relaxing','index.php?mod=content.list&id=7&title=Relaxing',3,1,0,0,0,0,1,7,0,1),(65,0,11,'search','index.php?mod=search.main',5,2,0,0,0,0,0,0,0,1),(66,0,4,'galleries','index.php?mod=content.list&id=2&title=Gallery',6,1,0,0,0,0,1,2,0,1),(67,0,4,'downloads','index.php?mod=content.list&id=3&title=Download',7,1,0,0,0,0,1,3,0,1),(68,0,4,'audios','index.php?mod=content.list&id=5&title=Sound+Audio',8,1,0,0,0,0,1,5,0,1),(69,0,4,'videos','index.php?mod=content.list&id=4&title=Videos',9,1,0,0,0,0,1,4,0,1),(70,0,2,'registrasi','index.php?mod=user.register',10,1,0,0,0,0,0,0,0,1),(71,0,8,'links','index.php?mod=links.main',11,1,0,0,0,0,0,0,0,1),(72,0,13,'','index.php?mod=interns.interns_tasks',12,1,1,1,0,0,0,0,0,1),(73,72,13,'','index.php?mod=interns.main',1,1,1,1,0,0,0,0,0,1),(74,72,13,'','index.php?mod=interns.interns_tasks',2,1,1,1,0,0,0,0,0,1),(75,72,13,'','index.php?mod=interns.interns_tasks',3,1,1,1,0,0,0,0,0,1);
+INSERT INTO `bbc_menu` VALUES (1,0,4,'','index.php?mod=content.main',1,1,1,1,0,0,0,0,0,1),(2,1,4,'','index.php?mod=content.content',1,1,1,1,1,0,0,0,0,1),(3,1,4,'','index.php?mod=content.content_add',2,1,1,1,1,0,0,0,0,1),(4,1,4,'','index.php?mod=content.category',3,1,1,1,0,0,0,0,0,1),(5,1,4,'','index.php?mod=content.comment',4,1,1,1,0,0,0,0,0,1),(6,1,4,'','index.php?mod=content.type',5,1,1,1,0,0,0,0,0,1),(7,1,4,'','index.php?mod=content.tag',6,1,1,1,0,0,0,0,0,1),(8,1,4,'','index.php?mod=content.config',7,1,1,1,0,0,0,0,0,1),(9,0,5,'','index.php?mod=agenda.main',2,1,1,1,0,0,0,0,0,1),(10,0,6,'','index.php?mod=contact.main',3,1,1,1,0,0,0,0,0,1),(11,10,6,'','index.php?mod=contact.posted',1,1,1,1,0,0,0,0,0,1),(12,10,6,'','index.php?mod=contact.messenger',2,1,1,1,0,0,0,0,0,1),(13,10,6,'','index.php?mod=contact.setting',3,1,1,1,0,0,0,0,0,1),(14,0,7,'','index.php?mod=guestbook.main',4,1,1,1,0,0,0,0,0,1),(15,14,7,'','index.php?mod=guestbook.list',1,1,1,1,0,0,0,0,0,1),(16,14,7,'','index.php?mod=guestbook.setting',2,1,1,1,0,0,0,0,0,1),(17,0,11,'','index.php?mod=imageslider.main',5,1,1,1,0,0,0,0,0,1),(18,17,11,'','index.php?mod=imageslider.list',1,1,1,1,0,0,0,0,0,1),(19,17,11,'','index.php?mod=imageslider.category',2,1,1,1,0,0,0,0,0,1),(20,0,8,'','index.php?mod=links.main',6,1,1,1,0,0,0,0,0,1),(21,20,8,'','index.php?mod=links.list',1,1,1,1,0,0,0,0,0,1),(22,20,8,'','index.php?mod=links.share',2,1,1,1,0,0,0,0,0,1),(23,20,8,'','index.php?mod=links.advertise',3,1,1,1,0,0,0,0,0,1),(24,0,9,'','index.php?mod=survey.main',7,1,1,1,0,0,0,0,0,1),(25,24,9,'','index.php?mod=survey.posted',1,1,1,1,0,0,0,0,0,1),(26,24,9,'','index.php?mod=survey.question',2,1,1,1,0,0,0,0,0,1),(27,24,9,'','index.php?mod=survey.polling',3,1,1,1,0,0,0,0,0,1),(28,24,9,'','index.php?mod=survey.config',4,1,1,1,0,0,0,0,0,1),(29,0,10,'','index.php?mod=testimonial.main',8,1,1,1,0,0,0,0,0,1),(30,29,10,'','index.php?mod=testimonial.list',1,1,1,1,0,0,0,0,0,1),(31,29,10,'','index.php?mod=testimonial.add',2,1,1,1,0,0,0,0,0,1),(32,29,10,'','index.php?mod=testimonial.setting',3,1,1,1,0,0,0,0,0,1),(33,0,3,'','index.php?mod=search.main',9,1,1,1,0,0,0,0,0,1),(34,0,2,'','index.php?mod=user.password',10,1,1,1,0,0,0,0,0,0),(35,0,1,'','index.php?mod=_cpanel.main',11,1,1,1,0,0,0,0,0,1),(36,0,5,'home','',1,1,0,0,0,0,0,0,0,1),(37,0,10,'testimonial','index.php?mod=testimonial.main',1,2,0,0,0,0,0,0,0,1),(38,0,2,'my-profile','index.php?mod=user.account',1,3,1,0,0,0,0,0,0,1),(39,0,4,'my-content','index.php?mod=content.posted',2,3,1,0,0,0,0,0,0,1),(40,0,5,'agenda','index.php?mod=agenda.main',2,2,0,0,0,0,0,0,0,1),(41,40,5,'kalender','index.php?mod=agenda.calendar',1,2,0,0,0,0,0,0,0,1),(42,40,5,'rutinitas','index.php?mod=agenda.routine',2,2,0,0,0,0,0,0,0,1),(43,40,5,'event','index.php?mod=agenda.events',3,2,0,0,0,0,0,0,0,1),(44,40,5,'harian','index.php?mod=agenda.daily',4,2,0,0,0,0,0,0,0,1),(45,40,5,'mingguan','index.php?mod=agenda.weekly',5,2,0,0,0,0,0,0,0,1),(46,40,5,'bulanan','index.php?mod=agenda.monthly',6,2,0,0,0,0,0,0,0,1),(47,40,5,'tahunan','index.php?mod=agenda.yearly',7,2,0,0,0,0,0,0,0,1),(48,0,4,'about-us','index.php?mod=content.detail&id=14&title=Penandatanganan Bantuan Kapal Penyebrangan',2,1,0,0,0,1,0,0,14,1),(49,0,4,'content','index.php?mod=content.latest',3,1,0,0,0,0,0,0,0,1),(50,49,4,'artikel','index.php?mod=content.article',1,1,0,0,0,0,0,0,0,1),(51,49,4,'gallery','index.php?mod=content.gallery',2,1,0,0,0,0,0,0,0,1),(52,49,4,'download','index.php?mod=content.download',3,1,0,0,0,0,0,0,0,1),(53,49,4,'video','index.php?mod=content.video',4,1,0,0,0,0,0,0,0,1),(54,49,4,'audio','index.php?mod=content.audio',5,1,0,0,0,0,0,0,0,1),(55,0,4,'create-content','index.php?mod=content.posted_form',3,3,1,0,0,0,0,0,0,1),(56,0,9,'survey','index.php?mod=survey.main',3,2,0,0,0,0,0,0,0,1),(57,0,2,'change-password','index.php?mod=user.password',4,3,1,0,0,0,0,0,0,1),(58,0,4,'pencarian','index.php?mod=content.search',4,1,0,0,0,0,0,0,0,1),(59,0,6,'contact-us','index.php?mod=contact.main',4,2,0,0,0,0,0,0,0,1),(60,0,2,'logout','index.php?mod=user.logout',5,3,1,0,0,0,0,0,0,1),(61,0,4,'berita','index.php?mod=content.list&id=6&title=Berita',5,1,0,0,0,0,1,6,0,1),(62,61,4,'hot-list','index.php?mod=content.list&id=9&title=Hot+List',1,1,0,0,0,0,1,9,0,1),(63,61,4,'information','index.php?mod=content.list&id=8&title=Information',2,1,0,0,0,0,1,8,0,1),(64,61,4,'relaxing','index.php?mod=content.list&id=7&title=Relaxing',3,1,0,0,0,0,1,7,0,1),(65,0,11,'search','index.php?mod=search.main',5,2,0,0,0,0,0,0,0,1),(66,0,4,'galleries','index.php?mod=content.list&id=2&title=Gallery',6,1,0,0,0,0,1,2,0,1),(67,0,4,'downloads','index.php?mod=content.list&id=3&title=Download',7,1,0,0,0,0,1,3,0,1),(68,0,4,'audios','index.php?mod=content.list&id=5&title=Sound+Audio',8,1,0,0,0,0,1,5,0,1),(69,0,4,'videos','index.php?mod=content.list&id=4&title=Videos',9,1,0,0,0,0,1,4,0,1),(70,0,2,'registrasi','index.php?mod=user.register',10,1,0,0,0,0,0,0,0,1),(71,0,8,'links','index.php?mod=links.main',11,1,0,0,0,0,0,0,0,1),(78,76,13,'','index.php?mod=interns.interns_tasks',2,1,1,1,0,0,0,0,0,1),(77,76,13,'','index.php?mod=interns.interns',1,1,1,1,0,0,0,0,0,1),(76,0,13,'','index.php?mod=interns.interns',12,1,1,1,0,0,0,0,0,1),(81,76,13,'','index.php?mod=interns.interns_tasks_list',3,1,1,1,0,0,0,0,0,1),(80,76,13,'','index.php?mod=interns.interns_report',4,1,1,1,0,0,0,0,0,1);
 DROP TABLE IF EXISTS `bbc_menu_cat`;
 CREATE TABLE `bbc_menu_cat` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -524,7 +524,7 @@ CREATE TABLE `bbc_menu_text` (
   KEY `menu_id` (`menu_id`,`lang_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `bbc_menu_text` VALUES (1,'Content',1),(2,'Content List',1),(3,'Add Content',1),(4,'Category',1),(5,'Comments',1),(6,'Content Type',1),(7,'Content Tags',1),(8,'Configuration',1),(9,'Agenda',1),(10,'Contact Us',1),(11,'List Contact Us',1),(12,'YM Account',1),(13,'Configuration',1),(14,'Guest Book',1),(15,'List Guest Book',1),(16,'Configuration',1),(17,'Image Slider',1),(18,'List Images',1),(19,'Category',1),(20,'Links',1),(21,'Ad List',1),(22,'Share Links',1),(23,'Advertise',1),(24,'Survey',1),(25,'Posted',1),(26,'Question',1),(27,'Polling',1),(28,'Configuration',1),(29,'Testimonial',1),(30,'List Testimonial',1),(31,'Add Testimonial',1),(32,'Configuration',1),(33,'Search',1),(34,'Change Password',1),(35,'Control Panel',1),(36,'Home',1),(37,'Testimonial',1),(38,'My Profile',1),(39,'My Content',1),(40,'Agenda',1),(41,'Kalender',1),(42,'Rutinitas',1),(43,'Event',1),(44,'Harian',1),(45,'Mingguan',1),(46,'Bulanan',1),(47,'Tahunan',1),(48,'About Us',1),(49,'Content',1),(50,'Artikel',1),(51,'Gallery',1),(52,'Download',1),(53,'Video',1),(54,'Audio',1),(55,'Create Content',1),(56,'Survey',1),(57,'Change Password',1),(58,'Pencarian',1),(59,'Contact Us',1),(60,'Logout',1),(61,'Berita',1),(62,'Hot List',1),(63,'Information',1),(64,'Relaxing',1),(65,'Search',1),(66,'Gallery',1),(67,'Download',1),(68,'Audio',1),(69,'Video',1),(70,'Registrasi',1),(71,'Links',1),(72,'Interns',1),(73,'Interns',1),(74,'Interns Task List',1),(75,'Interns Task',1);
+INSERT INTO `bbc_menu_text` VALUES (1,'Content',1),(2,'Content List',1),(3,'Add Content',1),(4,'Category',1),(5,'Comments',1),(6,'Content Type',1),(7,'Content Tags',1),(8,'Configuration',1),(9,'Agenda',1),(10,'Contact Us',1),(11,'List Contact Us',1),(12,'YM Account',1),(13,'Configuration',1),(14,'Guest Book',1),(15,'List Guest Book',1),(16,'Configuration',1),(17,'Image Slider',1),(18,'List Images',1),(19,'Category',1),(20,'Links',1),(21,'Ad List',1),(22,'Share Links',1),(23,'Advertise',1),(24,'Survey',1),(25,'Posted',1),(26,'Question',1),(27,'Polling',1),(28,'Configuration',1),(29,'Testimonial',1),(30,'List Testimonial',1),(31,'Add Testimonial',1),(32,'Configuration',1),(33,'Search',1),(34,'Change Password',1),(35,'Control Panel',1),(36,'Home',1),(37,'Testimonial',1),(38,'My Profile',1),(39,'My Content',1),(40,'Agenda',1),(41,'Kalender',1),(42,'Rutinitas',1),(43,'Event',1),(44,'Harian',1),(45,'Mingguan',1),(46,'Bulanan',1),(47,'Tahunan',1),(48,'About Us',1),(49,'Content',1),(50,'Artikel',1),(51,'Gallery',1),(52,'Download',1),(53,'Video',1),(54,'Audio',1),(55,'Create Content',1),(56,'Survey',1),(57,'Change Password',1),(58,'Pencarian',1),(59,'Contact Us',1),(60,'Logout',1),(61,'Berita',1),(62,'Hot List',1),(63,'Information',1),(64,'Relaxing',1),(65,'Search',1),(66,'Gallery',1),(67,'Download',1),(68,'Audio',1),(69,'Video',1),(70,'Registrasi',1),(71,'Links',1),(78,'Interns Tasks',1),(77,'Interns',1),(76,'Interns',1),(81,'Interns Task List',1),(80,'Interns Report',1);
 DROP TABLE IF EXISTS `bbc_module`;
 CREATE TABLE `bbc_module` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -565,7 +565,7 @@ CREATE TABLE `bbc_once` (
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='table untuk menyimpan action sudah dijalankan atau tidak berdasarkan waktu /jam /hari dll';
 
-INSERT INTO `bbc_once` VALUES (1,'user_iddle',1,'2025-12-08 13:45:26','2025-12-08 12:45:26');
+INSERT INTO `bbc_once` VALUES (1,'user_iddle',1,'2025-12-10 13:04:42','2025-12-10 12:04:42');
 DROP TABLE IF EXISTS `bbc_template`;
 CREATE TABLE `bbc_template` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
@@ -600,7 +600,7 @@ CREATE TABLE `bbc_user` (
   KEY `exp_checked` (`exp_checked`)
 ) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `bbc_user` VALUES (1,',3,4,1,2,','admin','lkEltrgcifUMPSlpMgp2unIu2OtXg/3hn5u9wuaxHqpaCZvZFXPYDk9KtE643xrcWy/Th4W5ZyE/+sMCyQtK8g==','127.0.0.1','127.0.0.1','2025-12-08 11:53:02','2025-12-08 09:56:50','2025-12-08 15:32:28',24,'0000-00-00 00:00:00',1),(2,',2,1,3,4,','danang@fisip.net','lkEltrgcifUMPSlpMgp2unIu2OtXg/3hn5u9wuaxHqpaCZvZFXPYDk9KtE643xrcWy/Th4W5ZyE/+sMCyQtK8g==','127.0.0.1','127.0.0.1','2016-05-03 23:35:44','2016-05-03 23:32:34','0000-00-00 00:00:00',0,'0000-00-00 00:00:00',1),(3,',3,','yusuf ','lkEltrgcifUMPSlpMgp2unIu2OtXg/3hn5u9wuaxHqpaCZvZFXPYDk9KtE643xrcWy/Th4W5ZyE/+sMCyQtK8g==','','','0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00',0,'2025-12-08 09:34:25',1);
+INSERT INTO `bbc_user` VALUES (1,',3,4,1,2,','admin','mB2Yok44RORZKreRRR1ose6MDi3FNDEybjMqBbIQRYTp81rK8fH+AUu5vRDandi9mp7a1w/D5mmX2h+HCWVzGQ==','127.0.0.1','127.0.0.1','2025-12-10 09:05:07','2025-12-08 11:53:02','2025-12-10 14:37:41',25,'0000-00-00 00:00:00',1),(2,',2,1,3,4,','danang@fisip.net','mB2Yok44RORZKreRRR1ose6MDi3FNDEybjMqBbIQRYTp81rK8fH+AUu5vRDandi9mp7a1w/D5mmX2h+HCWVzGQ==','127.0.0.1','127.0.0.1','2016-05-03 23:35:44','2016-05-03 23:32:34','0000-00-00 00:00:00',0,'0000-00-00 00:00:00',1),(3,',3,','yusuf ','mB2Yok44RORZKreRRR1ose6MDi3FNDEybjMqBbIQRYTp81rK8fH+AUu5vRDandi9mp7a1w/D5mmX2h+HCWVzGQ==','','','0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00',0,'2025-12-08 09:34:25',1);
 DROP TABLE IF EXISTS `bbc_user_field`;
 CREATE TABLE `bbc_user_field` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -766,73 +766,19 @@ INSERT INTO `imageslider_text` VALUES (1,'Gedung',1),(2,'Praktikum',1),(3,'Kelas
 DROP TABLE IF EXISTS `interns`;
 CREATE TABLE `interns` (
   `id` int NOT NULL AUTO_INCREMENT,
-
   `email` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `school` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `major` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-
   `start_date` date DEFAULT NULL,
   `end_date` date DEFAULT NULL,
-
   `created` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-
-
-
-
-DROP TABLE IF EXISTS `interns_tasks`;
-CREATE TABLE `interns_tasks` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `created` datetime DEFAULT CURRENT_TIMESTAMP,
-  `updated` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-INSERT INTO `interns_tasks` VALUES
-(1,'Install Linux','Install Linux Mint atau Ubuntu sesuai standar.','2025-12-08 09:32:44','2025-12-08 09:32:44'),
-(2,'Create Project Framework Esoftplay','Membuat project awal menggunakan framework Esoftplay.','2025-12-08 09:32:44','2025-12-08 09:32:44');
-
-
-DROP TABLE IF EXISTS `interns_tasks_list`;
-CREATE TABLE `interns_tasks_list` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `interns_id` int DEFAULT NULL,
-  `interns_tasks_id` int DEFAULT NULL,
-
-  `notes` text DEFAULT NULL,
-  `status` tinyint DEFAULT 1 COMMENT '1=to do, 2=in progress, 3=submit, 4=revised, 5=done, 6=cancel',
-  
-
-  `created` datetime DEFAULT CURRENT_TIMESTAMP,
-  `updated` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
-  PRIMARY KEY (`id`),
-  KEY `interns_id` (`interns_id`),
-  KEY `interns_tasks_id` (`interns_tasks_id`),
-
-  CONSTRAINT `itl_ibfk_interns` FOREIGN KEY (`interns_id`) 
-      REFERENCES `interns` (`id`) 
-      ON DELETE CASCADE ON UPDATE CASCADE,
-
-  CONSTRAINT `itl_ibfk_tasks` FOREIGN KEY (`interns_tasks_id`) 
-      REFERENCES `interns_tasks` (`id`)
-      ON DELETE SET NULL ON UPDATE CASCADE
-
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-
-INSERT INTO `interns_tasks_list` VALUES
-(3,1,1,'kerjakan deadline 1 minggu','desc','2025-12-08 10:31:13','2025-12-08 10:33:47');
-
-
+INSERT INTO `interns` VALUES (1,'yusufhabib290@gmail.com','Yusuf Rizqy','SMK Raden Umar Said','PPLG','2025-10-06','2026-03-28','2025-12-10 10:57:32','2025-12-10 10:57:32');
 DROP TABLE IF EXISTS `interns_report`;
 CREATE TABLE `interns_report` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -842,27 +788,48 @@ CREATE TABLE `interns_report` (
   PRIMARY KEY (`id`),
   KEY `interns_id` (`interns_id`),
   KEY `interns_tasks_id` (`interns_tasks_id`),
-  CONSTRAINT `interns_report_ibfk_1` FOREIGN KEY (`interns_id`) REFERENCES `interns` (`id`) 
-      ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `interns_report_ibfk_2` FOREIGN KEY (`interns_tasks_id`) REFERENCES `interns_tasks_list` (`id`) 
-      ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `interns_report_ibfk_1` FOREIGN KEY (`interns_id`) REFERENCES `interns` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `interns_report_ibfk_2` FOREIGN KEY (`interns_tasks_id`) REFERENCES `interns_tasks_list` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+DROP TABLE IF EXISTS `interns_tasks`;
+CREATE TABLE `interns_tasks` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `created` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+INSERT INTO `interns_tasks` VALUES (1,'Install Linux','Install Linux Mint atau Ubuntu sesuai standar.','2025-12-08 09:32:44','2025-12-08 09:32:44'),(2,'Create Project Framework Esoftplay','Membuat project awal menggunakan framework Esoftplay.','2025-12-08 09:32:44','2025-12-08 09:32:44');
+DROP TABLE IF EXISTS `interns_tasks_list`;
+CREATE TABLE `interns_tasks_list` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `interns_id` int DEFAULT NULL,
+  `interns_tasks_id` int DEFAULT NULL,
+  `notes` text COLLATE utf8mb4_unicode_ci,
+  `status` tinyint DEFAULT '1' COMMENT '1=to do, 2=in progress, 3=submit, 4=revised, 5=done, 6=cancel',
+  `created` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `interns_id` (`interns_id`),
+  KEY `interns_tasks_id` (`interns_tasks_id`),
+  CONSTRAINT `itl_ibfk_interns` FOREIGN KEY (`interns_id`) REFERENCES `interns` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `itl_ibfk_tasks` FOREIGN KEY (`interns_tasks_id`) REFERENCES `interns_tasks` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `interns_tasks_list` VALUES (1,1,1,'kerjakan deadline 1 minggu',0,'2025-12-08 10:31:13','2025-12-08 10:33:47');
 DROP TABLE IF EXISTS `interns_tasks_list_history`;
 CREATE TABLE `interns_tasks_list_history` (
   `id` int NOT NULL AUTO_INCREMENT,
   `interns_tasks_list_id` int DEFAULT NULL,
   `created` datetime DEFAULT CURRENT_TIMESTAMP,
-  `status` tinyint DEFAULT 1,
-
+  `status` tinyint DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `interns_tasks_list_id` (`interns_tasks_list_id`),
-  CONSTRAINT `itl_hist_ibfk_1` FOREIGN KEY (`interns_tasks_list_id`) REFERENCES `interns_tasks_list` (`id`)
-      ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `itl_hist_ibfk_1` FOREIGN KEY (`interns_tasks_list_id`) REFERENCES `interns_tasks_list` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-
 
 DROP TABLE IF EXISTS `links`;
 CREATE TABLE `links` (
@@ -875,6 +842,7 @@ CREATE TABLE `links` (
   PRIMARY KEY (`id`),
   KEY `publish` (`publish`)
 ) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 INSERT INTO `links` VALUES (1,'Dirjen Pendidikan Tinggi','http://dikti.go.id/','',1,1),(2,'Departemen Kesehatan RI','http://depkes.go.id/','',4,1),(3,'Pusat Informasi dan Konseling Kesehatan Reproduksi (PIKKR)','http://pikkr.wordpress.com/','',2,1),(4,'Dinas Kesehatan Provinsi DIY','http://fisip.net/','',3,1),(5,'Download','http://www.ifwdb.com/','',5,1);
 DROP TABLE IF EXISTS `links_ad`;
 CREATE TABLE `links_ad` (
@@ -1048,7 +1016,6 @@ CREATE TABLE `survey_questionary` (
 ) ENGINE=MyISAM AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `survey_questionary` VALUES (1,1,'Saya dengan mudah dapat mengakses situs berita online dari mana pun',1,1),(2,1,'Saya dengan mudah dapat mengakses situs berita online dengan menggunakan fasilitas/alat/gadget yang saya miliki',2,1),(3,1,'Saya dengan mudah dapat mempelajari cara menggunakan/mengakses situs berita online',3,1),(4,1,'Saya dengan mudah dapat memahami menu atau susunan rubik pada situs berita online',4,1),(5,1,'Saya dengan mudah dapat menggunakan fasilitas/fitur (contoh: layanan komentar, dll) yang ada pada situs berita online',5,1),(6,1,'Saya bisa dengan mudah mendapatkan berita yang saya cari ketika mengakses situs berita online',6,1),(7,1,'Saya dengan mudah dapat berinteraksi dengan pengelola situs berita online',7,1),(8,1,'Saya dengan mudah dapat berinteraksi dengan sesama pembaca situs berita online',8,1),(9,2,'Penggunaan situs berita online meningkatkan efektivitas saya dalam mencari informasi atau sebuah berita dibanding media cetak, televisi atau media yang lain',1,1),(10,2,'Dengan mengakses situs berita online saya dapat dengan mudah mencari informasi atau berita yang sudah lama berlalu',2,1),(11,2,'Melalui situs berita online saya mendapatkan informasi/berita yang saya butuhkan',3,1),(12,2,'Melalui situs berita online saya mendapatkan informasi tambahan yang saya butuhkan',4,1),(13,2,'Dengan mengakses situs berita online memungkinkan saya lebih cepat dalam mendapatkan berita yang saya butuhkan',5,1),(14,2,'Dengan mengakses situs berita online memungkinkan saya lebih mudah dalam mendapatkan berita yang saya butuhkan',6,1),(15,2,'Saya menghemat waktu dalam mencari sebuah informasi/berita jika melalui situs berita online',7,1),(16,2,'Saya menghemat biaya dalam mencari sebuah informasi/berita jika melalui situs berita online',8,1),(17,3,'Saya senang mengakses situs berita online karena tak perlu berlangganan media cetak',1,1),(18,3,'Saya senang mengakses situs berita online karena tidak perlu memberikan data pribadi',2,1),(19,3,'Saya senang mengakses situs berita online karena saya dapat mengomentari berita yang saya baca',3,1),(20,3,'Saya tidak suka situs berita online yang beritanya jarang/tidak diperbaharui (update)',4,1),(21,3,'Saya tidak suka situs berita online yang penyajian beritanya terlalu formal atau menggunakan bahasa yang terlalu baku',5,1),(22,3,'Saya bosan dengan tampilan (interface) situs berita online yang saya kunjungi',6,1),(23,3,'Saya lebih suka situs berita online yang dilengkapi dengan foto/ilustrasi/grafik',7,1),(24,4,'Saya lebih suka situs berita online yang memperbolehkan saya untuk berkomentar',1,1),(25,4,'Saya lebih suka situs berita online yang memperbolehkan saya untuk berkontribusi menyumbangkan berita',2,1),(26,4,'Sekalipun saya telah membaca media cetaknya, saya akan tetap mengakses situs berita secara online untuk mendapatkan informasi/berita yang saya butuhkan',3,1),(27,4,'Saya akan mengakses situs berita online jika ingin mengetahui berita terbaru mengenai suatu hal',4,1),(28,4,'Saya akan menyarankan/mengajak teman saya untuk mengakses situs berita online',5,1),(29,4,'Saya akan mengajak teman untuk berinteraksi/berdiskusi mengenai sebuah berita/informasi melalui fasilitas comment yang ada di situs berita online',6,1),(30,5,'Saya mengakses situs berita online setiap saya terkoneksi dengan internet',1,1),(31,5,'Saya akan mengakses situs berita online ketika ada peristiwa yang menarik atau yang sedang tren di masyarakat',2,1),(32,5,'Saya mengakses situs berita online hampir setiap hari',3,1),(33,5,'Rata-rata, saya mengakses situs berita online selama minimal 10 menit setiap kali mengunjunginya',4,1),(34,5,'Secara keseluruhan saya merasa puas dengan kinerja situs berita online',5,1),(35,5,'Saya menyampaikan kepuasan terhadap sebuah situs berita online, kepada teman saya',6,1);
-
 DROP TABLE IF EXISTS `testimonial`;
 CREATE TABLE `testimonial` (
   `id` int NOT NULL AUTO_INCREMENT,
