@@ -1,8 +1,5 @@
 <?php if (!defined('_VALID_BBC')) exit('No direct script access allowed');
 
-/* ===========================
-   SEARCH
-   =========================== */
 $formSearch = _lib('pea', 'interns_tasks');
 $formSearch->initSearch();
 
@@ -17,7 +14,7 @@ echo $formSearch->search->getForm();
    TABS
    =========================== */
 $tabs = array(
-  'Tasks' => '',
+  'Tasks ' => '',
   'Add Task' => ''
 );
 
@@ -28,23 +25,7 @@ $formAdd = _lib('pea', 'interns_tasks');
 $formAdd->initEdit();
 
 $formAdd->edit->addInput('header','header');
-$formAdd->edit->input->header->setTitle('Add / Edit Task');
-
-/* INTERN PICKER */
-$formAdd->edit->addInput('interns_id','selecttable');
-$formAdd->edit->input->interns_id->setTitle('Intern');
-$formAdd->edit->input->interns_id->setModal();
-$formAdd->edit->input->interns_id->setReferenceTable('interns');
-$formAdd->edit->input->interns_id->setReferenceField('name', 'id');
-$formAdd->edit->input->interns_id->setRequire();
-
-/* TASK MASTER PICKER */
-$formAdd->edit->addInput('interns_tasks_master_id','selecttable');
-$formAdd->edit->input->interns_tasks_master_id->setTitle('Task Master');
-$formAdd->edit->input->interns_tasks_master_id->setModal();
-$formAdd->edit->input->interns_tasks_master_id->setReferenceTable('interns_tasks_master');
-$formAdd->edit->input->interns_tasks_master_id->setReferenceField('title','id');
-$formAdd->edit->input->interns_tasks_master_id->setRequire();
+$formAdd->edit->input->header->setTitle('Add / Edit Task ');
 
 /* TITLE */
 $formAdd->edit->addInput('title','text');
@@ -64,21 +45,9 @@ $tabs['Add Task'] = $formAdd->edit->getForm();
 $formList = _lib('pea', 'interns_tasks');
 $formList->initRoll($add_sql.' ORDER BY id DESC', 'id');
 
-/* HIDDEN ID */
+/* ID */
 $formList->roll->addInput('id','sqlplaintext');
 $formList->roll->input->id->setDisplayColumn(false);
-
-/* INTERN COLUMN */
-$formList->roll->addInput('interns_id','selecttable');
-$formList->roll->input->interns_id->setTitle('Intern');
-$formList->roll->input->interns_id->setReferenceTable('interns');
-$formList->roll->input->interns_id->setReferenceField('name','id');
-
-/* TASK MASTER COLUMN (perbaikan kolom) */
-$formList->roll->addInput('interns_tasks_master_id','selecttable');
-$formList->roll->input->interns_tasks_master_id->setTitle('Master Task');
-$formList->roll->input->interns_tasks_master_id->setReferenceTable('interns_tasks_master');
-$formList->roll->input->interns_tasks_master_id->setReferenceField('title','id');
 
 /* TITLE */
 $formList->roll->addInput('title','text');
@@ -96,10 +65,10 @@ $formList->roll->input->created->setTitle('Created');
 $formList->roll->addInput('updated','sqlplaintext');
 $formList->roll->input->updated->setTitle('Updated');
 
+/* ACTIONS */
 $formList->roll->action();
 $formList->roll->onDelete(true);
 
 $tabs['Tasks'] = $formList->roll->getForm();
 
-/* SHOW TABS */
-echo tabs($tabs, 1, 'tabs_interns_tasks');
+echo tabs($tabs, 1, 'tabs_tasks');

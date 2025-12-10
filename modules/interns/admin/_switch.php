@@ -12,10 +12,10 @@ switch( $Bbc->mod['task'] )
     include 'interns_tasks.php';
     break;
 
-    case 'interns_tasks_master':
-    include 'interns_tasks_master.php';
+    case 'interns_tasks_list':
+    include 'interns_tasks_list.php';
     break;
-
+        
     
     case 'interns_report':
     include 'interns_report.php';
