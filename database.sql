@@ -823,13 +823,17 @@ INSERT INTO `interns_tasks_list` VALUES (1,1,1,'kerjakan deadline 1 minggu',0,'2
 DROP TABLE IF EXISTS `interns_tasks_list_history`;
 CREATE TABLE `interns_tasks_list_history` (
   `id` int NOT NULL AUTO_INCREMENT,
+  `interns_id` INT NOT NULL,
   `interns_tasks_list_id` int DEFAULT NULL,
   `created` datetime DEFAULT CURRENT_TIMESTAMP,
   `status` tinyint DEFAULT '1',
   PRIMARY KEY (`id`),
+  KEY `interns_id` (`interns_id`),
   KEY `interns_tasks_list_id` (`interns_tasks_list_id`),
-  CONSTRAINT `itl_hist_ibfk_1` FOREIGN KEY (`interns_tasks_list_id`) REFERENCES `interns_tasks_list` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `itl_hist_ibfk_interns` FOREIGN KEY (`interns_id`) REFERENCES `interns` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `itl_hist_ibfk_list` FOREIGN KEY (`interns_tasks_list_id`) REFERENCES `interns_tasks_list` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 DROP TABLE IF EXISTS `links`;
 CREATE TABLE `links` (
