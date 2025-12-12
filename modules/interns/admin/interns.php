@@ -138,33 +138,30 @@ echo tabs($tabs, 1, 'tabs_interns');
 ?>
 
 <div class="col-xs-12 no-both">
-    <div class="panel-group" id="accordion_interns_import">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title collapsed" data-toggle="collapse" data-parent="#accordion_interns_import" href="#import_panel">
-                    Klik Disini Untuk Import Data Intern From Excel (CSV)
-                </h4>
-            </div>
-            <div id="import_panel" class="panel-collapse collapse">
-                <form action="" method="POST" enctype="multipart/form-data">
+    <div class="panel-group" id="accordionadd_company">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 aria-expanded="false" class="panel-title collapsed" data-parent="#accordionadd_company" data-toggle="collapse" href="#pea_isHideToolOnadd_r_params" style="cursor: pointer;">
+            Klik Disini Untuk Import Data Intern From Excel (CSV)
+          </h4>
+        </div>
+        <div aria-expanded="false" class="panel-collapse collapse" id="pea_isHideToolOnadd_r_params" style="height: 0px;">
+          <form action="" method="POST" class="form" role="form" enctype="multipart/form-data">
                     <div class="panel-body">
                         <div class="form-group">
-                            <label>Upload File CSV</label>
-                            <input type="file" name="excel" class="form-control" accept=".csv" required />
+                            <label>Upload File</label>
+                            <input type="file" name="excel" class="form-control" placeholder="upload di sini!" accept=".csv" />
                             <div class="help-block">
-                                Format: email,name,school,major,start_date,end_date<br>
-                                <a href="?mod=interns&act=sample_intern">Download Sample CSV</a>
+                                Upload file daftar intern dalam format CSV. Silahkan download "sample file" untuk menentukan kolom-kolom apa saja yang perlu diisikan di <a href="?mod=interns&act=sample_intern">sini</a> (urutan: email,name,school,major,start_date,end_date).
                             </div>
                         </div>
                     </div>
                     <div class="panel-footer">
-                        <button type="submit" name="transfer" value="upload" class="btn btn-primary">
-                            Upload Data
-                        </button>
+                        <button type="submit" name="transfer" value="upload" class="btn btn-default"><?php echo icon('fa-upload') ?> Upload Data</button>
                     </div>
                 </form>
-            </div>
         </div>
+      </div>
     </div>
 </div>
 
