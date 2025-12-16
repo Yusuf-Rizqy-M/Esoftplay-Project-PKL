@@ -1,5 +1,14 @@
 <?php if (!defined('_VALID_BBC')) exit('No direct script access allowed');
 
+if (isset($_GET['act']) && $_GET['act'] == 'sample_intern') {
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment;filename="sample_import_intern.csv"');
+    echo "email,name,school,major,start_date,end_date\n";
+    echo "yusuf@example.com,Yusuf Rizqy,SMK Raden Umar Said,PPLG,2025-10-06,2026-03-28\n";
+    echo "wisnu@example.com,Wisnu Adi,SMK Negeri 2,TKJ,2025-11-01,2026-04-30\n";
+    die();
+}
+
 $formSearch = _lib('pea', 'interns');
 $formSearch->initSearch();
 
