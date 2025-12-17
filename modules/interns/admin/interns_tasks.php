@@ -14,29 +14,24 @@ if (!empty($_GET['act']) && $_GET['act'] == 'sample_task') {
     die();
 }
 
+//search
 $formSearch = _lib('pea', 'interns_tasks');
 $formSearch->initSearch();
-
-$formSearch->search->addInput('keyword','keyword');
-$formSearch->search->input->keyword->addSearchField('title', false);
-$formSearch->search->input->keyword->addSearchField('description', false);
-
-
-
+$formSearch->search->addInput('title','keyword');
+$formSearch->search->input->title->setTitle('Title'); 
+$formSearch->search->input->title->addSearchField('title', false);
 $add_sql = $formSearch->search->action();
 echo $formSearch->search->getForm();
 
-$tabs = array(
-  'Tasks'    => '', 
-  'Add Task' => ''
-);
 
-include 'interns_tasks_edit.php';
-$tabs['Add Task'] = $formAdd->edit->getForm();
+
+//list taks
 $formList = _lib('pea', 'interns_tasks');
 $formList->initRoll($add_sql.' ORDER BY id DESC', 'id');
+
 $formList->roll->setSaveTool(false);
-$formList->roll->setDeleteTool(false);
+$formList->roll->setDeleteTool(true);
+
 // id
 $formList->roll->addInput('id','sqlplaintext');
 $formList->roll->input->id->setDisplayColumn(false);
@@ -46,7 +41,7 @@ $formList->roll->addInput('title','sqllinks');
 $formList->roll->input->title->setLinks($Bbc->mod['circuit'].'.interns_tasks_edit');
 $formList->roll->input->title->setTitle('Title');
 
-// desc
+// description
 $formList->roll->addInput('description','sqlplaintext');
 $formList->roll->input->description->setTitle('Description');
 
@@ -60,13 +55,31 @@ $formList->roll->input->updated->setTitle('Updated');
 
 // action
 $formList->roll->action();
-$formList->roll->onDelete(true); 
+$formList->roll->onDelete(true);
 
-$tabs['Tasks'] = $formList->roll->getForm();
+echo '<div class="panel panel-default">';
+echo '<div class="panel-heading"><h3 class="panel-title">Daftar Task</h3></div>';
+echo '<div class="panel-body">';
+echo $formList->roll->getForm();
+echo '</div>';
+echo '</div>';
 
-echo tabs($tabs, 1, 'tabs_tasks');
+// =====================================================
+// FORM ADD / EDIT TASK (DITARO DI BAWAH LIST)
+// =====================================================
+include 'interns_tasks_edit.php';  // File yang berisi formAdd
+
+echo '<div class="panel panel-default">';
+echo '<div class="panel-heading"><h3 class="panel-title">Add / Edit Task</h3></div>';
+echo '<div class="panel-body">';
+echo $formAdd->edit->getForm();
+echo '</div>';
+echo '</div>';
+
+// =====================================================
+// IMPORT MASTER TASK (CSV)
+// =====================================================
 ?>
-
 <!-- IMPORT MASTER TASK -->
 <div class="col-xs-12 no-both">
     <div class="panel-group" id="accordion_tasks_import">
@@ -83,7 +96,7 @@ echo tabs($tabs, 1, 'tabs_tasks');
                             <label>Upload File CSV</label>
                             <input type="file" name="excel_task" class="form-control" accept=".csv" required />
                             <div class="help-block">
-                               Upload file daftar intern dalam format CSV. Silahkan download "sample file" untuk menentukan kolom-kolom apa saja yang perlu diisikan di <a href="?mod=interns.interns_tasks&act=sample_task">sini</a> (urutan: title,description).
+                                Upload file daftar task dalam format CSV. Silahkan download "sample file" untuk menentukan kolom-kolom apa saja yang perlu diisikan di <a href="?mod=interns.interns_tasks&act=sample_task">sini</a> (urutan: title,description).
                             </div>
                         </div>
                     </div>
@@ -99,7 +112,7 @@ echo tabs($tabs, 1, 'tabs_tasks');
 </div>
 
 <?php
-// === IMPORT MASTER TASK ===
+// === PROSES IMPORT CSV ===
 if (!empty($_POST['import_task']) && $_POST['import_task'] == 'upload' && !empty($_FILES['excel_task']['tmp_name'])) {
     global $db;
     $file = $_FILES['excel_task']['tmp_name'];
@@ -107,14 +120,12 @@ if (!empty($_POST['import_task']) && $_POST['import_task'] == 'upload' && !empty
     if ($handle === false) {
         die('<div class="alert alert-danger">Gagal buka file!</div>');
     }
-
     $success = $fail = 0;
     $row = 0;
     echo '<div class="alert alert-info"><h4>Hasil Import Master Task:</h4><ul>';
-
     while (($data = fgetcsv($handle, 1000, ",")) !== false) {
         $row++;
-        if ($row == 1) continue; // header
+        if ($row == 1) continue; // skip header
         if (count($data) < 1) continue;
 
         $title = trim($data[0]);
@@ -133,9 +144,8 @@ if (!empty($_POST['import_task']) && $_POST['import_task'] == 'upload' && !empty
             continue;
         }
 
-        $q = "INSERT INTO interns_tasks (title, description, created, updated) 
+        $q = "INSERT INTO interns_tasks (title, description, created, updated)
               VALUES ('".addslashes($title)."', '".addslashes($desc)."', NOW(), NOW())";
-
         if ($db->Execute($q)) {
             echo "<li>Baris $row: <b>$title</b> berhasil ditambah</li>";
             $success++;
