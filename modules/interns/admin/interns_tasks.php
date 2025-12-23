@@ -23,7 +23,7 @@ $formSearch->search->input->title->setTitle('Title');
 $formSearch->search->input->title->addSearchField('title', false);
 $add_sql = $formSearch->search->action();
 echo $formSearch->search->getForm();
-
+include 'interns_tasks_edit.php';
 // list tasks
 $formList = _lib('pea', 'interns_tasks');
 $formList->initRoll($add_sql.' ORDER BY id DESC', 'id');
@@ -50,7 +50,7 @@ echo '</div>';
 echo '</div>';
 
 // FORM ADD / EDIT TASK
-include 'interns_tasks_edit.php';
+
 echo '<div class="panel panel-default">';
 echo '<div class="panel-heading"><h3 class="panel-title">Add / Edit Task</h3></div>';
 echo '<div class="panel-body">';
