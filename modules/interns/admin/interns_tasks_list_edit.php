@@ -1,27 +1,21 @@
 <?php
 if (!defined('_VALID_BBC')) exit('No direct script access allowed');
-
 $db = $GLOBALS['db'];
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-
 if ($id > 0) {
     $old = $db->getRow("SELECT * FROM interns_tasks_list WHERE id={$id}");
     $intern_name = $db->getOne("SELECT name FROM interns WHERE id={$old['interns_id']}");
     $task_title = $db->getOne("SELECT title FROM interns_tasks WHERE id={$old['interns_tasks_id']}");
 }
-
 $formAdd = _lib('pea', 'interns_tasks_list');
 $formAdd->initEdit($id > 0 ? "WHERE id={$id}" : "");
-
 $formAdd->edit->addInput('header','header');
 $formAdd->edit->input->header->setTitle('Add / Edit Intern Task');
-
 if ($id > 0) {
     $formAdd->edit->addInput('intern_name','plaintext');
     $formAdd->edit->input->intern_name->setTitle('Intern');
     $formAdd->edit->input->intern_name->setValue($intern_name);
     $formAdd->edit->addInput('interns_id','hidden');
-
     $formAdd->edit->addInput('task_title','plaintext');
     $formAdd->edit->input->task_title->setTitle('Task');
     $formAdd->edit->input->task_title->setValue($task_title);
@@ -33,7 +27,6 @@ if ($id > 0) {
     $formAdd->edit->input->interns_id->setReferenceTable('interns');
     $formAdd->edit->input->interns_id->setReferenceField('name','id');
     $formAdd->edit->input->interns_id->setRequire();
-
     $formAdd->edit->addInput('interns_tasks_id','selecttable');
     $formAdd->edit->input->interns_tasks_id->setTitle('Task');
     $formAdd->edit->input->interns_tasks_id->setModal();
@@ -41,10 +34,8 @@ if ($id > 0) {
     $formAdd->edit->input->interns_tasks_id->setReferenceField('title','id');
     $formAdd->edit->input->interns_tasks_id->setRequire();
 }
-
 $formAdd->edit->addInput('notes','textarea');
 $formAdd->edit->input->notes->setTitle('Notes');
-
 $formAdd->edit->addInput('status','select');
 $formAdd->edit->input->status->setTitle('Status');
 $formAdd->edit->input->status->addOption('To Do', 1);
@@ -54,15 +45,10 @@ $formAdd->edit->input->status->addOption('Revised', 4);
 $formAdd->edit->input->status->addOption('Done', 5);
 $formAdd->edit->input->status->addOption('Cancel', 6);
 $formAdd->edit->input->status->setRequire();
-
 $formAdd->edit->action();
-
 if (!empty($_POST)) {
     if ($id == 0) {
         $new_id = $db->Insert_ID();
-        if ($new_id > 0) {
-            $db->Execute("UPDATE interns_tasks_list SET updated = NOW() WHERE id = {$new_id}");
-        }
     } else {
         $new = $db->getRow("SELECT * FROM interns_tasks_list WHERE id={$id}");
         if (!empty($old) && !empty($new)) {
@@ -88,12 +74,13 @@ if (!empty($_POST)) {
                 $db->Execute($sql);
             }
         }
+        $db->Execute("UPDATE interns_tasks_list SET updated = NOW() WHERE id = {$id}");
     }
     $redirect_url = $_SERVER['PHP_SELF'] . (isset($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '');
     header("Location: {$redirect_url}");
     exit;
 }
-
 if ($id > 0) {
     echo $formAdd->edit->getForm();
 }
+?>
