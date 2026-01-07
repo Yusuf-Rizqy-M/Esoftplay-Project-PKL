@@ -27,13 +27,17 @@ switch( $Bbc->mod['task'] )
 	case 'task_pkl':
 	echo'task_pkl';
     break;
-
+		
 	case 'login':
 	echo'login';
     break;
 
 	case 'print_sertif':
 	echo'print_sertif';
+    break;
+	
+	case 'laporanharian2':
+	echo'laporanharian2';
     break;
 
 
