@@ -61,7 +61,7 @@ $formAdd->edit->input->end_date->setRequire();
 $formAdd->edit->onSave('intern_before_save', '', false);
 
 // onSave callback - AFTER save (untuk update user_id)
-// $formAdd->edit->onSave('intern_after_save', '', true);
+$formAdd->edit->onSave('intern_after_save', '', true);
 
 $formAdd->edit->action();
 $tabs['Add Intern'] = $formAdd->edit->getForm();
@@ -155,10 +155,10 @@ function intern_before_save($intern_id) {
         
         // Buat user baru menggunakan user_create()
         $params = array(
-            'username' => $email,
-            'name'     => $name,
-            'email'    => $email,
-       
+            'username' => trim($email),
+            'name'     => trim($name),
+            'email'    => trim($email),
+            'params'   => ['_padding' => 1],
         );
         
         $user_id = user_create($params);
@@ -332,7 +332,7 @@ if (!empty($_POST['transfer']) && $_POST['transfer'] == 'upload' && !empty($_FIL
             );
             
             $user_id = user_create($params);
-            
+            pr($user_id);
             if (!$user_id) {
                 $messages[] = '<li class="text-danger">Baris '.$row.': Gagal membuat user menggunakan user_create()</li>';
                 $fail++;
