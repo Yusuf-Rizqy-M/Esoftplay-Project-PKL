@@ -565,7 +565,7 @@ CREATE TABLE `bbc_once` (
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='table untuk menyimpan action sudah dijalankan atau tidak berdasarkan waktu /jam /hari dll';
 
-INSERT INTO `bbc_once` VALUES (1,'user_iddle',1,'2026-01-06 10:40:53','2026-01-06 09:40:53');
+INSERT INTO `bbc_once` VALUES (1,'user_iddle',1,'2026-01-07 12:35:22','2026-01-07 11:35:22');
 DROP TABLE IF EXISTS `bbc_template`;
 CREATE TABLE `bbc_template` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
@@ -600,7 +600,7 @@ CREATE TABLE `bbc_user` (
   KEY `exp_checked` (`exp_checked`)
 ) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `bbc_user` VALUES (1,',3,4,1,2,','admin','mB2Yok44RORZKreRRR1ose6MDi3FNDEybjMqBbIQRYTp81rK8fH+AUu5vRDandi9mp7a1w/D5mmX2h+HCWVzGQ==','127.0.0.1','127.0.0.1','2026-01-05 15:11:05','2026-01-05 14:38:05','0000-00-00 00:00:00',38,NULL,1),(2,',2,1,3,4,','danang@fisip.net','mB2Yok44RORZKreRRR1ose6MDi3FNDEybjMqBbIQRYTp81rK8fH+AUu5vRDandi9mp7a1w/D5mmX2h+HCWVzGQ==','127.0.0.1','127.0.0.1','2016-05-03 23:35:44','2016-05-03 23:32:34',NULL,0,NULL,1),(3,',3,','yusuf ','mB2Yok44RORZKreRRR1ose6MDi3FNDEybjMqBbIQRYTp81rK8fH+AUu5vRDandi9mp7a1w/D5mmX2h+HCWVzGQ==','','',NULL,NULL,NULL,0,'2025-12-08 09:34:25',1),(4,',3,','jovancho ','yihexaJguBPLIn+wuDcyPcE/VdNlY9h65wQpz+j+rvGoqOnqCp0V3SKMgVGSI90wzt8egRmJtIkcq2iK9jVyUA==','','','0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00',0,'2025-12-22 12:54:17',1);
+INSERT INTO `bbc_user` VALUES (1,',3,4,1,2,','admin','mB2Yok44RORZKreRRR1ose6MDi3FNDEybjMqBbIQRYTp81rK8fH+AUu5vRDandi9mp7a1w/D5mmX2h+HCWVzGQ==','127.0.0.1','127.0.0.1','2026-01-07 11:38:57','2026-01-05 15:11:05','2026-01-07 14:12:13',39,NULL,1),(2,',2,1,3,4,','danang@fisip.net','mB2Yok44RORZKreRRR1ose6MDi3FNDEybjMqBbIQRYTp81rK8fH+AUu5vRDandi9mp7a1w/D5mmX2h+HCWVzGQ==','127.0.0.1','127.0.0.1','2016-05-03 23:35:44','2016-05-03 23:32:34',NULL,0,NULL,1),(3,',3,','yusuf ','mB2Yok44RORZKreRRR1ose6MDi3FNDEybjMqBbIQRYTp81rK8fH+AUu5vRDandi9mp7a1w/D5mmX2h+HCWVzGQ==','','',NULL,NULL,NULL,0,'2025-12-08 09:34:25',1),(4,',3,','jovancho ','yihexaJguBPLIn+wuDcyPcE/VdNlY9h65wQpz+j+rvGoqOnqCp0V3SKMgVGSI90wzt8egRmJtIkcq2iK9jVyUA==','','','0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00',0,'2025-12-22 12:54:17',1);
 DROP TABLE IF EXISTS `bbc_user_field`;
 CREATE TABLE `bbc_user_field` (
   `id` int NOT NULL AUTO_INCREMENT,
