@@ -32,6 +32,11 @@ switch( $Bbc->mod['task'] )
 	echo'login';
     break;
 
+	case 'print_sertif':
+	echo'print_sertif';
+    break;
+
+
 	default:
 	echo 'Invalid action <b>'.$Bbc->mod['task'].'</b> has been received...';
 	break;
