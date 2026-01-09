@@ -14,6 +14,7 @@
         padding: 12px 40px;
         display: flex;
         align-items: center;
+        margin-top: 3px; 
         margin-bottom: 40px;
     }
 
