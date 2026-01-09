@@ -11,11 +11,24 @@ if (isset($_GET['act']) && $_GET['act'] == 'sample_intern') {
     die();
 }
 
+
 $formSearch = _lib('pea', 'interns');
 $formSearch->initSearch();
+
+$formSearch->search->addInput('status_filter', 'select');
+$formSearch->search->input->status_filter->setTitle('Status');
+$formSearch->search->input->status_filter->setFieldName('id AS status_filter');
+$formSearch->search->input->status_filter->addOption('-- All Status --', 'all');
+$formSearch->search->input->status_filter->addOption('Active', 'active');
+$formSearch->search->input->status_filter->addOption('Ended', 'ended');
+
+
+
 $formSearch->search->addInput('name','keyword');
 $formSearch->search->input->name->setTitle('Name');
 $formSearch->search->input->name->addSearchField('name', false);
+
+
 $formSearch->search->addInput('school','keyword');
 $formSearch->search->input->school->setTitle('School');
 $formSearch->search->input->school->addSearchField('school', false);
@@ -26,11 +39,50 @@ $formSearch->search->input->end_date->setTitle('End Date');
 $add_sql = $formSearch->search->action();
 echo $formSearch->search->getForm();
 
+$where = [];
+
+$where = [];
+
+if (!empty($_SESSION['search']['interns'])) {
+    $s = $_SESSION['search']['interns'];
+
+    if (!empty($s['search_status_filter'])) {
+        if ($s['search_status_filter'] == 'active') {
+            $where[] = "CURRENT_DATE BETWEEN start_date AND end_date";
+        } elseif ($s['search_status_filter'] == 'coming_soon') {
+            $where[] = "CURRENT_DATE < start_date";
+        } elseif ($s['search_status_filter'] == 'ended') {
+            $where[] = "CURRENT_DATE > end_date";
+        }
+    }
+
+    if (!empty($s['search_name'])) {
+        $where[] = "`name` LIKE '%{$s['search_name']}%'";
+    }
+
+    if (!empty($s['search_school'])) {
+        $where[] = "`school` LIKE '%{$s['search_school']}%'";
+    }
+
+    if (!empty($s['search_start_date'])) {
+        $date = date('Y-m-d', strtotime(str_replace('/', '-', $s['search_start_date'])));
+        $where[] = "`start_date` LIKE '{$date}%'";
+    }
+
+    if (!empty($s['search_end_date'])) {
+        $date = date('Y-m-d', strtotime(str_replace('/', '-', $s['search_end_date'])));
+        $where[] = "`end_date` LIKE '{$date}%'";
+    }
+}
+
+$sqlWhere = $where ? 'WHERE '.implode(' AND ', $where) : 'WHERE 1';
+// pr($sqlWhere);
+// pr($add_sql);
 $tabs = array();
 $is_edit = (!empty($_GET['id']) && is_numeric($_GET['id'])) ? true : false;
 
 $formList = _lib('pea', 'interns');
-$formList->initRoll($add_sql . ' ORDER BY id DESC', 'id');
+$formList->initRoll($sqlWhere . ' ORDER BY id DESC', 'id');
 $formList->roll->setDeleteTool(true);
 $formList->roll->setSaveTool(false);
 $formList->roll->addInput('name','sqllinks');
@@ -48,6 +100,17 @@ $formList->roll->input->period->setFieldName('CONCAT(DATE_FORMAT(start_date,"%d 
 $formList->roll->addInput('status', 'sqlplaintext');
 $formList->roll->input->status->setTitle('Status');
 $formList->roll->input->status->setFieldName('CASE WHEN CURRENT_DATE < start_date THEN "Coming Soon" WHEN CURRENT_DATE BETWEEN start_date AND end_date THEN "Active" ELSE "Ended" END as status');
+
+$formList->roll->addInput('task_link', 'sqllinks');
+$formList->roll->input->task_link->setLinks($Bbc->mod['circuit'].'.interns_tasks_detail');
+$formList->roll->input->task_link->setTitle('Tasks');
+$formList->roll->input->task_link->setFieldName('user_id as detail' );
+$formList->roll->input->task_link->setDisplayFunction(function( $row) {
+    global $Bbc;
+    $url = $Bbc->mod['circuit'].'.interns_tasks_detail&id=' . intval($row);
+    return '<a href="'.$url.'" class="btn btn-xs btn-primary">Lihat User</a>';
+});
+
 $formList->roll->action();
 
 $formAdd = _lib('pea', 'interns');
