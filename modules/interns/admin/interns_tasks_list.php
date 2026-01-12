@@ -65,8 +65,10 @@ $formList->roll->input->status->setDisplayFunction(function ($value) {
 });
 $formList->roll->addInput('created', 'sqlplaintext');
 $formList->roll->input->created->setTitle('Created');
+$formList->roll->input->created->setDateFormat('d M Y, H:i');
 $formList->roll->addInput('updated', 'sqlplaintext');
 $formList->roll->input->updated->setTitle('Updated');
+$formList->roll->input->updated->setDateFormat('d M Y, H:i');
 $formList->roll->action();
 if (!empty($_POST['roll_submit_update'])) {
     if (!empty($_POST['roll_status']) && is_array($_POST['roll_status']) && !empty($_POST['roll_id']) && is_array($_POST['roll_id'])) {
