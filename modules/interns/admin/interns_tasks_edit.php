@@ -19,6 +19,15 @@ $formAdd->edit->input->title->setRequire();
 $formAdd->edit->addInput('description','textarea');
 $formAdd->edit->input->description->setTitle('Description');
 
+$formAdd->edit->addInput('timeline','text');
+$formAdd->edit->input->timeline->setTitle('timeline');
+$formAdd->edit->input->timeline->setNumberFormat(true);
+$formAdd->edit->input->timeline->setRequire()
+;
+$formAdd->edit->addInput('type','text');
+$formAdd->edit->input->type->setTitle('type');
+$formAdd->edit->input->type->setRequire();
+
 $formAdd->edit->action();
 
 if ($id == 0 && !empty($_POST['title'])) {

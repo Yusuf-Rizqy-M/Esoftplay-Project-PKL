@@ -15,6 +15,7 @@ if (!empty($_GET['act']) && $_GET['act'] == 'sample_task') {
     die();
 }
 
+
 // search
 $formSearch = _lib('pea', 'interns_tasks');
 $formSearch->initSearch();
@@ -22,7 +23,13 @@ $formSearch->search->addInput('title', 'keyword');
 $formSearch->search->input->title->setTitle('Title');
 $formSearch->search->input->title->addSearchField('title', false);
 $add_sql = $formSearch->search->action();
+
+// --- MULAI PENAMBAHAN GAP ---
+echo '<div style="margin-bottom: 20px;">'; // Memberikan jarak bawah 20px
 echo $formSearch->search->getForm();
+echo '</div>';
+// --- SELESAI PENAMBAHAN GAP ---
+
 include 'interns_tasks_edit.php';
 // list tasks
 $formList = _lib('pea', 'interns_tasks');
@@ -31,19 +38,38 @@ $formList->roll->setSaveTool(false);
 $formList->roll->setDeleteTool(true);
 $formList->roll->addInput('id', 'sqlplaintext');
 $formList->roll->input->id->setDisplayColumn(false);
+
 $formList->roll->addInput('title', 'sqllinks');
 $formList->roll->input->title->setLinks($Bbc->mod['circuit'] . '.interns_tasks_edit');
 $formList->roll->input->title->setTitle('Title');
+
 $formList->roll->addInput('description', 'sqlplaintext');
 $formList->roll->input->description->setTitle('Description');
+
 $formList->roll->addInput('timeline', 'sqlplaintext');
 $formList->roll->input->timeline->setTitle('Timeline (Days)');
+
+$formList->roll->addInput('type', 'sqlplaintext');
+$formList->roll->input->type->setTitle('Type');
+
 $formList->roll->addInput('created', 'sqlplaintext');
 $formList->roll->input->created->setTitle('Created');
 $formList->roll->input->created->setDateFormat('d M Y, H:i');
+
 $formList->roll->addInput('updated', 'sqlplaintext');
 $formList->roll->input->updated->setTitle('Updated');
 $formList->roll->input->updated->setDateFormat('d M Y, H:i');
+
+$formList->roll->addInput('task_link', 'sqllinks');
+$formList->roll->input->task_link->setLinks($Bbc->mod['circuit'].'.interns_tasks_detail');
+$formList->roll->input->task_link->setTitle('Tasks');
+$formList->roll->input->task_link->setFieldName('id as detail' );
+$formList->roll->input->task_link->setDisplayFunction(function( $row) {
+    global $Bbc;
+    $url = $Bbc->mod['circuit'].'.interns_tasks_detail&id=' . intval($row);
+    return '<a href="'.$url.'" class="btn btn-xs btn-primary">Lihat Task</a>';
+});
+
 $formList->roll->action();
 $formList->roll->onDelete(true);
 echo '<div class="panel panel-default">';

@@ -94,6 +94,8 @@ $formList->roll->addInput('no_hp','sqlplaintext');
 $formList->roll->input->no_hp->setTitle('No HP');
 $formList->roll->addInput('school','sqlplaintext');
 $formList->roll->input->school->setTitle('School');
+$formList->roll->addInput('major','sqlplaintext');
+$formList->roll->input->major->setTitle('Major');
 $formList->roll->addInput('period', 'sqlplaintext');
 $formList->roll->input->period->setTitle('Internship Period');
 $formList->roll->input->period->setFieldName('CONCAT(DATE_FORMAT(start_date,"%d %b %Y")," - ",DATE_FORMAT(IFNULL(end_date,start_date),"%d %b %Y")) AS period');

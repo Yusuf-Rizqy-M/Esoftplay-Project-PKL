@@ -22,7 +22,9 @@ $formSearch->search->addInput('notes', 'keyword');
 $formSearch->search->input->notes->setTitle('Notes');
 $formSearch->search->input->notes->addSearchField('notes', false);
 $add_sql = $formSearch->search->action();
+echo '<div style="margin-bottom: 20px;">'; // Memberikan jarak bawah 20px
 echo $formSearch->search->getForm();
+echo '</div>';
 include 'interns_tasks_list_edit.php';
 $formList = _lib('pea', 'interns_tasks_list');
 $formList->initRoll($add_sql . ' ORDER BY id DESC', 'id');

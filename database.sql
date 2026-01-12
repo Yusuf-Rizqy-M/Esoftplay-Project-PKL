@@ -801,13 +801,14 @@ CREATE TABLE `interns_tasks` (
   `id` int NOT NULL AUTO_INCREMENT,
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-`timeline` INT NOT NULL,
+  `timeline` INT NOT NULL,
+  `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `interns_tasks` VALUES (1,'Install Linux','Install Linux Mint atau Ubuntu sesuai standar.','6','2025-12-08 09:32:44',NULL),(2,'Create Project Framework Esoftplay','Membuat project awal menggunakan framework Esoftplay.','10','2025-12-08 09:32:44',NULL);
+INSERT INTO `interns_tasks` VALUES (1,'Install Linux','Install Linux Mint atau Ubuntu sesuai standar.','6','Website','2025-12-08 09:32:44',NULL),(2,'Create Project Framework Esoftplay','Membuat project awal menggunakan framework Esoftplay.','10','Website','2025-12-08 09:32:44',NULL);
 DROP TABLE IF EXISTS `interns_tasks_list`;
 CREATE TABLE `interns_tasks_list` (
   `id` int NOT NULL AUTO_INCREMENT,

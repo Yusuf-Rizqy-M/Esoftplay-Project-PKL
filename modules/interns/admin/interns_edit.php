@@ -19,6 +19,13 @@ $formAdd->edit->addInput('email','text');
 $formAdd->edit->input->email->setTitle('Email');
 $formAdd->edit->input->email->setRequire();
 
+$formAdd->edit->addInput('no_hp','text');
+$formAdd->edit->input->no_hp->setTitle('No HP');
+$formAdd->edit->input->no_hp->setNumberFormat(true);
+$formAdd->edit->input->no_hp->setExtra(' minlength="9" maxlength="14"');
+$formAdd->edit->input->no_hp->setRequire();
+
+
 $formAdd->edit->addInput('school','text');
 $formAdd->edit->input->school->setTitle('School');
 

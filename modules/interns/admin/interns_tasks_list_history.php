@@ -12,7 +12,9 @@ $form->search->input->interns_id->setReferenceTable('interns');
 $form->search->input->interns_id->setReferenceField('name', 'id');
 
 $add_sql = $form->search->action();
+echo '<div style="margin-bottom: 20px;">'; // Memberikan jarak bawah 20px
 echo $form->search->getForm();
+echo '</div>';
 
 /* LIST HISTORY */
 $form->initRoll($add_sql . ' ORDER BY created DESC, id DESC', 'id');
