@@ -36,8 +36,20 @@ switch( $Bbc->mod['task'] )
 	echo'print_sertif';
     break;
 
+	case 'client_esoftplay':
+    break;
 
+	case 'internship':
+    break;
+
+	case 'tentang_kami':
+    break;
+
+	case 'kontak':
+    break;
 	default:
+
+	
 	echo 'Invalid action <b>'.$Bbc->mod['task'].'</b> has been received...';
 	break;
 }

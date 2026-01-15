@@ -129,7 +129,7 @@
         <div class="navbar-inner">
             <div class="nav-logo">
                 <img src="<?php echo $config['logo']; ?>" alt="Logo">
-                <span>Esoftplay Project</span>
+                <span>Esoftplay Internship</span>
             </div>
             <div class="nav-menu">
                 <?php foreach ($menus as $menu) { ?>

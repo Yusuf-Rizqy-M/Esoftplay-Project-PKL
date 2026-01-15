@@ -11,37 +11,59 @@ if (!empty($_GET['act']) && $_GET['act'] == 'sample_tasklist') {
     echo "jojo@gmail.com,Setup Development Environment,install VSCode dan Git\n";
     die();
 }
+/* 2. SEARCH SECTION */
 $formSearch = _lib('pea', 'interns_tasks_list');
 $formSearch->initSearch();
+
+// Filter berdasarkan Nama Intern
 $formSearch->search->addInput('interns_id', 'selecttable');
-$formSearch->search->input->interns_id->setTitle(lang('Type'));
+$formSearch->search->input->interns_id->setTitle(lang('Name'));
 $formSearch->search->input->interns_id->addOption(lang('---- Filter by Name ----'), '');
 $formSearch->search->input->interns_id->setReferenceTable('interns');
 $formSearch->search->input->interns_id->setReferenceField('name', 'id');
+
+// Filter berdasarkan Status (Gunakan 'status', bukan 'interns_id')
+$formSearch->search->addInput('status', 'select');
+$formSearch->search->input->status->setTitle(lang('Status'));
+$formSearch->search->input->status->addOption(lang('---- Filter by Status ----'), '');
+$formSearch->search->input->status->addOption('To Do', '1');
+$formSearch->search->input->status->addOption('In Progress', '2');
+$formSearch->search->input->status->addOption('Submit', '3');
+$formSearch->search->input->status->addOption('Revised', '4');
+$formSearch->search->input->status->addOption('Done', '5');
+$formSearch->search->input->status->addOption('Cancel', '6');
+
+// Filter berdasarkan Notes
 $formSearch->search->addInput('notes', 'keyword');
 $formSearch->search->input->notes->setTitle('Notes');
 $formSearch->search->input->notes->addSearchField('notes', false);
+
 $add_sql = $formSearch->search->action();
+
+
 echo '<div style="margin-bottom: 20px;">'; // Memberikan jarak bawah 20px
 echo $formSearch->search->getForm();
 echo '</div>';
 include 'interns_tasks_list_edit.php';
+
 $formList = _lib('pea', 'interns_tasks_list');
 $formList->initRoll($add_sql . ' ORDER BY id DESC', 'id');
 $formList->roll->setDeleteTool(false);
 $formList->roll->setSaveTool(false);
 $formList->roll->addInput('id', 'sqlplaintext');
 $formList->roll->input->id->setDisplayColumn(false);
-$formList->roll->addInput('interns_id', 'selecttable');
-$formList->roll->input->interns_id->setTitle('Intern Name');
-$formList->roll->input->interns_id->setPlaintext(true);
-$formList->roll->input->interns_id->setReferenceTable('interns');
-$formList->roll->input->interns_id->setReferenceField('name', 'id');
 $formList->roll->addInput('interns_tasks_id', 'selecttable');
 $formList->roll->input->interns_tasks_id->setTitle('Task');
 $formList->roll->input->interns_tasks_id->setPlaintext(true);
 $formList->roll->input->interns_tasks_id->setReferenceTable('interns_tasks');
 $formList->roll->input->interns_tasks_id->setReferenceField('title', 'id');
+
+$formList->roll->addInput('interns_id', 'selecttable');
+$formList->roll->input->interns_id->setTitle('Intern Name');
+$formList->roll->input->interns_id->setPlaintext(true);
+$formList->roll->input->interns_id->setReferenceTable('interns');
+$formList->roll->input->interns_id->setReferenceField('name', 'id');
+
 $formList->roll->addInput('notes', 'sqllinks');
 $formList->roll->input->notes->setLinks($Bbc->mod['circuit'] . '.interns_tasks_list_edit');
 $formList->roll->input->notes->setModal(true);
