@@ -1,6 +1,7 @@
 <?php if (!defined('_VALID_BBC')) exit('No direct script access allowed'); ?>
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <title>Esoftplay Project</title>
@@ -39,6 +40,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            text-decoration: none;
         }
 
         .nav-logo img {
@@ -87,9 +89,9 @@
             align-items: center;
             gap: 12px;
             padding: 10px 22px;
-            background: #2f3e5c;
+            background: #ffcb22ff;
             border-radius: 999px;
-            color: #fff;
+            color: #ffffffff;
             text-decoration: none;
             font-size: 15px;
             font-weight: 600;
@@ -117,20 +119,22 @@
             .navbar {
                 height: 70px;
             }
+
             .nav-menu {
                 display: none;
             }
         }
     </style>
 </head>
+
 <body>
     <?php $current_url = basename($_SERVER['PHP_SELF']) . (isset($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : ''); ?>
     <nav class="navbar">
         <div class="navbar-inner">
-            <div class="nav-logo">
+            <a href="beranda.html" class="nav-logo">
                 <img src="<?php echo $config['logo']; ?>" alt="Logo">
                 <span>Esoftplay Internship</span>
-            </div>
+            </a>
             <div class="nav-menu">
                 <?php foreach ($menus as $menu) { ?>
                     <a href="<?php echo $menu['link']; ?>" class="<?php echo ($menu['link'] == $current_url) ? 'active' : ''; ?>">
@@ -154,4 +158,5 @@
         </div>
     </nav>
 </body>
+
 </html>

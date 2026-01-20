@@ -7,7 +7,7 @@
     .client-section {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         text-align: center;
-        padding: 80px 20px; /* Memberikan ruang atas dan bawah */
+        padding: 30px; /* Memberikan ruang atas dan bawah */
         background-color: #ffffff;
         color: #111827; /* Warna hitam yang lembut */
     }

@@ -1,12 +1,11 @@
 <?php if (!defined('_VALID_BBC')) exit('No direct script access allowed'); ?>
 
 <style>
-/* Reset Dasar */
 .about-section-wrapper {
     margin: 0;
     padding: 0;
     width: 100%;
-    overflow-x: hidden; /* Mencegah scroll horizontal */
+    overflow-x: hidden;
     background: #ffffff;
 }
 
@@ -22,18 +21,15 @@
     text-align: center;
 }
 
-/* BAGIAN PENGATUR POSISI (GESER KANAN)
-   Ubah nilai 100px di bawah untuk menggeser konten secara manual 
-*/
 .about-content-container {
     width: 100%;
-    max-width: 1000px; /* Lebar maksimal konten */
-    margin-left: 50px; /* <--- GESER KE KANAN 100PX DI SINI */
+    max-width: 1000px;
+    margin-left: 50px;
     transition: margin 0.3s ease;
 }
 
 .about-section h1 {
-    font-size: clamp(28px, 5vw, 36px); /* Ukuran font dinamis */
+    font-size: clamp(28px, 5vw, 36px);
     font-weight: 700;
     color: #1a1a1a;
     margin: 0 0 15px 0;
@@ -48,7 +44,7 @@
     left: 20%;
     width: 60%;
     height: 3px;
-    background-color: #7abaff;
+    background-color: #FFD700;
 }
 
 .about-section p {
@@ -60,7 +56,6 @@
     font-weight: 500;
 }
 
-/* Gallery Styles */
 .about-gallery-wrapper {
     position: relative;
     width: 100%;
@@ -94,10 +89,9 @@
 .img-mid-bottom { grid-column: 2; grid-row: 2; }
 .img-right { grid-column: 3; grid-row: 1 / span 2; }
 
-/* Dekorasi Shape */
 .shape {
     position: absolute;
-    background: #cfe1ff;
+    background: #FFF59D;
     z-index: 1;
     opacity: 0.6;
 }
@@ -106,10 +100,7 @@
 .shape-triangle { bottom: 10%; left: 8%; width: 50px; height: 50px; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); transform: rotate(-15deg); }
 .shape-star { bottom: 15%; right: 8%; width: 60px; height: 60px; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
 
-/* RESPONSIVE BREAKPOINTS */
-
 @media (max-width: 1100px) {
-    /* Mengurangi geseran pada layar nanggung agar tidak off-screen */
     .about-content-container { margin-left: 50px; }
 }
 
