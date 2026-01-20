@@ -1,17 +1,17 @@
 <?php
 if (!defined('_VALID_BBC')) exit('No direct script access allowed');
 
-// === DOWNLOAD SAMPLE ===
+// === DOWNLOAD SAMPLE - UPDATE FORMAT ===
 if (!empty($_GET['act']) && $_GET['act'] == 'sample_task') {
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment;filename="sample_import_tasks.csv"');
     header('Cache-Control: no-cache, no-store, must-revalidate');
     header('Pragma: no-cache');
     header('Expires: 0');
-    echo "title,description\n";
-    echo "Install Linux,Install Linux Mint atau Ubuntu pada laptop intern\n";
-    echo "Setup Development Environment,Install VSCode, Git, PHP, Node.js\n";
-    echo "Belajar Git Dasar,Push project pertama ke GitHub\n";
+    echo "title,description,timeline,type\n";
+    echo "Install Linux,Install Linux Mint atau Ubuntu pada laptop intern,6,Website\n";
+    echo "Setup Development Environment,Install VSCode Git PHP Node.js,5,Website\n";
+    echo "Belajar Git Dasar,Push project pertama ke GitHub,3,Website\n";
     die();
 }
 
@@ -19,9 +19,17 @@ if (!empty($_GET['act']) && $_GET['act'] == 'sample_task') {
 // search
 $formSearch = _lib('pea', 'interns_tasks');
 $formSearch->initSearch();
-$formSearch->search->addInput('title', 'keyword');
-$formSearch->search->input->title->setTitle('Title');
-$formSearch->search->input->title->addSearchField('title', false);
+
+// KEYWORD UNTUK SEARCH TITLE - LEBIH EFISIEN UNTUK DATA BANYAK
+$formSearch->search->addInput('keyword', 'keyword');
+$formSearch->search->input->keyword->setTitle('Search Task Title');
+$formSearch->search->input->keyword->addSearchField('title', false); // Search di field title
+
+// KEYWORD UNTUK SEARCH TYPE - TEXT INPUT BUKAN DROPDOWN
+$formSearch->search->addInput('type_keyword', 'keyword');
+$formSearch->search->input->type_keyword->setTitle('Search Type');
+$formSearch->search->input->type_keyword->addSearchField('type', false); // Search di field type
+
 $add_sql = $formSearch->search->action();
 
 // --- MULAI PENAMBAHAN GAP ---
@@ -52,35 +60,39 @@ $formList->roll->input->timeline->setTitle('Timeline (Days)');
 $formList->roll->addInput('type', 'sqlplaintext');
 $formList->roll->input->type->setTitle('Type');
 
+// ========== CREATED & UPDATED - HIDE BY DEFAULT ==========
 $formList->roll->addInput('created', 'sqlplaintext');
 $formList->roll->input->created->setTitle('Created');
 $formList->roll->input->created->setDateFormat('d M Y, H:i');
+$formList->roll->input->created->setDisplayColumn(false); // HIDE BY DEFAULT
 
 $formList->roll->addInput('updated', 'sqlplaintext');
 $formList->roll->input->updated->setTitle('Updated');
 $formList->roll->input->updated->setDateFormat('d M Y, H:i');
+$formList->roll->input->updated->setDisplayColumn(false); // HIDE BY DEFAULT
 
+// === MODIFIKASI: BUTTON LIHAT PENGERJAAN ===
 $formList->roll->addInput('task_link', 'sqllinks');
-$formList->roll->input->task_link->setLinks($Bbc->mod['circuit'].'.interns_tasks_detail');
+$formList->roll->input->task_link->setLinks($Bbc->mod['circuit'].'.interns_tasks_list');
 $formList->roll->input->task_link->setTitle('Tasks');
-$formList->roll->input->task_link->setFieldName('id as detail' );
-$formList->roll->input->task_link->setDisplayFunction(function( $row) {
+$formList->roll->input->task_link->setFieldName('id as detail');
+$formList->roll->input->task_link->setDisplayFunction(function($row) {
     global $Bbc;
-    $url = $Bbc->mod['circuit'].'.interns_tasks_detail&id=' . intval($row);
-    return '<a href="'.$url.'" class="btn btn-xs btn-primary">Lihat Task</a>';
+    // Redirect ke interns_tasks_list dengan filter task_id
+    $url = $Bbc->mod['circuit'].'.interns_tasks_list&filter_task_id=' . intval($row);
+    return '<a href="'.$url.'" class="btn btn-xs btn-primary">Lihat Pengerjaan</a>';
 });
 
 $formList->roll->action();
 $formList->roll->onDelete(true);
 echo '<div class="panel panel-default">';
-echo '<div class="panel-heading"><h3 class="panel-title">Daftar Task</h3></div>';
+echo '<div class="panel-heading"><h3 class="panel-title">Daftar Tugas</h3></div>';
 echo '<div class="panel-body">';
 echo $formList->roll->getForm();
 echo '</div>';
 echo '</div>';
 
 // FORM ADD / EDIT TASK
-
 echo '<div class="panel panel-default">';
 echo '<div class="panel-heading"><h3 class="panel-title">Add Task</h3></div>';
 echo '<div class="panel-body">';
@@ -89,185 +101,162 @@ echo '</div>';
 echo '</div>';
 ?>
 
-<!-- IMPORT MASTER TASK -->
+<style>
+.loading-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,.95);z-index:9999;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.loader-spinner{border:8px solid #f3f3f3;border-top:8px solid #3498db;border-radius:50%;width:60px;height:60px;animation:spin 1s linear infinite;margin-bottom:20px}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+</style>
+
+<!-- IMPORT MASTER TASK - UI PERSIS SAMA DENGAN INTERNS -->
 <div class="col-xs-12 no-both">
-    <div class="panel-group" id="accordion_tasks_import">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title collapsed" data-toggle="collapse" data-parent="#accordion_tasks_import" href="#import_tasks_panel" style="cursor: pointer;">
-                    Klik Disini Untuk Import Task From Excel (CSV)
-                </h4>
-            </div>
-            <div id="import_tasks_panel" class="panel-collapse collapse">
-                <form action="" method="POST" enctype="multipart/form-data">
-                    <div class="panel-body">
-                        <div class="form-group">
-                            <label>Upload File CSV</label>
-                            <input type="file" name="excel_task" class="form-control" accept=".csv" required />
-                            <div class="help-block">
-                                Upload file daftar task dalam format CSV. Download sample file
-                                <a href="?mod=interns.interns_tasks&act=sample_task">sini</a>
-                                (urutan: title,description).
-                            </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title" data-toggle="collapse" href="#import_tasks_panel" style="cursor:pointer;">
+                <?php echo icon('fa-file-excel-o') ?> klik disini untuk import data intern task dari CSV
+            </h4>
+        </div>
+        <div id="import_tasks_panel" class="panel-collapse collapse">
+            <form action="" method="POST" enctype="multipart/form-data">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label>Upload File CSV</label>
+                        <input type="file" name="excel_task" class="form-control" accept=".csv" />
+                        <div class="help-block">
+                            Urutan kolom: title, description, timeline, type.<br>
+                            Download contoh: <a href="?mod=interns.interns_tasks&act=sample_task" style="text-decoration:underline;">di sini</a>
                         </div>
                     </div>
-                    <div class="panel-footer">
-                        <button type="submit" name="import_task" value="upload" class="btn btn-default">
-                            <?php echo icon('fa-upload') ?> Upload Data
-                        </button>
-                    </div>
-                </form>
-            </div>
+                </div>
+                <div class="panel-footer">
+                    <button type="submit" name="import_task" value="upload" class="btn btn-primary">
+                        <?php echo icon('fa-upload') ?> Upload Sekarang
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
 <?php
-// === PROSES IMPORT CSV ===
+// === PROSES IMPORT CSV - PERSIS SAMA DENGAN INTERNS ===
 if (!empty($_POST['import_task']) && $_POST['import_task'] == 'upload' && !empty($_FILES['excel_task']['tmp_name'])) {
     global $db;
     $file = $_FILES['excel_task']['tmp_name'];
     $handle = fopen($file, "r");
+    
     if ($handle === false) {
-        echo '<div class="alert alert-danger">Gagal membuka file CSV!</div>';
-        exit;
-    }
-    $success = $fail = 0;
-    $row = 0;
-    $messages = [];
-    $success_titles = [];
-    while (($data = fgetcsv($handle, 1000, ",")) !== false) {
-        $row++;
-        if ($row == 1) continue;
-        if (count($data) < 1) continue;
-        $title = trim($data[0] ?? '');
-        $desc = trim($data[1] ?? '');
-        if (empty($title)) {
-            $messages[] = '<li class="text-danger">Baris ' . $row . ': Skip - title kosong</li>';
-            $fail++;
-            continue;
+        echo '<div class="alert alert-danger" id="import-error-alert" style="margin-top:20px;">
+                <h4>Gagal Import:</h4>
+                <ul><li>Gagal membuka file CSV!</li></ul>
+                <button type="button" class="btn btn-danger" onclick="closeErrorAndOpenPanel()">Tutup & Perbaiki</button>
+              </div>';
+    } else {
+        $success = $fail = 0;
+        $row = 0;
+        $error_logs = [];
+        $success_titles = [];
+        
+        while (($data = fgetcsv($handle, 1000, ",")) !== false) {
+            $row++;
+            
+            // Skip header row
+            if ($row == 1) continue;
+            
+            // Skip empty rows
+            if (count($data) < 1) continue;
+            
+            // Ambil data dari CSV: title, description, timeline, type
+            $title = trim($data[0] ?? '');
+            $desc = trim($data[1] ?? '');
+            $timeline = trim($data[2] ?? '');
+            $type = trim($data[3] ?? '');
+            
+            // Validasi: title tidak boleh kosong
+            if (empty($title)) {
+                $error_logs[] = "Baris $row: Title kosong";
+                $fail++;
+                continue;
+            }
+            
+            // Validasi: timeline harus angka (jika ada)
+            if (!empty($timeline) && !is_numeric($timeline)) {
+                $error_logs[] = "Baris $row ($title): Timeline harus berupa angka!";
+                $fail++;
+                continue;
+            }
+            
+            // Cek duplikat title
+            $is_exist = $db->getOne("SELECT id FROM interns_tasks WHERE title='" . addslashes($title) . "'");
+            if ($is_exist) {
+                $error_logs[] = "Baris $row ($title): Task sudah ada";
+                $fail++;
+                continue;
+            }
+            
+            // Insert task dengan field baru: title, description, timeline, type
+            $timeline_sql = !empty($timeline) && is_numeric($timeline) ? intval($timeline) : 'NULL';
+            $type_sql = !empty($type) ? "'" . addslashes($type) . "'" : 'NULL';
+            
+            $q = "INSERT INTO interns_tasks (title, description, timeline, type, created) 
+                  VALUES ('" . addslashes($title) . "', '" . addslashes($desc) . "', $timeline_sql, $type_sql, NOW())";
+            
+            if ($db->Execute($q)) {
+                $success_titles[] = $title;
+                $success++;
+            } else {
+                $error_logs[] = "Baris $row ($title): Gagal insert - " . $db->ErrorMsg();
+                $fail++;
+            }
         }
-        if ($db->getOne("SELECT id FROM interns_tasks WHERE title='" . addslashes($title) . "'")) {
-            $messages[] = '<li class="text-danger">Baris ' . $row . ': Skip - Task <b>' . htmlspecialchars($title) . '</b> sudah ada</li>';
-            $fail++;
-            continue;
-        }
-        $q = "INSERT INTO interns_tasks (title, description, created) 
-              VALUES ('" . addslashes($title) . "', '" . addslashes($desc) . "', NOW())";
-        if ($db->Execute($q)) {
-            $messages[] = '<li class="text-success">Baris ' . $row . ': <b>' . htmlspecialchars($title) . '</b> berhasil ditambahkan</li>';
-            $success_titles[] = $title;
-            $success++;
-        } else {
-            $messages[] = '<li class="text-danger">Baris ' . $row . ': Gagal insert</li>';
-            $fail++;
-        }
-    }
-    fclose($handle);
-
-    // Tampilkan hasil import detail
-    echo '<div class="alert alert-info" style="margin-top: 15px;"><h4>Hasil Import Master Task:</h4><ul>';
-    foreach ($messages as $msg) {
-        echo $msg;
-    }
-    echo '</ul>';
-    echo '<strong>Selesai!</strong> Berhasil: <span class="text-success">' . $success . '</span> | Gagal: <span class="text-danger">' . $fail . '</span></div>';
-
-    // Jika berhasil, tampilkan loading overlay
-    if ($success > 0) {
-        $redirect_url = $_SERVER['PHP_SELF'] . (isset($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '');
-?>
-        <style>
-            .loading-overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(255, 255, 255, 0.95);
-                z-index: 9999;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                text-align: center;
+        
+        fclose($handle);
+        
+        // ERROR HANDLING - PERSIS SAMA DENGAN INTERNS
+        if ($fail > 0) {
+            echo '<div class="alert alert-danger" id="import-error-alert" style="margin-top:20px;">
+                    <h4>Gagal Import:</h4><ul>';
+            foreach ($error_logs as $log) {
+                echo "<li>$log</li>";
             }
-
-            .loader-spinner {
-                border: 8px solid #f3f3f3;
-                border-top: 8px solid #3498db;
-                border-radius: 50%;
-                width: 60px;
-                height: 60px;
-                animation: spin 1.5s linear infinite;
-                margin-bottom: 20px;
-            }
-
-            .loading-text {
-                font-family: Arial, sans-serif;
-                font-size: 20px;
-                color: #333;
-                font-weight: bold;
-                max-width: 600px;
-            }
-
-            .success-list {
-                margin-top: 20px;
-                text-align: left;
-                max-height: 200px;
-                overflow-y: auto;
-                padding: 10px;
-                background: #f0f8ff;
-                border: 1px solid #ccc;
-                border-radius: 6px;
-                width: 90%;
-                max-width: 500px;
-            }
-
-            .success-list li {
-                margin-bottom: 5px;
-            }
-
-            @keyframes spin {
-                0% {
-                    transform: rotate(0deg);
+            echo '</ul><button type="button" class="btn btn-danger" onclick="closeErrorAndOpenPanel()">Tutup & Perbaiki</button></div>';
+            
+            // JavaScript - IDENTIK DENGAN INTERNS
+            echo '<script>
+            function closeErrorAndOpenPanel() {
+                // Sembunyikan alert error
+                document.getElementById("import-error-alert").style.display = "none";
+                
+                // Buka panel import CSV
+                if(typeof jQuery !== "undefined") {
+                    jQuery("#import_tasks_panel").collapse("show");
                 }
-
-                100% {
-                    transform: rotate(360deg);
-                }
+                
+                // Scroll ke panel import
+                setTimeout(function() {
+                    var panel = document.getElementById("import_tasks_panel");
+                    if(panel) {
+                        panel.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }
+                }, 300);
             }
-        </style>
-        <div class="loading-overlay">
-            <div class="loader-spinner"></div>
-            <div class="loading-text">
-                Import Berhasil!<br>
-                <small>Sedang memperbarui data...</small>
-            </div>
-            <div class="success-list">
-                <strong>Task baru yang berhasil ditambahkan (<?php echo $success; ?>):</strong>
-                <?php if (count($success_titles) <= 10): ?>
-                    <ul>
-                        <?php foreach ($success_titles as $title): ?>
-                            <li><?php echo htmlspecialchars($title); ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php else: ?>
-                    <ul>
-                        <?php for ($i = 0; $i < 10; $i++): ?>
-                            <li><?php echo htmlspecialchars($success_titles[$i]); ?></li>
-                        <?php endfor; ?>
-                    </ul>
-                    <p style="margin-top: 10px;">+ <?php echo ($success - 10); ?> task lainnya</p>
-                <?php endif; ?>
-            </div>
-        </div>
-        <script type="text/javascript">
-            setTimeout(function() {
-                window.location.href = "<?php echo $redirect_url; ?>";
-            }, 5000);
-        </script>
-<?php
+            </script>';
+        }
+        
+        // SUCCESS OVERLAY
+        if ($success > 0) {
+            echo '<div class="loading-overlay">
+                    <div class="loader-spinner"></div>
+                    <h3>Import Berhasil!</h3>
+                    <p>' . $success . ' data ditambahkan.</p>
+                  </div>';
+            
+            $redirect_url = 'index.php?mod=interns.interns_tasks';
+            echo '<script>
+                setTimeout(function() {
+                    window.location.href = "' . $redirect_url . '";
+                }, 2000);
+            </script>';
+        }
     }
 }
 ?>

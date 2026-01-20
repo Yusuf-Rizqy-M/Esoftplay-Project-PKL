@@ -1,5 +1,6 @@
 <?php
 if (!defined('_VALID_BBC')) exit('No direct script access allowed');
+_func('user');
 
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $db = $GLOBALS['db'];
@@ -15,16 +16,23 @@ $formAdd->edit->addInput('name','text');
 $formAdd->edit->input->name->setTitle('Name');
 $formAdd->edit->input->name->setRequire();
 
-$formAdd->edit->addInput('email','text');
-$formAdd->edit->input->email->setTitle('Email');
-$formAdd->edit->input->email->setRequire();
+// ========== EMAIL FIELD - READONLY SAAT EDIT ==========
+if ($id > 0) {
+    // SAAT EDIT: Pakai 'sqlplaintext' agar terlihat tapi tidak bisa diubah
+    $formAdd->edit->addInput('email','sqlplaintext');
+    $formAdd->edit->input->email->setTitle('Email');
+} else {
+    // SAAT ADD: Pakai 'text' biasa
+    $formAdd->edit->addInput('email','text');
+    $formAdd->edit->input->email->setTitle('Email');
+    $formAdd->edit->input->email->setRequire();
+}
 
-$formAdd->edit->addInput('no_hp','text');
-$formAdd->edit->input->no_hp->setTitle('No HP');
-$formAdd->edit->input->no_hp->setNumberFormat(true);
-$formAdd->edit->input->no_hp->setExtra(' minlength="9" maxlength="14"');
-$formAdd->edit->input->no_hp->setRequire();
-
+$formAdd->edit->addInput('phone','text');
+$formAdd->edit->input->phone->setTitle('Phone');
+$formAdd->edit->input->phone->setNumberFormat(true);
+$formAdd->edit->input->phone->setExtra(' minlength="9" maxlength="14"');
+$formAdd->edit->input->phone->setRequire();
 
 $formAdd->edit->addInput('school','text');
 $formAdd->edit->input->school->setTitle('School');
@@ -58,33 +66,67 @@ echo '</div>';
 
 function intern_edit_before_save($intern_id) {
     global $db;
-    $email = trim($_POST['add_email'] ?? '');
-    $name  = trim($_POST['add_name'] ?? '');
-    $start = $_POST['add_start_date'] ?? '';
-    $end   = $_POST['add_end_date'] ?? '';
-    $curr_id = intval($_POST['add_id'] ?? 0);
-
-    // Cek Tanggal
-    if (!empty($start) && !empty($end)) {
-        if (strtotime($end) < strtotime($start)) {
-            return "Error: Tanggal Selesai tidak boleh mendahului Tanggal Mulai!";
-        }
+    
+    // Cari value secara dinamis (karena PEA pakai array/prefix)
+    $email = '';
+    $name = '';
+    $start = '';
+    $end = '';
+    $curr_id = 0;
+    
+    foreach($_POST as $k => $v){
+        if(strpos($k, 'email') !== false) $email = strtolower(trim(is_array($v) ? current($v) : $v));
+        if(strpos($k, 'name') !== false && strpos($k, 'email') === false) $name = trim(is_array($v) ? current($v) : $v);
+        if(strpos($k, 'start_date') !== false && !is_array($v)) $start = $v;
+        if(strpos($k, 'end_date') !== false && !is_array($v)) $end = $v;
+        if(strpos($k, 'id') !== false && !is_array($v)) $curr_id = intval($v);
+    }
+    
+    // Jika curr_id masih 0, coba ambil dari GET
+    if ($curr_id == 0 && !empty($_GET['id'])) {
+        $curr_id = intval($_GET['id']);
     }
 
-    // Cek Email Duplikat (Kecuali record sendiri saat edit)
-    $check_email = $db->getOne("SELECT id FROM interns WHERE email = '".addslashes($email)."' AND id != $curr_id");
-    if ($check_email) return "Error: Email sudah digunakan oleh intern lain!";
+    // 1. Validasi format email (hanya saat ADD, karena saat EDIT email readonly)
+    if ($curr_id == 0 && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return "Gagal Simpan: Format email tidak valid!";
+    }
+
+    // 2. Validasi Tanggal - HARUS ADA KEDUA TANGGAL
+    if(empty($start) || empty($end)){
+        return "Gagal Simpan: Tanggal Mulai dan Tanggal Selesai harus diisi!";
+    }
     
-    // Logika Akun User (Hanya jika data baru)
+    // 3. Validasi Tanggal - END DATE HARUS LEBIH DARI START DATE (TIDAK BOLEH SAMA)
+    if (strtotime($end) <= strtotime($start)) {
+        return "Gagal Simpan: Tanggal Selesai (".date('d-m-Y', strtotime($end)).") harus setelah Tanggal Mulai (".date('d-m-Y', strtotime($start)).")!";
+    }
+
+    // 4. Cek Email Duplikat (hanya saat ADD, karena saat EDIT email tidak bisa diubah)
+    if ($curr_id == 0) {
+        $check_email = $db->getOne("SELECT id FROM interns WHERE email = '".addslashes($email)."'");
+        if ($check_email) {
+            return "Gagal Simpan: Email '$email' sudah digunakan oleh intern lain!";
+        }
+    }
+    
+    // 5. Logika Akun User (Hanya jika data baru)
     if ($curr_id == 0) {
         $user_check = $db->getOne("SELECT id FROM bbc_user WHERE username = '".addslashes($email)."'");
         if ($user_check) {
             $_SESSION['intern_temp_user_id'] = $user_check;
         } else {
-            _func('user');
-            $params = array('username' => $email, 'name' => $name, 'email' => $email, 'params' => ['_padding' => 1]);
+            $params = array(
+                'username' => $email, 
+                'name' => $name, 
+                'email' => $email,
+                'password' => password_hash('intern123', PASSWORD_DEFAULT),
+                'params' => ['_padding' => 1]
+            );
             $user_id = user_create($params);
-            if (!$user_id) return "Error: Gagal membuat akun user!";
+            if (!$user_id) {
+                return "Gagal Simpan: Gagal membuat akun user!";
+            }
             $_SESSION['intern_temp_user_id'] = $user_id;
         }
     }
@@ -100,3 +142,86 @@ function intern_edit_after_save($intern_id) {
     }
     return true;
 }
+?>
+
+<script>
+(function() {
+    // Fungsi untuk setup validasi tanggal menggunakan Bootstrap Datepicker
+    function setupDateValidation() {
+        // Tunggu sampai jQuery dan datepicker ready
+        if (typeof jQuery === 'undefined' || typeof jQuery.fn.datepicker === 'undefined') {
+            setTimeout(setupDateValidation, 200);
+            return;
+        }
+        
+        // Cari input start_date dan end_date
+        var $inputs = jQuery('input[type="text"], input[type="date"]');
+        var $startDate = null;
+        var $endDate = null;
+        
+        $inputs.each(function() {
+            var name = jQuery(this).attr('name') || '';
+            if (name.indexOf('start_date') !== -1 && name.indexOf('search') === -1) {
+                $startDate = jQuery(this);
+            }
+            if (name.indexOf('end_date') !== -1 && name.indexOf('search') === -1) {
+                $endDate = jQuery(this);
+            }
+        });
+        
+        if (!$startDate || !$endDate) {
+            return;
+        }
+        
+        console.log('Date inputs found:', $startDate.attr('name'), $endDate.attr('name'));
+        
+        // Event saat start_date berubah
+        $startDate.on('changeDate change', function() {
+            var startVal = $startDate.val();
+            if (startVal) {
+                // Parse tanggal start
+                var startDate = new Date(startVal);
+                
+                // Tambah 1 hari untuk minimum end_date
+                var minEndDate = new Date(startDate);
+                minEndDate.setDate(minEndDate.getDate() + 1);
+                
+                // Set startDate pada end_date datepicker
+                // Ini akan membuat tanggal sebelum minEndDate tidak bisa diklik
+                $endDate.datepicker('setStartDate', minEndDate);
+                
+                console.log('End date minimum set to:', minEndDate);
+                
+                // Jika end_date sudah terisi tapi invalid, kosongkan
+                var endVal = $endDate.val();
+                if (endVal) {
+                    var endDate = new Date(endVal);
+                    if (endDate <= startDate) {
+                        $endDate.val('');
+                        $endDate.datepicker('update', '');
+                    }
+                }
+            } else {
+                // Jika start_date dikosongkan, reset end_date restriction
+                $endDate.datepicker('setStartDate', null);
+            }
+        });
+        
+        // Trigger event untuk set initial state jika start_date sudah ada value
+        if ($startDate.val()) {
+            $startDate.trigger('changeDate');
+        }
+    }
+    
+    // Init saat document ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupDateValidation);
+    } else {
+        setupDateValidation();
+    }
+    
+    // Init ulang setelah beberapa delay untuk memastikan datepicker sudah ready
+    setTimeout(setupDateValidation, 500);
+    setTimeout(setupDateValidation, 1000);
+})();
+</script>
