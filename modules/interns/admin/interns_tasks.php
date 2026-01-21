@@ -75,11 +75,11 @@ $formList->roll->input->updated->setDisplayColumn(false); // HIDE BY DEFAULT
 $formList->roll->addInput('task_link', 'sqllinks');
 $formList->roll->input->task_link->setLinks($Bbc->mod['circuit'].'.interns_tasks_list');
 $formList->roll->input->task_link->setTitle('Tasks');
-$formList->roll->input->task_link->setFieldName('id as detail');
+$formList->roll->input->task_link->setFieldName('title as detail');
 $formList->roll->input->task_link->setDisplayFunction(function($row) {
     global $Bbc;
     // Redirect ke interns_tasks_list dengan filter task_id
-    $url = $Bbc->mod['circuit'].'.interns_tasks_list&filter_task_id=' . intval($row);
+    $url = $Bbc->mod['circuit'].'.interns_tasks_list&task_title=' . urlencode($row);
     return '<a href="'.$url.'" class="btn btn-xs btn-primary">Lihat Pengerjaan</a>';
 });
 

@@ -245,53 +245,34 @@ $formSearch->search->addInput('notes', 'keyword');
 $formSearch->search->input->notes->setTitle('Notes');
 $formSearch->search->input->notes->addSearchField('notes', false);
 
+$keyword = $formSearch->search->keyword();
 $add_sql = $formSearch->search->action();
 
 // ========== MANUAL FILTER UNTUK INTERN NAME DAN TASK TITLE ==========
 global $db;
 
-// Filter berdasarkan Intern Name
-if (!empty($_SESSION['search']['interns_tasks_list']['search_intern_name'])) {
-    $intern_name = addslashes($_SESSION['search']['interns_tasks_list']['search_intern_name']);
-    $intern_ids = $db->getCol("SELECT id FROM interns WHERE name LIKE '%{$intern_name}%'");
+if (!empty($keyword['intern_name'])) {
+	$intern_name = addslashes(trim($keyword['intern_name']));
+    $intern_ids   = $db->getCol("SELECT id FROM interns WHERE name = '{$intern_name}'");
     
-    if (!empty($intern_ids)) {
-        $ids_string = implode(',', $intern_ids);
-        if (stripos($add_sql, 'WHERE') !== false) {
-            $add_sql .= " AND interns_id IN ($ids_string)";
-        } else {
-            $add_sql .= " WHERE interns_id IN ($ids_string)";
-        }
-    } else {
-        // Jika tidak ada hasil, tampilkan hasil kosong
-        if (stripos($add_sql, 'WHERE') !== false) {
-            $add_sql .= " AND 1=0";
-        } else {
-            $add_sql .= " WHERE 1=0";
-        }
-    }
+    if (empty($intern_ids)) {
+		$intern_ids = [0];
+	}
+
+	$ids_string = implode(',', $intern_ids);
+	$add_sql   .= " AND interns_id IN ({$ids_string})";
 }
 
-// Filter berdasarkan Task Title
-if (!empty($_SESSION['search']['interns_tasks_list']['search_task_title'])) {
-    $task_title = addslashes($_SESSION['search']['interns_tasks_list']['search_task_title']);
-    $task_ids = $db->getCol("SELECT id FROM interns_tasks WHERE title LIKE '%{$task_title}%'");
+if (!empty($keyword['task_title'])) {
+	$task_title = addslashes(trim($keyword['task_title']));
+    $task_ids   = $db->getCol("SELECT id FROM interns_tasks WHERE title = '{$task_title}'");
     
-    if (!empty($task_ids)) {
-        $ids_string = implode(',', $task_ids);
-        if (stripos($add_sql, 'WHERE') !== false) {
-            $add_sql .= " AND interns_tasks_id IN ($ids_string)";
-        } else {
-            $add_sql .= " WHERE interns_tasks_id IN ($ids_string)";
-        }
-    } else {
-        // Jika tidak ada hasil, tampilkan hasil kosong
-        if (stripos($add_sql, 'WHERE') !== false) {
-            $add_sql .= " AND 1=0";
-        } else {
-            $add_sql .= " WHERE 1=0";
-        }
+    if (empty($task_ids)) {
+		$task_ids = [0];
     }
+
+	$ids_string = implode(',', $task_ids);
+	$add_sql   .= " AND interns_tasks_id IN ({$ids_string})";
 }
 
 // ========== APPLY PERIOD FILTER ==========
@@ -450,38 +431,40 @@ $formList->roll->input->status->setDisplayFunction(function ($value) {
     return '<span class="label" style="background-color: '.$color.'; color: '.$tcolor.'; padding: 5px 10px; border-radius: 12px;">'.$text.'</span>';
 });
 
-// ========== KOLOM TIMELINE (MUNCUL JIKA STATUS >= IN PROGRESS) ==========
+// ========== ✅ KOLOM TIMELINE (DAYS) - PERSIS SEPERTI INTERNS_TASKS ==========
 $formList->roll->addInput('timeline_display', 'sqlplaintext');
-$formList->roll->input->timeline_display->setTitle('Timeline');
+$formList->roll->input->timeline_display->setTitle('Timeline (Days)');
 $formList->roll->input->timeline_display->setFieldName('id as timeline_display');
 $formList->roll->input->timeline_display->setDisplayFunction(function ($id) {
     global $db;
     
     if (!$id) {
-        return '<span style="color: #999; font-style: italic;">-</span>';
+        return '-';
     }
     
     // Query untuk ambil status dan task_id dari interns_tasks_list
     $row = $db->getRow("SELECT status, interns_tasks_id FROM interns_tasks_list WHERE id = " . intval($id));
     
     if (!$row) {
-        return '<span style="color: #999; font-style: italic;">-</span>';
+        return '-';
     }
     
     $status = intval($row['status']);
     $task_id = intval($row['interns_tasks_id']);
     
-    // Hanya tampilkan timeline jika status >= 2 (In Progress ke atas)
+    // ✅ Hanya tampilkan timeline jika status >= 2 (In Progress ke atas)
     if ($status >= 2 && $task_id) {
         // Query untuk ambil timeline dari interns_tasks
         $timeline = $db->getOne("SELECT timeline FROM interns_tasks WHERE id = " . $task_id);
         
         if ($timeline) {
-            return '<span style="color: #555; font-weight: 500;">' . htmlspecialchars($timeline) . ' days</span>';
+            // ✅ TAMPILAN SAMA PERSIS DENGAN INTERNS_TASKS (HANYA ANGKA)
+            return htmlspecialchars($timeline);
         }
     }
     
-    return '<span style="color: #999; font-style: italic;">-</span>';
+    // ✅ Jika status To Do atau timeline tidak ada, tampilkan '-'
+    return '-';
 });
 
 $formList->roll->addInput('status_intern', 'sqlplaintext');

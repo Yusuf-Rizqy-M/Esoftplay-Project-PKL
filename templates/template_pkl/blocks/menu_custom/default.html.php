@@ -12,7 +12,7 @@
             box-sizing: border-box;
             font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
         }
-
+        
         .navbar {
             width: 100%;
             height: 85px;
@@ -131,7 +131,7 @@
     <?php $current_url = basename($_SERVER['PHP_SELF']) . (isset($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : ''); ?>
     <nav class="navbar">
         <div class="navbar-inner">
-            <a href="beranda.html" class="nav-logo">
+            <a href="home83.html" class="nav-logo">
                 <img src="<?php echo $config['logo']; ?>" alt="Logo">
                 <span>Esoftplay Internship</span>
             </a>

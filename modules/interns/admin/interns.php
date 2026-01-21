@@ -124,12 +124,12 @@ $formList->roll->input->status->setDisplayFunction(function ($value) {
 $formList->roll->addInput('task_link', 'sqllinks');
 $formList->roll->input->task_link->setLinks('#'); // Set ke # agar tidak auto-generate
 $formList->roll->input->task_link->setTitle('Tasks');
-$formList->roll->input->task_link->setFieldName('id as task_link');
-$formList->roll->input->task_link->setDisplayFunction(function($intern_id) {
+$formList->roll->input->task_link->setFieldName('name as task_link');
+$formList->roll->input->task_link->setDisplayFunction(function($intern_name) {
     global $Bbc;
     
     // Generate URL dengan parameter force_intern_id
-    $url = $Bbc->mod['circuit'] . '.interns_tasks_list&force_intern_id=' . intval($intern_id);
+    $url = $Bbc->mod['circuit'] . '.interns_tasks_list&intern_name=' . urlencode($intern_name);
     
     // Return button HTML
     return '<a href="' . $url . '" class="btn btn-xs btn-primary">Lihat Pengerjaan</a>';
