@@ -58,6 +58,8 @@
             display: flex;
             justify-content: center;
             gap: 32px;
+            height: 85px;
+            align-items: center;
         }
 
         .nav-menu a {
@@ -66,7 +68,10 @@
             font-weight: 500;
             color: #555;
             transition: all 0.2s ease;
-            padding: 8px 0;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            border-bottom: 3px solid transparent;
         }
 
         .nav-menu a:hover {
@@ -91,7 +96,7 @@
             padding: 10px 22px;
             background: #ffcb22ff;
             border-radius: 999px;
-            color: #ffffffff;
+            color: #ffffff;
             text-decoration: none;
             font-size: 15px;
             font-weight: 600;
@@ -128,7 +133,13 @@
 </head>
 
 <body>
-    <?php $current_url = basename($_SERVER['PHP_SELF']) . (isset($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : ''); ?>
+    <?php 
+    $current_uri = $_SERVER['REQUEST_URI'];
+    $current_page = basename($current_uri);
+    if (empty($current_page) || $current_page == 'index.php') {
+        $current_page = 'home83.html';
+    }
+    ?>
     <nav class="navbar">
         <div class="navbar-inner">
             <a href="home83.html" class="nav-logo">
@@ -136,8 +147,10 @@
                 <span>Esoftplay Internship</span>
             </a>
             <div class="nav-menu">
-                <?php foreach ($menus as $menu) { ?>
-                    <a href="<?php echo $menu['link']; ?>" class="<?php echo ($menu['link'] == $current_url) ? 'active' : ''; ?>">
+                <?php foreach ($menus as $menu) { 
+                    $active_class = ($menu['link'] == $current_page || $menu['link'] == $current_uri) ? 'active' : '';
+                ?>
+                    <a href="<?php echo $menu['link']; ?>" class="<?php echo $active_class; ?>">
                         <?php echo $menu['title']; ?>
                     </a>
                 <?php } ?>
