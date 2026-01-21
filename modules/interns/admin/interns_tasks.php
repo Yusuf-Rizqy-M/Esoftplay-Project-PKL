@@ -71,15 +71,18 @@ $formList->roll->input->updated->setTitle('Updated');
 $formList->roll->input->updated->setDateFormat('d M Y, H:i');
 $formList->roll->input->updated->setDisplayColumn(false); // HIDE BY DEFAULT
 
-// === MODIFIKASI: BUTTON LIHAT PENGERJAAN ===
+// === BUTTON LIHAT PENGERJAAN - KIRIM TASK TITLE ===
 $formList->roll->addInput('task_link', 'sqllinks');
-$formList->roll->input->task_link->setLinks($Bbc->mod['circuit'].'.interns_tasks_list');
+$formList->roll->input->task_link->setLinks('#'); // Set ke # agar tidak auto-generate
 $formList->roll->input->task_link->setTitle('Tasks');
-$formList->roll->input->task_link->setFieldName('title as detail');
-$formList->roll->input->task_link->setDisplayFunction(function($row) {
+$formList->roll->input->task_link->setFieldName('title as task_link'); // Ambil title
+$formList->roll->input->task_link->setDisplayFunction(function($title) {
     global $Bbc;
-    // Redirect ke interns_tasks_list dengan filter task_id
-    $url = $Bbc->mod['circuit'].'.interns_tasks_list&task_title=' . urlencode($row);
+    
+    // ✅ Generate URL dengan parameter task_title
+    // URL encode untuk handle special characters
+    $url = $Bbc->mod['circuit'].'.interns_tasks_list&task_title=' . urlencode($title);
+    
     return '<a href="'.$url.'" class="btn btn-xs btn-primary">Lihat Pengerjaan</a>';
 });
 
@@ -112,7 +115,7 @@ echo '</div>';
     <div class="panel panel-default">
         <div class="panel-heading">
             <h4 class="panel-title" data-toggle="collapse" href="#import_tasks_panel" style="cursor:pointer;">
-                <?php echo icon('fa-file-excel-o') ?> klik disini untuk import data intern task dari CSV
+                <?php echo icon('fa-file-excel-o') ?> Klik disini untuk import data intern task dari CSV
             </h4>
         </div>
         <div id="import_tasks_panel" class="panel-collapse collapse">

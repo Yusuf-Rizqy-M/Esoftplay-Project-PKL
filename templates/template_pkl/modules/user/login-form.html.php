@@ -209,7 +209,7 @@ link_js('includes/lib/pea/includes/formIsRequire.js', false);
     <div class="login-side-image">
         <a href="#" class="side-logo-container">
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBdJBSF1ii-xU_NREaLsWhKxQ6soWaNgWE3A&s" alt="Logo">
-            <span>Esoftplay Project</span>
+            <span>Esoftplay Internship</span>
         </a>
     </div>
 

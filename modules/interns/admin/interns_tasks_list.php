@@ -171,28 +171,69 @@ if (!empty($_SESSION['import_result'])) {
     unset($_SESSION['import_result']);
 }
 
-// ========== HANDLER FORCE_INTERN_ID - DENGAN PERIOD FILTER! ==========
+// ========== HANDLER FORCE_INTERN_ID - DENGAN PERIOD FILTER SESUAI STATUS! ==========
 if (!empty($_GET['force_intern_id']) && is_numeric($_GET['force_intern_id'])) {
     $force_intern_id = intval($_GET['force_intern_id']);
     
     // RESET SEMUA FILTER
     unset($_SESSION['search']['interns_tasks_list']);
     
-    // SET HANYA filter intern_id
-    $_SESSION['search']['interns_tasks_list']['search_intern_name'] = '';
-    
-    // SET period ke 'active' (default)
-    $_SESSION['search']['interns_tasks_list']['search_period_filter'] = 'active';
-    $_SESSION['period_filter_interns_tasks_list'] = 'active';
-    
-    // Ambil nama intern untuk ditampilkan di filter
     global $db;
-    $intern_name = $db->getOne("SELECT name FROM interns WHERE id = {$force_intern_id}");
-    if ($intern_name) {
-        $_SESSION['search']['interns_tasks_list']['search_intern_name'] = $intern_name;
+    
+    // Ambil nama dan status intern
+    $intern_data = $db->getRow("
+        SELECT 
+            name,
+            CASE 
+                WHEN CURDATE() < start_date THEN 'Coming Soon'
+                WHEN CURDATE() BETWEEN start_date AND end_date THEN 'Active'
+                ELSE 'Ended'
+            END as status_intern
+        FROM interns 
+        WHERE id = {$force_intern_id}
+    ");
+    
+    if ($intern_data) {
+        // SET filter intern name
+        $_SESSION['search']['interns_tasks_list']['search_intern_name'] = $intern_data['name'];
+        
+        // SET period filter berdasarkan STATUS INTERN
+        if ($intern_data['status_intern'] === 'Active') {
+            // Jika intern masih aktif, filter ke "active only"
+            $period_filter = 'active';
+        } else {
+            // Jika intern ended atau coming soon, tampilkan semua
+            $period_filter = 'all';
+        }
+        
+        $_SESSION['search']['interns_tasks_list']['search_period_filter'] = $period_filter;
+        $_SESSION['period_filter_interns_tasks_list'] = $period_filter;
     }
     
     // REDIRECT ke URL bersih dengan JavaScript
+    ?>
+    <script type="text/javascript">
+        window.location.href = 'index.php?mod=interns.interns_tasks_list';
+    </script>
+    <?php
+    exit;
+}
+
+// ========== HANDLER TASK_TITLE dari URL (button "Lihat Pengerjaan" di Interns Tasks) ==========
+if (!empty($_GET['task_title'])) {
+    $task_title_param = trim($_GET['task_title']);
+    
+    // RESET filter intern name agar tidak mengganggu
+    unset($_SESSION['search']['interns_tasks_list']['search_intern_name']);
+    
+    // Set filter task title di SESSION (langsung dari parameter URL)
+    $_SESSION['search']['interns_tasks_list']['search_task_title'] = $task_title_param;
+    
+    // ✅ SET period filter ke 'active' (hanya tampilkan intern yang sedang aktif)
+    $_SESSION['search']['interns_tasks_list']['search_period_filter'] = 'active';
+    $_SESSION['period_filter_interns_tasks_list'] = 'active';
+    
+    // REDIRECT ke URL bersih
     ?>
     <script type="text/javascript">
         window.location.href = 'index.php?mod=interns.interns_tasks_list';
@@ -222,15 +263,6 @@ $formSearch->search->input->intern_name->setTitle('Filter by Intern Name');
 $formSearch->search->addInput('task_title', 'keyword');
 $formSearch->search->input->task_title->setTitle('Filter by Task');
 
-if (!empty($_GET['filter_task_id']) && is_numeric($_GET['filter_task_id'])) {
-    $task_id = intval($_GET['filter_task_id']);
-    global $db;
-    $task_title = $db->getOne("SELECT title FROM interns_tasks WHERE id = {$task_id}");
-    if ($task_title) {
-        $_SESSION['search']['interns_tasks_list']['search_task_title'] = $task_title;
-    }
-}
-
 $formSearch->search->addInput('status', 'select');
 $formSearch->search->input->status->setTitle(lang('Status'));
 $formSearch->search->input->status->addOption(lang('---- Filter by Status ----'), '');
@@ -251,28 +283,30 @@ $add_sql = $formSearch->search->action();
 // ========== MANUAL FILTER UNTUK INTERN NAME DAN TASK TITLE ==========
 global $db;
 
+// ✅ Filter berdasarkan Intern Name (LIKE search)
 if (!empty($keyword['intern_name'])) {
-	$intern_name = addslashes(trim($keyword['intern_name']));
-    $intern_ids   = $db->getCol("SELECT id FROM interns WHERE name = '{$intern_name}'");
+    $intern_name = addslashes(trim($keyword['intern_name']));
+    $intern_ids = $db->getCol("SELECT id FROM interns WHERE name LIKE '%{$intern_name}%'");
     
     if (empty($intern_ids)) {
-		$intern_ids = [0];
-	}
-
-	$ids_string = implode(',', $intern_ids);
-	$add_sql   .= " AND interns_id IN ({$ids_string})";
+        $intern_ids = [0]; // Jika tidak ada hasil, set ke 0 untuk hasil kosong
+    }
+    
+    $ids_string = implode(',', $intern_ids);
+    $add_sql .= " AND interns_id IN ({$ids_string})";
 }
 
+// ✅ Filter berdasarkan Task Title (LIKE search)
 if (!empty($keyword['task_title'])) {
-	$task_title = addslashes(trim($keyword['task_title']));
-    $task_ids   = $db->getCol("SELECT id FROM interns_tasks WHERE title = '{$task_title}'");
+    $task_title = addslashes(trim($keyword['task_title']));
+    $task_ids = $db->getCol("SELECT id FROM interns_tasks WHERE title LIKE '%{$task_title}%'");
     
     if (empty($task_ids)) {
-		$task_ids = [0];
+        $task_ids = [0]; // Jika tidak ada hasil, set ke 0 untuk hasil kosong
     }
-
-	$ids_string = implode(',', $task_ids);
-	$add_sql   .= " AND interns_tasks_id IN ({$ids_string})";
+    
+    $ids_string = implode(',', $task_ids);
+    $add_sql .= " AND interns_tasks_id IN ({$ids_string})";
 }
 
 // ========== APPLY PERIOD FILTER ==========
@@ -542,7 +576,7 @@ if (!empty($import_message)) { echo '<div class="col-xs-12 no-both">'.$import_me
     <div class="panel panel-default">
         <div class="panel-heading">
             <h4 class="panel-title" data-toggle="collapse" href="#import_tasklist_panel" style="cursor:pointer;">
-                <?php echo icon('fa-file-excel-o') ?> klik disini untuk import data intern task list dari CSV
+                <?php echo icon('fa-file-excel-o') ?> Klik disini untuk import data intern task list dari CSV
             </h4>
         </div>
         <div id="import_tasklist_panel" class="panel-collapse collapse">
