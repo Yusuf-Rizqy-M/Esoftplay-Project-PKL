@@ -4,7 +4,7 @@
     .partnership-wrapper {
         text-align: center;
         font-family: 'Arial', sans-serif;
-        padding: 180px 10px;
+        padding: 20px 80px;
         background-color: #ffffff;
     }
 
