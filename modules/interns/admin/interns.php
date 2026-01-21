@@ -62,18 +62,25 @@ if (!empty($_SESSION['search']['interns'])) {
         $where[] = "`school` LIKE '%{$s['search_school']}%'";
     }
 
+    // ========== PERBAIKAN LOGIKA DATE RANGE ==========
     if (!empty($s['search_start_date']) && !empty($s['search_end_date'])) {
+        // Konversi ke format Y-m-d
         $filter_start = date('Y-m-d', strtotime(str_replace('/', '-', $s['search_start_date'])));
         $filter_end = date('Y-m-d', strtotime(str_replace('/', '-', $s['search_end_date'])));
-        $where[] = "(start_date <= '{$filter_end}' AND end_date >= '{$filter_start}')";
+        
+        // STRICT FILTER: Periode intern HARUS berada dalam range yang dicari
+        // Artinya: start_date >= filter_start DAN end_date <= filter_end
+        $where[] = "(start_date >= '{$filter_start}' AND end_date <= '{$filter_end}')";
     } 
     elseif (!empty($s['search_start_date'])) {
+        // Jika hanya start_date: cari intern yang mulai SETELAH tanggal ini
         $filter_start = date('Y-m-d', strtotime(str_replace('/', '-', $s['search_start_date'])));
-        $where[] = "end_date >= '{$filter_start}'";
+        $where[] = "start_date >= '{$filter_start}'";
     }
     elseif (!empty($s['search_end_date'])) {
+        // Jika hanya end_date: cari intern yang selesai SEBELUM tanggal ini
         $filter_end = date('Y-m-d', strtotime(str_replace('/', '-', $s['search_end_date'])));
-        $where[] = "start_date <= '{$filter_end}'";
+        $where[] = "end_date <= '{$filter_end}'";
     }
 }
 
@@ -120,18 +127,17 @@ $formList->roll->input->status->setDisplayFunction(function ($value) {
     return '<span class="label" style="background-color: '.$color.'; color: white; padding: 5px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; display: inline-block;">'.$value.'</span>';
 });
 
-// ========== INI YANG DIUBAH - PAKAI setGetName() ==========
+// ========== BUTTON LIHAT PENGERJAAN - KIRIM ID DAN NAMA ==========
 $formList->roll->addInput('task_link', 'sqllinks');
-$formList->roll->input->task_link->setLinks('#'); // Set ke # agar tidak auto-generate
+$formList->roll->input->task_link->setLinks('#');
 $formList->roll->input->task_link->setTitle('Tasks');
-$formList->roll->input->task_link->setFieldName('name as task_link');
-$formList->roll->input->task_link->setDisplayFunction(function($intern_name) {
+$formList->roll->input->task_link->setFieldName('id as task_link'); // ✅ Ubah ke id
+$formList->roll->input->task_link->setDisplayFunction(function($intern_id) {
     global $Bbc;
     
-    // Generate URL dengan parameter force_intern_id
-    $url = $Bbc->mod['circuit'] . '.interns_tasks_list&intern_name=' . urlencode($intern_name);
+    // ✅ Generate URL dengan parameter force_intern_id (bukan intern_name)
+    $url = $Bbc->mod['circuit'] . '.interns_tasks_list&force_intern_id=' . intval($intern_id);
     
-    // Return button HTML
     return '<a href="' . $url . '" class="btn btn-xs btn-primary">Lihat Pengerjaan</a>';
 });
 
@@ -191,7 +197,7 @@ echo tabs($tabs, ($is_edit ? 2 : 1), 'tabs_interns');
     <div class="panel panel-default">
         <div class="panel-heading">
             <h4 class="panel-title" data-toggle="collapse" href="#import_panel" style="cursor:pointer;">
-                <?php echo icon('fa-file-excel-o') ?> klik disini untuk import data intern dari CSV
+                <?php echo icon('fa-file-excel-o') ?> Klik disini untuk import data intern dari CSV
             </h4>
         </div>
         <div id="import_panel" class="panel-collapse collapse">
