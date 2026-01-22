@@ -33,6 +33,7 @@ link_js('includes/lib/pea/includes/formIsRequire.js', false);
         flex: 1;
         height: 100%;
         position: relative;
+        /* CATATAN: Jika gambar asli Anda bernuansa biru, sebaiknya ganti dengan gambar bernuansa hangat/kuning agar serasi */
         background: url('http://localhost/pkl_project_esoftplay/images/uploads/asset/Rectangle%2067.png?KeepThis=true&TB_iframe=true&height=430&width=700') no-repeat center center;
         background-size: cover;
     }
@@ -94,7 +95,8 @@ link_js('includes/lib/pea/includes/formIsRequire.js', false);
 
     .dots-decor {
         font-size: 24px;
-        color: #CBD5E0;
+        /* UBAH: Warna titik dekorasi jadi kuning muda */
+        color: #FFECB3; 
         letter-spacing: 4px;
         margin-bottom: 40px;
     }
@@ -121,7 +123,8 @@ link_js('includes/lib/pea/includes/formIsRequire.js', false);
     .input-field-wrapper i.prefix-icon {
         position: absolute;
         left: 18px;
-        color: #5874f6;
+        /* UBAH: Ikon di depan jadi kuning emas */
+        color: #FFC107;
         font-size: 18px;
     }
 
@@ -134,7 +137,8 @@ link_js('includes/lib/pea/includes/formIsRequire.js', false);
     }
 
     .input-field-wrapper i.suffix-icon:hover {
-        color: #5874f6;
+        /* UBAH: Hover ikon mata jadi kuning emas */
+        color: #FFC107;
     }
 
     .form-input-pro {
@@ -150,17 +154,21 @@ link_js('includes/lib/pea/includes/formIsRequire.js', false);
 
     .form-input-pro:focus {
         outline: none;
-        border-color: #5874f6;
+        /* UBAH: Border saat fokus jadi kuning emas */
+        border-color: #FFC107;
         background: #fff;
-        box-shadow: 0 0 0 4px rgba(88, 116, 246, 0.1);
+        /* UBAH: Shadow/glow saat fokus jadi kuning transparan */
+        box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.2);
     }
 
     /* BUTTON */
     .btn-submit-pro {
         width: 100%;
         padding: 16px;
-        background: #5874f6;
-        color: #fff;
+        /* UBAH: Background tombol jadi kuning emas */
+        background: #FFC107;
+        /* UBAH: Warna teks tombol jadi gelap agar kontras dengan kuning */
+        color: #2D3748; 
         border: none;
         border-radius: 12px;
         font-size: 16px;
@@ -168,13 +176,16 @@ link_js('includes/lib/pea/includes/formIsRequire.js', false);
         cursor: pointer;
         transition: all 0.3s ease;
         margin-top: 10px;
-        box-shadow: 0 10px 15px -3px rgba(88, 116, 246, 0.3);
+        /* UBAH: Shadow tombol jadi bernuansa kuning */
+        box-shadow: 0 10px 15px -3px rgba(255, 193, 7, 0.3);
     }
 
     .btn-submit-pro:hover {
-        background: #4661e0;
+        /* UBAH: Background saat hover jadi kuning lebih gelap/oranye */
+        background: #FFA000;
         transform: translateY(-2px);
-        box-shadow: 0 20px 25px -5px rgba(88, 116, 246, 0.4);
+        /* UBAH: Shadow hover jadi bernuansa kuning lebih kuat */
+        box-shadow: 0 20px 25px -5px rgba(255, 193, 7, 0.4);
     }
 
     .form-footer {
@@ -185,10 +196,15 @@ link_js('includes/lib/pea/includes/formIsRequire.js', false);
     }
 
     .form-footer a {
-        color: #2D3748;
+        /* UBAH: Warna link footer jadi kuning emas */
+        color: #FFC107;
         text-decoration: none;
         font-weight: 600;
         font-style: italic;
+    }
+    
+    .form-footer a:hover {
+        text-decoration: underline;
     }
 
     .copy-text {
@@ -207,7 +223,7 @@ link_js('includes/lib/pea/includes/formIsRequire.js', false);
 
 <div class="master-login-wrapper">
     <div class="login-side-image">
-        <a href="#" class="side-logo-container">
+        <a href="http://localhost/pkl_project_esoftplay/" class="side-logo-container">
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBdJBSF1ii-xU_NREaLsWhKxQ6soWaNgWE3A&s" alt="Logo">
             <span>Esoftplay Internship</span>
         </a>
@@ -223,7 +239,7 @@ link_js('includes/lib/pea/includes/formIsRequire.js', false);
 
             <form class="formIsRequire" method="POST" action="">
                 <div class="custom-group">
-                    <label>Username</label>
+                    <label>Email</label>
                     <div class="input-field-wrapper">
                         <i class="fa-regular fa-envelope prefix-icon"></i>
                         <input class="form-input-pro" placeholder="you@example.com" req="any true" autofocus="" type="text" name="usr" />

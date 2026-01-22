@@ -2,31 +2,33 @@
 
 <style>
     .cta-career-section {
-        background-color: #001d57;
-        color: #ffffff;
+        background-color: #ffffff;
+        color: #333333;
         padding: 80px 20px;
         text-align: center;
-        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
     }
 
     .cta-career-container {
-        max-width: 800px;
+        max-width: 850px;
         margin: 0 auto;
     }
 
     .cta-career-title {
         font-size: 36px;
-        font-weight: 700;
-        line-height: 1.3;
-        margin-bottom: 30px;
+        font-weight: 800;
+        line-height: 1.2;
+        margin-bottom: 20px;
+        color: #FFB300;
+        letter-spacing: -1px;
     }
 
     .cta-career-desc {
-        font-size: 16px;
-        line-height: 1.6;
+        font-size: 17px;
+        line-height: 1.7;
         margin-bottom: 40px;
-        color: #e0e0e0;
-        max-width: 700px;
+        color: #555555;
+        max-width: 720px;
         margin-left: auto;
         margin-right: auto;
     }
@@ -40,33 +42,38 @@
 
     .btn-career {
         display: inline-block;
-        padding: 12px 30px;
-        border-radius: 50px;
-        font-size: 14px;
-        font-weight: 600;
+        padding: 14px 34px;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 700;
         text-decoration: none;
-        transition: all 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .btn-apply {
-        background-color: #ffffff;
-        color: #001d57;
+        background-color: #FFB300;
+        color: #ffffff;
+        box-shadow: 0 4px 15px rgba(255, 179, 0, 0.35);
     }
 
     .btn-apply:hover {
-        background-color: #f0f0f0;
-        transform: translateY(-2px);
+        background-color: #FFB300;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(230, 81, 0, 0.4);
+        color: #ffffff;
     }
 
+    /* BAGIAN YANG DIUBAH WARNANYA */
     .btn-talk {
-        background-color: transparent;
-        color: #ffffff;
-        border: 2px solid #ffffff;
+        background-color: transparent !important;
+        color: #FFB300 !important;
+        border: 2px solid #FFB300 !important;
     }
 
     .btn-talk:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-        transform: translateY(-2px);
+        background-color: rgba(230, 81, 0, 0.08) !important;
+        color: #FFB300 !important;
+        transform: translateY(-3px) !important;
     }
 
     @media (max-width: 768px) {
@@ -82,10 +89,10 @@
             flex-direction: column;
             align-items: center;
         }
-
+        
         .btn-career {
             width: 100%;
-            max-width: 250px;
+            max-width: 280px;
         }
     }
 </style>

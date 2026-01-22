@@ -1,54 +1,57 @@
-<?php  if (!defined('_VALID_BBC')) exit('No direct script access allowed');
+<?php if (!defined('_VALID_BBC')) exit('No direct script access allowed');
 
 
-switch( $Bbc->mod['task'] )
-{
-	case 'main' :
+switch ($Bbc->mod['task']) {
+	case 'main':
 
 	case 'intern':
-    include 'intern.php';
-    break;
+		include 'intern.php';
+		break;
 
 	case 'home':
-    break;
-
-	case 'print_sertif':
-	echo'print_sertif';
-    break;
+		break;
 
 	case 'laporan_harian':
-	echo'laporan_harian';
-    break;
+		$sys->set_layout('dashboard');
+		echo 'laporan_harian';
+		break;
 
 	case 'laporan_pkl':
-	echo'laporan_pkl';
-    break;
+		$sys->set_layout('dashboard');
+		break;
 
 	case 'task_pkl':
-	echo'task_pkl';
-    break;
+		$sys->set_layout('dashboard');
+		echo 'task_pkl';
+		break;
 
-	case 'login':
-	echo'login';
-    break;
+	case 'dashboard':
+		$sys->set_layout('dashboard');
+		echo 'hi dashboard';
+		break;
+
 
 	case 'print_sertif':
-	echo'print_sertif';
-    break;
+		$sys->set_layout('dashboard');
+		break;
 
 	case 'client_esoftplay':
-    break;
+		break;
 
 	case 'internship':
-    break;
+		break;
 
 	case 'tentang_kami':
-    break;
+		break;
+
+	case 'login':
+		echo 'login';
+		break;
 
 	case 'kontak':
-    break;
+		break;
 	default:
 
-	echo 'Invalid action <b>'.$Bbc->mod['task'].'</b> has been received...';
-	break;
+		echo 'Invalid action <b>' . $Bbc->mod['task'] . '</b> has been received...';
+		break;
 }
