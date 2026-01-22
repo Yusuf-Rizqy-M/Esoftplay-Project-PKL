@@ -7,16 +7,18 @@
     <![endif]-->
   </head>
   <body>
-    <?php echo $sys->block_show('top');?>
-      <div>
-        <?php if (_ADMIN) echo $sys->block_show('left');?>
+	<div class="row">
+      <div class="col-md-3">
+        <?php echo $sys->block_show('left');?>
+      </div>
+      <div class="col-md-9">
         <?php echo $sys->block_show('content_top');?>
         <?php echo trim($Bbc->content);?>
         <?php echo $sys->block_show('content_bottom');?>
-        <?php echo $sys->block_show('footer'); ?>
+        <!-- <?php echo $sys->block_show('footer'); ?> -->
       </div>
+	</div>
     
-    </div>
     <!-- Bootstrap JavaScript -->
     <script src="<?php echo _URL;?>templates/admin/bootstrap/js/bootstrap.min.js"></script>
     
