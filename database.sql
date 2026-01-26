@@ -774,6 +774,7 @@ CREATE TABLE `interns` (
   `major` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `start_date` date DEFAULT NULL,
   `end_date` date DEFAULT NULL,
+  `status` tinyint(1) DEFAULT 1 COMMENT '1=Active, 2=Ended, 3=Coming Soon',
   `created` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),

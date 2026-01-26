@@ -8,64 +8,63 @@ $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $formAdd = _lib('pea', 'interns_tasks');
 $formAdd->initEdit($id > 0 ? "WHERE id=$id" : "");
 
-$formAdd->edit->addInput('title','text');
+$formAdd->edit->addInput('title', 'text');
 $formAdd->edit->input->title->setTitle('Title');
 $formAdd->edit->input->title->setRequire();
 
-$formAdd->edit->addInput('description','textarea');
+$formAdd->edit->addInput('description', 'textarea');
 $formAdd->edit->input->description->setTitle('Description');
 
-$formAdd->edit->addInput('timeline','text');
+$formAdd->edit->addInput('timeline', 'text');
 $formAdd->edit->input->timeline->setTitle('timeline');
 $formAdd->edit->input->timeline->setNumberFormat(true);
-$formAdd->edit->input->timeline->setRequire()
-;
-$formAdd->edit->addInput('type','text');
+$formAdd->edit->input->timeline->setRequire();
+$formAdd->edit->addInput('type', 'text');
 $formAdd->edit->input->type->setTitle('type');
 $formAdd->edit->input->type->setRequire();
 
 $formAdd->edit->action();
 
 if ($id == 0 && !empty($_POST['title'])) {
-    $new_id = $db->Insert_ID();
-    if ($new_id > 0) {
-        $db->Execute("UPDATE interns_tasks_list SET updated = NULL WHERE id = $new_id");
-    }
-    $redirect_url = $_SERVER['PHP_SELF'] . (isset($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '');
-    header("Location: $redirect_url");
-    exit;
+  $new_id = $db->Insert_ID();
+  if ($new_id > 0) {
+    $db->Execute("UPDATE interns_tasks_list SET updated = NULL WHERE id = $new_id");
+  }
+  $redirect_url = $_SERVER['PHP_SELF'] . (isset($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '');
+  header("Location: $redirect_url");
+  exit;
 }
 
 if ($id > 0) {
-    echo $formAdd->edit->getForm();
+  echo $formAdd->edit->getForm();
 }
 
 $old = ($id > 0) ? $db->getRow("SELECT * FROM interns_tasks_list WHERE id=$id") : [];
 $new = ($id > 0) ? $db->getRow("SELECT * FROM interns_tasks_list WHERE id=$id") : [];
 
 if (empty($old) || empty($new)) {
-    return;
+  return;
 }
 
 $changes = [];
 foreach ($new as $key => $val) {
-    if ($old[$key] != $val) {
-        $changes[] = strtoupper($key)." berubah dari '".$old[$key]."' menjadi '".$val."'";
-    }
+  if ($old[$key] != $val) {
+    $changes[] = strtoupper($key) . " berubah dari '" . $old[$key] . "' menjadi '" . $val . "'";
+  }
 }
 
 if (!empty($changes)) {
-    $report_text = implode("; ", $changes);
-    $sql = "
+  $report_text = implode("; ", $changes);
+  $sql = "
         INSERT INTO interns_tasks_list_history
             (interns_id, interns_tasks_id, report, created)
         VALUES
             (
                 {$new['interns_id']},
                 {$new['id']},
-                ".$db->quote($report_text).",
+                " . $db->quote($report_text) . ",
                 NOW()
             )
     ";
-    $db->Execute($sql);
+  $db->Execute($sql);
 }
