@@ -1,6 +1,5 @@
 <?php
 if (!defined('_VALID_BBC')) exit('No direct script access allowed');
-_func('user');
 
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
@@ -15,7 +14,6 @@ $form_add->edit->addInput('name', 'text');
 $form_add->edit->input->name->setTitle('Name');
 $form_add->edit->input->name->setRequire();
 
-// ========== EMAIL FIELD - READONLY SAAT EDIT ==========
 if ($id > 0) {
   $form_add->edit->addInput('email', 'sqlplaintext');
   $form_add->edit->input->email->setTitle('Email');
@@ -28,11 +26,27 @@ if ($id > 0) {
 $form_add->edit->addInput('phone', 'text');
 $form_add->edit->input->phone->setTitle('Phone');
 $form_add->edit->input->phone->setNumberFormat(true);
-$form_add->edit->input->phone->setExtra(' minlength="9" maxlength="14"');
+$form_add->edit->input->phone->setExtra(' minlength="5" maxlength="20"');
 $form_add->edit->input->phone->setRequire();
 
-$form_add->edit->addInput('school', 'text');
+
+
+$view_exists = $db->getOne("SHOW TABLES LIKE 'schools_view'");
+if (!$view_exists) {
+  $db->Execute("CREATE OR REPLACE VIEW schools_view AS 
+                SELECT DISTINCT school as name, school as id 
+                FROM interns 
+                WHERE school IS NOT NULL AND school != '' 
+                ORDER BY school ASC");
+}
+
+$form_add->edit->addInput('school', 'selecttable');
 $form_add->edit->input->school->setTitle('School');
+$form_add->edit->input->school->setReferenceTable('schools_view');
+$form_add->edit->input->school->setReferenceField('name', 'id');
+$form_add->edit->input->school->setAutoComplete(true);
+$form_add->edit->input->school->setAllowNew(true);
+$form_add->edit->input->school->setRequire();
 
 $form_add->edit->addInput('major', 'text');
 $form_add->edit->input->major->setTitle('Major');
@@ -57,7 +71,6 @@ echo $form_add->edit->getForm();
 echo '</div>';
 echo '</div>';
 
-// ========== CALLBACK FUNCTIONS ==========
 
 function intern_edit_before_save($intern_id)
 {
@@ -65,6 +78,7 @@ function intern_edit_before_save($intern_id)
 
   $email = '';
   $name = '';
+  $phone = '';
   $start = '';
   $end = '';
   $curr_id = 0;
@@ -72,6 +86,7 @@ function intern_edit_before_save($intern_id)
   foreach ($_POST as $k => $v) {
     if (strpos($k, 'email') !== false) $email = strtolower(trim(is_array($v) ? current($v) : $v));
     if (strpos($k, 'name') !== false && strpos($k, 'email') === false) $name = trim(is_array($v) ? current($v) : $v);
+    if (strpos($k, 'phone') !== false) $phone = trim(is_array($v) ? current($v) : $v);
     if (strpos($k, 'start_date') !== false && !is_array($v)) $start = $v;
     if (strpos($k, 'end_date') !== false && !is_array($v)) $end = $v;
     if (strpos($k, 'id') !== false && !is_array($v)) $curr_id = intval($v);
@@ -81,8 +96,12 @@ function intern_edit_before_save($intern_id)
     $curr_id = intval($_GET['id']);
   }
 
-  if ($curr_id == 0 && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+  if ($curr_id == 0 && !is_email($email)) {
     return "Gagal Simpan: Format email tidak valid!";
+  }
+
+  if (!empty($phone) && !is_phone($phone)) {
+    return "Gagal Simpan: Format nomor telepon tidak valid! Gunakan format yang benar (minimal 5 digit).";
   }
 
   if (empty($start) || empty($end)) {
@@ -100,19 +119,17 @@ function intern_edit_before_save($intern_id)
     }
   }
 
-  // ========== CALCULATE STATUS BERDASARKAN TANGGAL ==========
   $current = date('Y-m-d');
-  $status = 1; // Default Active
+  $status = 1; 
   
   if ($current < $start) {
-    $status = 3; // Coming Soon
+    $status = 3; 
   } elseif ($current >= $start && $current <= $end) {
-    $status = 1; // Active
+    $status = 1;
   } else {
-    $status = 2; // Ended
+    $status = 2; 
   }
   
-  // Simpan status ke session untuk digunakan di after_save
   $_SESSION['intern_temp_status'] = $status;
 
   if ($curr_id == 0) {
@@ -134,7 +151,6 @@ function intern_edit_before_save($intern_id)
       $_SESSION['intern_temp_user_id'] = $user_id;
     }
   } else {
-    // Jika edit, langsung update status di sini
     $db->Execute("UPDATE interns SET status = {$status} WHERE id = {$curr_id}");
   }
   
@@ -150,7 +166,6 @@ function intern_edit_after_save($intern_id)
     unset($_SESSION['intern_temp_user_id']);
   }
 
-  // Update status untuk data yang baru di-insert
   if (!empty($_SESSION['intern_temp_status']) && !empty($intern_id)) {
     $db->Execute("UPDATE interns SET status = " . intval($_SESSION['intern_temp_status']) . " WHERE id = " . intval($intern_id));
     unset($_SESSION['intern_temp_status']);
@@ -161,19 +176,52 @@ function intern_edit_after_save($intern_id)
 ?>
 
 <script type="text/javascript">
-/**
- * Interns Edit Module - JavaScript Functions
- * Naming Convention: camelCase for JavaScript variables
- * PHP Variables use: snake_case
- */
 (function() {
   'use strict';
 
-  // ========== NAMESPACE: InternEditDateValidation ==========
+  var PhoneValidation = {
+    init: function() {
+      if (typeof jQuery === 'undefined') {
+        setTimeout(PhoneValidation.init, 200);
+        return;
+      }
+
+      var phoneInputs = jQuery('input[name*="phone"]');
+      
+      phoneInputs.each(function() {
+        var $input = jQuery(this);
+        
+        $input.closest('form').on('submit', function(e) {
+          var phoneValue = $input.val().trim();
+          
+          if (phoneValue !== '') {
+            var phoneRegex = /^\+?([0-9]+[\s\.\-]?(?:[0-9\s\.\-]+)?){5,}$/i;
+            
+            if (!phoneRegex.test(phoneValue)) {
+              e.preventDefault();
+              alert('Format nomor telepon tidak valid!\n\nGunakan format yang benar:\n- Minimal 5 digit angka\n- Boleh ada spasi, titik, atau strip\n- Contoh: 081234567890 atau +62 812 3456 7890');
+              $input.focus();
+              return false;
+            }
+          }
+        });
+        
+        $input.on('blur', function() {
+          var phoneValue = jQuery(this).val().trim();
+          if (phoneValue !== '') {
+            var phoneRegex = /^\+?([0-9]+[\s\.\-]?(?:[0-9\s\.\-]+)?){5,}$/i;
+            if (!phoneRegex.test(phoneValue)) {
+              jQuery(this).css('border-color', 'red');
+            } else {
+              jQuery(this).css('border-color', '');
+            }
+          }
+        });
+      });
+    }
+  };
+
   var InternEditDateValidation = {
-    /**
-     * Setup date validation for start_date and end_date fields
-     */
     setupValidation: function() {
       if (typeof jQuery === 'undefined' || typeof jQuery.fn.datepicker === 'undefined') {
         setTimeout(InternEditDateValidation.setupValidation, 200);
@@ -183,7 +231,7 @@ function intern_edit_after_save($intern_id)
       var inputFields = jQuery('input[type="text"], input[type="date"]');
       var startDateInput = null;
       var endDateInput = null;
-
+      
       inputFields.each(function() {
         var fieldName = jQuery(this).attr('name') || '';
         if (fieldName.indexOf('start_date') !== -1 && fieldName.indexOf('search') === -1) {
@@ -198,8 +246,6 @@ function intern_edit_after_save($intern_id)
         return;
       }
 
-      console.log('Date inputs found:', startDateInput.attr('name'), endDateInput.attr('name'));
-
       startDateInput.on('changeDate change', function() {
         var startValue = startDateInput.val();
 
@@ -209,7 +255,6 @@ function intern_edit_after_save($intern_id)
           minEndDate.setDate(minEndDate.getDate() + 1);
 
           endDateInput.datepicker('setStartDate', minEndDate);
-          console.log('End date minimum set to:', minEndDate);
 
           var endValue = endDateInput.val();
           if (endValue) {
@@ -229,9 +274,6 @@ function intern_edit_after_save($intern_id)
       }
     },
 
-    /**
-     * Initialize date validation
-     */
     init: function() {
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', InternEditDateValidation.setupValidation);
@@ -244,10 +286,7 @@ function intern_edit_after_save($intern_id)
     }
   };
 
-  // ========== EXPORT TO WINDOW ==========
-  window.InternEditDateValidation = InternEditDateValidation;
-
-  // ========== AUTO INITIALIZE ==========
+  PhoneValidation.init();
   InternEditDateValidation.init();
 
 })();

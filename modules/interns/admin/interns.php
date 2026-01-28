@@ -1,18 +1,24 @@
 <?php
 if (!defined('_VALID_BBC')) exit('No direct script access allowed');
-_func('date');
-_func('user');
+_func('download');
 
-// ========== HANDLE SAMPLE CSV DOWNLOAD ==========
 if (isset($_GET['act']) && $_GET['act'] == 'sample_intern') {
-  header('Content-Type: text/csv; charset=utf-8');
-  header('Content-Disposition: attachment;filename="sample_import_intern.csv"');
-  echo "email,name,phone,school,major,start_date,end_date\n";
-  echo "choirulanam@gmail.com,Muhammad Choirul Anam,081234567890,SMK Raden Umar Said,PPLG,2025-10-06,2026-04-06\n";
+  $sample_data = array(
+    array(
+      'email' => 'choirulanam@gmail.com',
+      'name' => 'Muhammad Choirul Anam',
+      'phone' => '081234567890',
+      'school' => 'SMK Raden Umar Said',
+      'major' => 'PPLG',
+      'start_date' => '2025-10-06',
+      'end_date' => '2026-04-06'
+    )
+  );
+
+  download_excel('sample_import_intern', $sample_data, 'Intern Data');
   die();
 }
 
-// ========== SEARCH FORM ==========
 $form_search = _lib('pea', 'interns');
 $form_search->initSearch();
 
@@ -32,20 +38,17 @@ $form_search->search->input->school->setTitle('School');
 $form_search->search->input->school->addSearchField('school', false);
 
 $form_search->search->addInput('start_date', 'dateinterval');
-$form_search->search->input->start_date->setTitle('Internship Period');
-$form_search->search->input->start_date->setIsSearchRange();
+$form_search->search->input->start_date->setIsSearchRange(); 
+$form_search->search->input->start_date->setTitle('Start Date');
 
 $add_sql = $form_search->search->action();
 echo $form_search->search->getForm();
 
-// ========== TABS ARRAY ==========
 $tabs = array();
 $is_edit = (!empty($_GET['id']) && is_numeric($_GET['id'])) ? true : false;
 
-// ========== INTERNS LIST FORM ==========
 $form_list = _lib('pea', 'interns');
 $form_list->initRoll($add_sql . ' ORDER BY id DESC', 'id');
-pr ($add_sql);
 $form_list->roll->setDeleteTool(true);
 $form_list->roll->setSaveTool(false);
 
@@ -66,7 +69,7 @@ $form_list->roll->addInput('major', 'sqlplaintext');
 $form_list->roll->input->major->setTitle('Major');
 
 $form_list->roll->addInput('period', 'sqlplaintext');
-$form_list->roll->input->period->setTitle('Internship Period');
+$form_list->roll->input->period->setTitle('Internship');
 $form_list->roll->input->period->setFieldName('CONCAT(DATE_FORMAT(start_date,"%d %b %Y")," - ",DATE_FORMAT(IFNULL(end_date,start_date),"%d %b %Y")) AS period');
 
 $form_list->roll->addInput('status', 'sqlplaintext');
@@ -93,20 +96,17 @@ $form_list->roll->input->task_link->setDisplayFunction(function ($intern_id) {
 
 $form_list->roll->action();
 
-// ========== INCLUDE INTERNS_EDIT.PHP untuk Tab 2 ==========
 ob_start();
 include 'interns_edit.php';
 $form_edit_content = ob_get_clean();
 
-// ========== BUILD TABS ==========
 $tabs['List Interns'] = $form_list->roll->getForm();
 $tabs[$is_edit ? 'Edit Intern' : 'Add Intern'] = $form_edit_content;
 
 echo tabs($tabs, ($is_edit ? 2 : 1), 'tabs_interns');
 ?>
 
-<!-- ========== STYLES ========== -->
-<style>
+<style type="text/css">
   .loading-overlay {
     position: fixed;
     top: 0;
@@ -168,22 +168,22 @@ echo tabs($tabs, ($is_edit ? 2 : 1), 'tabs_interns');
   }
 </style>
 
-<!-- ========== IMPORT CSV PANEL ========== -->
+
 <div class="col-xs-12 no-both">
   <div class="panel panel-default">
     <div class="panel-heading">
       <h4 class="panel-title" data-toggle="collapse" href="#import_panel" style="cursor:pointer;">
-        <?php echo icon('fa-file-excel-o') ?> Klik disini untuk import data intern dari CSV
+        <?php echo icon('fa-file-excel-o') ?> Klik disini untuk import data intern dari Excel
       </h4>
     </div>
     <div id="import_panel" class="panel-collapse collapse">
       <form action="" method="POST" enctype="multipart/form-data">
         <div class="panel-body">
           <div class="form-group">
-            <label>Upload File CSV</label>
-            <input type="file" name="excel" class="form-control" accept=".csv" />
+            <label>Upload File Excel (.xlsx atau .xls)</label>
+            <input type="file" name="excel" class="form-control" accept=".xlsx,.xls" required />
             <div class="help-block">
-              Urutan kolom: email, name, phone, school, major, start_date, end_date.<br>
+              Format kolom: email, name, phone, school, major, start_date, end_date<br>
               Download contoh: <a href="?mod=interns&act=sample_intern" style="text-decoration:underline;">di sini</a>
             </div>
           </div>
@@ -199,178 +199,180 @@ echo tabs($tabs, ($is_edit ? 2 : 1), 'tabs_interns');
 </div>
 
 <?php
-// ========== HELPER FUNCTION: Calculate Status ==========
 function calculate_intern_status($start_date, $end_date)
 {
   $current = date('Y-m-d');
   if ($current < $start_date) {
-    return 3; // Coming Soon
+    return 3;
   } elseif ($current >= $start_date && $current <= $end_date) {
-    return 1; // Active
+    return 1; 
   } else {
-    return 2; // Ended
+    return 2; 
   }
 }
 
-// ========== CSV IMPORT HANDLER ==========
 if (!empty($_POST['transfer']) && $_POST['transfer'] == 'upload' && !empty($_FILES['excel']['tmp_name'])) {
   global $db;
 
-  $db->Execute("SET FOREIGN_KEY_CHECKS=0");
-
   $file = $_FILES['excel']['tmp_name'];
-  $handle = fopen($file, "r");
+  
+  try {
+    $excel = _lib('excel')->read($file);
+    $data = $excel->sheet(1)->fetch(); 
+    
+    if (empty($data) || count($data) < 2) {
+      echo '<div class="alert alert-danger">File Excel kosong atau tidak valid!</div>';
+    } else {
+      $db->Execute("SET FOREIGN_KEY_CHECKS=0");
+      
+      $success = $fail = 0;
+      $row = 0;
+      $messages = [];
+      $success_names = [];
 
-  if ($handle === false) {
-    echo '<div class="alert alert-danger">Gagal membuka file CSV!</div>';
-    $db->Execute("SET FOREIGN_KEY_CHECKS=1");
-  } else {
-    $success = $fail = 0;
-    $row = 0;
-    $messages = [];
-    $success_names = [];
+      foreach ($data as $cells) {
+        $row++;
 
-    while (($data = fgetcsv($handle, 1000, ",")) !== false) {
-      $row++;
+        if ($row == 1) continue;
 
-      if ($row == 1) continue;
-      if (count($data) < 2) continue;
+        $email = strtolower(trim($cells['A'] ?? ''));
+        $name = trim($cells['B'] ?? '');
+        $phone = trim($cells['C'] ?? '');
+        $school = trim($cells['D'] ?? '');
+        $major = trim($cells['E'] ?? '');
+        $start = trim($cells['F'] ?? '');
+        $end = trim($cells['G'] ?? '');
 
-      $email = strtolower(trim($data[0] ?? ''));
-      $name = trim($data[1] ?? '');
-      $phone = trim($data[2] ?? '');
-      $school = trim($data[3] ?? '');
-      $major = trim($data[4] ?? '');
-      $start = trim($data[5] ?? '');
-      $end = trim($data[6] ?? '');
+        if (empty($email) && empty($name)) continue;
 
-      if (empty($email) || empty($name)) {
-        $messages[] = '<li class="text-danger">Baris ' . $row . ': Skip - email atau name kosong</li>';
-        $fail++;
-        continue;
-      }
-
-      if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $messages[] = '<li class="text-danger">Baris ' . $row . ': Skip - Format email tidak valid</li>';
-        $fail++;
-        continue;
-      }
-
-      if ($db->getOne("SELECT id FROM interns WHERE email = '" . addslashes($email) . "'")) {
-        $messages[] = '<li class="text-danger">Baris ' . $row . ': Skip - Email <b>' . $email . '</b> sudah terdaftar</li>';
-        $fail++;
-        continue;
-      }
-
-      $start_ts = $start ? strtotime($start) : false;
-      $end_ts = $end ? strtotime($end) : false;
-
-      if ($start_ts && $end_ts && $end_ts <= $start_ts) {
-        $messages[] = '<li class="text-danger">Baris ' . $row . ': Skip - End Date harus setelah Start Date</li>';
-        $fail++;
-        continue;
-      }
-
-      $start_sql = $start_ts ? "'" . date('Y-m-d', $start_ts) . "'" : "NULL";
-      $end_sql = $end_ts ? "'" . date('Y-m-d', $end_ts) . "'" : "NULL";
-
-      // Calculate status
-      $status = 1; // Default Active
-      if ($start_ts && $end_ts) {
-        $status = calculate_intern_status(date('Y-m-d', $start_ts), date('Y-m-d', $end_ts));
-      }
-
-      $user_id = 0;
-      $user_check = $db->getOne("SELECT id FROM bbc_user WHERE username = '" . addslashes($email) . "'");
-
-      if ($user_check) {
-        $user_id = $user_check;
-      } else {
-        $params = array(
-          'username' => $email,
-          'name'     => $name,
-          'email'    => $email,
-          'password' => password_hash('intern123', PASSWORD_DEFAULT),
-          'params'   => ['_padding' => 1],
-        );
-
-        $user_id = user_create($params);
-
-        if (!$user_id) {
-          $messages[] = '<li class="text-danger">Baris ' . $row . ': Gagal membuat user menggunakan user_create()</li>';
+        if (empty($email) || empty($name)) {
+          $messages[] = '<li class="text-danger">Baris ' . $row . ': Skip - email atau name kosong</li>';
           $fail++;
           continue;
         }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+          $messages[] = '<li class="text-danger">Baris ' . $row . ': Skip - Format email tidak valid</li>';
+          $fail++;
+          continue;
+        }
+
+        if ($db->getOne("SELECT id FROM interns WHERE email = '" . addslashes($email) . "'")) {
+          $messages[] = '<li class="text-danger">Baris ' . $row . ': Skip - Email <b>' . $email . '</b> sudah terdaftar</li>';
+          $fail++;
+          continue;
+        }
+
+        $start_ts = $start ? strtotime($start) : false;
+        $end_ts = $end ? strtotime($end) : false;
+
+        if ($start_ts && $end_ts && $end_ts <= $start_ts) {
+          $messages[] = '<li class="text-danger">Baris ' . $row . ': Skip - End Date harus setelah Start Date</li>';
+          $fail++;
+          continue;
+        }
+
+        $start_sql = $start_ts ? "'" . date('Y-m-d', $start_ts) . "'" : "NULL";
+        $end_sql = $end_ts ? "'" . date('Y-m-d', $end_ts) . "'" : "NULL";
+
+        $status = 1; 
+        if ($start_ts && $end_ts) {
+          $status = calculate_intern_status(date('Y-m-d', $start_ts), date('Y-m-d', $end_ts));
+        }
+
+        $user_id = 0;
+        $user_check = $db->getOne("SELECT id FROM bbc_user WHERE username = '" . addslashes($email) . "'");
+
+        if ($user_check) {
+          $user_id = $user_check;
+        } else {
+          $params = array(
+            'username' => $email,
+            'name'     => $name,
+            'email'    => $email,
+            'password' => password_hash('intern123', PASSWORD_DEFAULT),
+            'params'   => ['_padding' => 1],
+          );
+
+          $user_id = user_create($params);
+
+          if (!$user_id) {
+            $messages[] = '<li class="text-danger">Baris ' . $row . ': Gagal membuat user</li>';
+            $fail++;
+            continue;
+          }
+        }
+
+        $user_id_sql = $user_id > 0 ? $user_id : "NULL";
+
+        $q = "INSERT INTO interns
+                    (email, name, phone, school, major, start_date, end_date, status, user_id, created, updated)
+                    VALUES
+                    ('" . addslashes($email) . "', '" . addslashes($name) . "', '" . addslashes($phone) . "',
+                     '" . addslashes($school) . "', '" . addslashes($major) . "',
+                     $start_sql, $end_sql, $status, $user_id_sql, NOW(), NOW())";
+
+        if ($db->Execute($q)) {
+          $intern_id = $db->insert_ID();
+          $messages[] = '<li class="text-success">Baris ' . $row . ': <b>' . $name . '</b> berhasil ditambahkan (User ID: ' . $user_id . ', Intern ID: ' . $intern_id . ')</li>';
+          $success_names[] = $name;
+          $success++;
+        } else {
+          $messages[] = '<li class="text-danger">Baris ' . $row . ': Gagal insert intern - ' . htmlspecialchars($db->ErrorMsg()) . '</li>';
+          $fail++;
+        }
       }
 
-      $user_id_sql = $user_id > 0 ? $user_id : "NULL";
+      $db->Execute("SET FOREIGN_KEY_CHECKS=1");
 
-      $q = "INSERT INTO interns
-                  (email, name, phone, school, major, start_date, end_date, status, user_id, created, updated)
-                  VALUES
-                  ('" . addslashes($email) . "', '" . addslashes($name) . "', '" . addslashes($phone) . "',
-                   '" . addslashes($school) . "', '" . addslashes($major) . "',
-                   $start_sql, $end_sql, $status, $user_id_sql, NOW(), NOW())";
-
-      if ($db->Execute($q)) {
-        $intern_id = $db->insert_ID();
-        $messages[] = '<li class="text-success">Baris ' . $row . ': <b>' . $name . '</b> berhasil ditambahkan (User ID: ' . $user_id . ', Intern ID: ' . $intern_id . ')</li>';
-        $success_names[] = $name;
-        $success++;
-      } else {
-        $messages[] = '<li class="text-danger">Baris ' . $row . ': Gagal insert intern - ' . htmlspecialchars($db->ErrorMsg()) . '</li>';
-        $fail++;
+      if ($fail > 0) {
+        echo '<div class="alert alert-danger" id="import-error-alert" style="margin-top:20px;"><h4>Hasil Import:</h4><ul>';
+        foreach ($messages as $msg) echo $msg;
+        echo '</ul><button type="button" class="btn btn-danger" onclick="InternImport.closeErrorAndOpenPanel()">Tutup & Perbaiki</button></div>';
       }
-    }
 
-    fclose($handle);
-    $db->Execute("SET FOREIGN_KEY_CHECKS=1");
-
-    if ($fail > 0) {
-      echo '<div class="alert alert-danger" id="import-error-alert" style="margin-top:20px;"><h4>Hasil Import:</h4><ul>';
-      foreach ($messages as $msg) echo $msg;
-      echo '</ul><button type="button" class="btn btn-danger" onclick="InternImport.closeErrorAndOpenPanel()">Tutup & Perbaiki</button></div>';
-    }
-
-    if ($success > 0) {
-      $redirect_url = $_SERVER['PHP_SELF'] . (isset($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '');
+      if ($success > 0) {
+        $redirect_url = $_SERVER['PHP_SELF'] . (isset($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '');
 ?>
-      <div class="loading-overlay">
-        <div class="loader-spinner"></div>
-        <div class="loading-text">
-          Import Berhasil!<br>
-          <small>Sedang memperbarui data...</small>
+        <div class="loading-overlay">
+          <div class="loader-spinner"></div>
+          <div class="loading-text">
+            Import Berhasil!<br>
+            <small>Sedang memperbarui data...</small>
+          </div>
+          <div class="success-list">
+            <strong>Data baru yang berhasil ditambahkan (<?php echo $success; ?>):</strong><br>
+            <?php if (count($success_names) <= 10): ?>
+              <ul>
+                <?php foreach ($success_names as $name): ?>
+                  <li><?php echo htmlspecialchars($name); ?></li>
+                <?php endforeach; ?>
+              </ul>
+            <?php else: ?>
+              <ul>
+                <?php for ($i = 0; $i < 10; $i++): ?>
+                  <li><?php echo htmlspecialchars($success_names[$i]); ?></li>
+                <?php endfor; ?>
+              </ul>
+              <p style="margin-top: 10px;">+ <?php echo ($success - 10); ?> data lainnya</p>
+            <?php endif; ?>
+          </div>
         </div>
-        <div class="success-list">
-          <strong>Data baru yang berhasil ditambahkan (<?php echo $success; ?>):</strong><br>
-          <?php if (count($success_names) <= 10): ?>
-            <ul>
-              <?php foreach ($success_names as $name): ?>
-                <li><?php echo htmlspecialchars($name); ?></li>
-              <?php endforeach; ?>
-            </ul>
-          <?php else: ?>
-            <ul>
-              <?php for ($i = 0; $i < 10; $i++): ?>
-                <li><?php echo htmlspecialchars($success_names[$i]); ?></li>
-              <?php endfor; ?>
-            </ul>
-            <p style="margin-top: 10px;">+ <?php echo ($success - 10); ?> data lainnya</p>
-          <?php endif; ?>
-        </div>
-      </div>
-      <script type="text/javascript">
-        setTimeout(function() {
-          window.location.href = "<?php echo $redirect_url; ?>";
-        }, 7000);
-      </script>
+        <script type="text/javascript">
+          setTimeout(function() {
+            window.location.href = "<?php echo $redirect_url; ?>";
+          }, 7000);
+        </script>
 <?php
+      }
     }
+  } catch (Exception $e) {
+    echo '<div class="alert alert-danger">Error membaca file Excel: ' . htmlspecialchars($e->getMessage()) . '</div>';
+    $db->Execute("SET FOREIGN_KEY_CHECKS=1");
   }
 }
 ?>
 
-<!-- ========== JAVASCRIPT ========== -->
 <script type="text/javascript">
 (function() {
   'use strict';
@@ -381,7 +383,7 @@ if (!empty($_POST['transfer']) && $_POST['transfer'] == 'upload' && !empty($_FIL
         setTimeout(InternDateValidation.setupValidation, 200);
         return;
       }
-
+      
       var inputFields = jQuery('input[type="text"], input[type="date"]');
       var startDateInput = null;
       var endDateInput = null;
@@ -464,7 +466,7 @@ if (!empty($_POST['transfer']) && $_POST['transfer'] == 'upload' && !empty($_FIL
       }, 300);
     }
   };
-                                      
+
   window.InternDateValidation = InternDateValidation;
   window.InternImport = InternImport;
   InternDateValidation.init();

@@ -783,7 +783,10 @@ CREATE TABLE `interns` (
   CONSTRAINT `fk_interns_user` FOREIGN KEY (`user_id`) REFERENCES `bbc_user` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `interns` VALUES (1,3,'yusufhabib290@gmail.com','Yusuf Rizqy','085786673009','SMK Raden Umar Said','PPLG','2025-10-06','2026-03-28','2025-12-22 12:50:41',NULL),(2,4,'jojo@gmail.com','Jojo','082147296071','SMK Raden Umar Said','PPLG','2025-12-17','2025-12-24','2025-12-22 12:50:41',NULL),(9,5,'yusufhabib2903@gmail.com','Yusuf Rizqy','085786673009','smk ','rpl','2026-01-21','2026-01-31','2026-01-21 10:02:04','2026-01-21 10:02:04');
+INSERT INTO `interns` 
+(`id`, `user_id`, `email`, `name`, `phone`, `school`, `major`, `start_date`, `end_date`, `status`, `created`, `updated`) 
+VALUES 
+(1, 3, 'yusufhabib290@gmail.com', 'Yusuf Rizqy', '085786673009', 'SMK Raden Umar Said', 'PPLG', '2025-10-06', '2026-03-28', 1, '2025-12-22 12:50:41', NULL);
 DROP TABLE IF EXISTS `interns_report`;
 CREATE TABLE `interns_report` (
   `id` int NOT NULL AUTO_INCREMENT,
