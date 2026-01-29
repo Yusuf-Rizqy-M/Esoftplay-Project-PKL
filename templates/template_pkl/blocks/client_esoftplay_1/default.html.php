@@ -37,7 +37,6 @@
         }
     }
 </style>
-
 <div class="client-section">
     <h1><?php echo $config['heading'] ?></h1>
     <p><?php echo $config['tagline'] ?></p>

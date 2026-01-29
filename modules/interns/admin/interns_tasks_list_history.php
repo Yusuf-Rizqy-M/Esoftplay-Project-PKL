@@ -16,26 +16,26 @@ global $db;
 
 // Filter berdasarkan Name OR Email
 if (!empty($_SESSION['search']['interns_tasks_list_history']['search_intern_search'])) {
-    $search_keyword = addslashes($_SESSION['search']['interns_tasks_list_history']['search_intern_search']);
-    
-    // Cari di tabel interns berdasarkan name OR email
-    $intern_ids = $db->getCol("SELECT id FROM interns WHERE name LIKE '%{$search_keyword}%' OR email LIKE '%{$search_keyword}%'");
-    
-    if (!empty($intern_ids)) {
-        $ids_string = implode(',', $intern_ids);
-        if (stripos($add_sql, 'WHERE') !== false) {
-            $add_sql .= " AND interns_id IN ($ids_string)";
-        } else {
-            $add_sql .= " WHERE interns_id IN ($ids_string)";
-        }
+  $search_keyword = addslashes($_SESSION['search']['interns_tasks_list_history']['search_intern_search']);
+
+  // Cari di tabel interns berdasarkan name OR email
+  $intern_ids = $db->getCol("SELECT id FROM interns WHERE name LIKE '%{$search_keyword}%' OR email LIKE '%{$search_keyword}%'");
+
+  if (!empty($intern_ids)) {
+    $ids_string = implode(',', $intern_ids);
+    if (stripos($add_sql, 'WHERE') !== false) {
+      $add_sql .= " AND interns_id IN ($ids_string)";
     } else {
-        // Jika tidak ada hasil, tampilkan hasil kosong
-        if (stripos($add_sql, 'WHERE') !== false) {
-            $add_sql .= " AND 1=0";
-        } else {
-            $add_sql .= " WHERE 1=0";
-        }
+      $add_sql .= " WHERE interns_id IN ($ids_string)";
     }
+  } else {
+    // Jika tidak ada hasil, tampilkan hasil kosong
+    if (stripos($add_sql, 'WHERE') !== false) {
+      $add_sql .= " AND 1=0";
+    } else {
+      $add_sql .= " WHERE 1=0";
+    }
+  }
 }
 
 echo '<div style="margin-bottom: 20px;">'; // Gap antara Search dan List
@@ -56,11 +56,11 @@ $form->roll->input->id->setDisplayColumn(false);
 /* ========== URUTAN: NAME, EMAIL, TASKS, NOTES, STATUS ========== */
 
 /* KOLOM 1: NAME */
-$form->roll->addInput('interns_id','selecttable');
+$form->roll->addInput('interns_id', 'selecttable');
 $form->roll->input->interns_id->setTitle('Name');
 $form->roll->input->interns_id->setPlaintext(true);
 $form->roll->input->interns_id->setReferenceTable('interns');
-$form->roll->input->interns_id->setReferenceField('name','id');
+$form->roll->input->interns_id->setReferenceField('name', 'id');
 
 /* KOLOM 2: EMAIL */
 $form->roll->addInput('intern_email', 'sqlplaintext');
@@ -77,29 +77,29 @@ $form->roll->input->interns_tasks_list_id->setReferenceTable('interns_tasks_list
 $form->roll->input->interns_tasks_list_id->setReferenceField('t.title', 'l.id');
 
 /* KOLOM 4: NOTES */
-$form->roll->addInput('task_notes', 'selecttable'); 
+$form->roll->addInput('task_notes', 'selecttable');
 $form->roll->input->task_notes->setTitle('Notes');
 $form->roll->input->task_notes->setFieldName('interns_tasks_list_id'); // Merujuk ke field ID yang sama di DB
 $form->roll->input->task_notes->setPlaintext(true);
 $form->roll->input->task_notes->setReferenceTable('interns_tasks_list');
-$form->roll->input->task_notes->setReferenceField('notes','id');
+$form->roll->input->task_notes->setReferenceField('notes', 'id');
 
 /* KOLOM 5: STATUS */
 $form->roll->addInput('status', 'sqlplaintext');
 $form->roll->input->status->setTitle('Status');
 $form->roll->input->status->setDisplayFunction(function ($value) {
-    $colors = [
-        1 => ['bg' => '#6c757d', 'text' => 'white', 'label' => 'To Do'],
-        2 => ['bg' => '#007bff', 'text' => 'white', 'label' => 'In Progress'],
-        3 => ['bg' => '#ffc107', 'text' => 'black', 'label' => 'Submit'],
-        4 => ['bg' => '#fd7e14', 'text' => 'white', 'label' => 'Revised'],
-        5 => ['bg' => '#28a745', 'text' => 'white', 'label' => 'Done'],
-        6 => ['bg' => '#dc3545', 'text' => 'white', 'label' => 'Cancel']
-    ];
-    
-    $status = $colors[$value] ?? ['bg' => '#6c757d', 'text' => 'white', 'label' => 'Unknown'];
-    
-    return '<span class="label" style="background-color: '.$status['bg'].'; color: '.$status['text'].'; padding: 5px 10px; border-radius: 12px;">'.$status['label'].'</span>';
+  $colors = [
+    1 => ['bg' => '#6c757d', 'text' => 'white', 'label' => 'To Do'],
+    2 => ['bg' => '#007bff', 'text' => 'white', 'label' => 'In Progress'],
+    3 => ['bg' => '#ffc107', 'text' => 'black', 'label' => 'Submit'],
+    4 => ['bg' => '#fd7e14', 'text' => 'white', 'label' => 'Revised'],
+    5 => ['bg' => '#28a745', 'text' => 'white', 'label' => 'Done'],
+    6 => ['bg' => '#dc3545', 'text' => 'white', 'label' => 'Cancel']
+  ];
+
+  $status = $colors[$value] ?? ['bg' => '#6c757d', 'text' => 'white', 'label' => 'Unknown'];
+
+  return '<span class="label" style="background-color: ' . $status['bg'] . '; color: ' . $status['text'] . '; padding: 5px 10px; border-radius: 12px;">' . $status['label'] . '</span>';
 });
 
 /* KOLOM 6: CREATED */
