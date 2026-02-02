@@ -10,7 +10,7 @@ if ($p_action == 'add_') {
     $email = strtolower(trim($_POST['add_email']));
     $name  = $_POST['add_name'];
 
-    $user_id = $db->getOne("SELECT id FROM bbc_user WHERE username='".addslashes($email)."'");
+    $user_id = $db->getOne("SELECT id FROM bbc_user WHERE username='" . addslashes($email) . "'");
     if (!$user_id && is_email($email)) {
         $user_params = array(
             'username'  => $email,
@@ -49,7 +49,7 @@ $form_add->edit->addInput('phone', 'text');
 $form_add->edit->addInput('school', 'selecttable');
 $form_add->edit->input->school->setTitle('School');
 $form_add->edit->input->school->setReferenceTable('interns');
-$form_add->edit->input->school->setReferenceField('school', 'school'); 
+$form_add->edit->input->school->setReferenceField('school', 'school');
 $form_add->edit->input->school->setReferenceCondition('1 GROUP BY school');
 $form_add->edit->input->school->setAutoComplete(true);
 $form_add->edit->input->school->setAllowNew(true);
@@ -69,44 +69,57 @@ $form_add->edit->onSave('intern_logic_save', array(), false);
 $form_add->edit->action();
 echo '<div class="panel panel-default"><div class="panel-body">' . $form_add->edit->getForm() . '</div></div>';
 
-function intern_logic_save($intern_id) {
-    global $form_add; 
-    
+function intern_logic_save($intern_id)
+{
+    global $form_add;
+
     $p = isset($_POST['add_submit_add']) ? 'add_' : (isset($_POST['edit_submit_edit']) ? 'edit_' : '');
     if (empty($p)) {
         $p = ($intern_id > 0) ? 'edit_' : 'add_';
     }
-    
-    $start = isset($_POST[$p.'start_date']) ? $_POST[$p.'start_date'] : '';
-    $end   = isset($_POST[$p.'end_date']) ? $_POST[$p.'end_date'] : '';
-    
+
+    $start = isset($_POST[$p . 'start_date']) ? $_POST[$p . 'start_date'] : '';
+    $end   = isset($_POST[$p . 'end_date']) ? $_POST[$p . 'end_date'] : '';
+    $email = isset($_POST[$p . 'email']) ? $_POST[$p . 'email'] : '';
+    $phone = isset($_POST[$p . 'phone']) ? $_POST[$p . 'phone'] : '';
+
     if (!empty($start) && !empty($end)) {
         if (strtotime($end) < strtotime($start)) {
             return "Tanggal Selesai harus setelah Tanggal Mulai!";
         }
 
         $status = (date('Y-m-d') < $start) ? 3 : ((date('Y-m-d') <= $end) ? 1 : 2);
-        
+
         // Menggunakan addExtraField untuk menyuntikkan nilai status ke query SQL
         $form_add->edit->addExtraField('status', $status);
     }
-    
+
+    if (!is_email($email)) {
+        $form_add->edit->setFailSaveMessage('m');
+        $form_add->edit->error = true;
+        return false;
+    }
+    if (!is_phone($phone)) {
+        $form_add->edit->setFailSaveMessage('t');
+        $form_add->edit->error = true;
+        return false;
+    }
     if ($intern_id == 0 && empty($_POST['add_user_id'])) {
         return user_create_validate_msg();
     }
-    
+
     return true;
 }
 ?>
 
 <script type="text/javascript">
-(function($) {
-  $(document).ready(function() {
-    $('input[name*="phone"]').on('blur', function() {
-      var val = $(this).val();
-      if (val && val.length < 5) $(this).css('border-color', 'red');
-      else $(this).css('border-color', '');
-    });
-  });
-})(jQuery);
+    (function($) {
+        $(document).ready(function() {
+            $('input[name*="phone"]').on('blur', function() {
+                var val = $(this).val();
+                if (val && val.length < 5) $(this).css('border-color', 'red');
+                else $(this).css('border-color', '');
+            });
+        });
+    })(jQuery);
 </script>
