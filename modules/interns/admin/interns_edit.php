@@ -30,6 +30,10 @@ if ($p_action == 'add_') {
 $form_add = _lib('pea', 'interns');
 $form_add->initEdit($id > 0 ? "WHERE id=$id" : "");
 
+// --- PERUBAHAN DISINI ---
+// Kita langsung set nilai variabelnya seperti gaya library Anda
+$form_add->edit->setSuccessSaveMessage = ($id > 0) ? 'Berhasil update data intern!' : 'Berhasil menambah intern baru!';
+
 $form_add->edit->addInput('header', 'header');
 $form_add->edit->input->header->setTitle($id > 0 ? 'Edit Intern' : 'Add Intern');
 
@@ -61,9 +65,6 @@ $form_add->edit->input->start_date->setEndDateField('end_date');
 
 $form_add->edit->addInput('user_id', 'hidden');
 
-// --- PENTING: JANGAN addInput status di sini jika menggunakan addExtraField ---
-// $form_add->edit->addInput('status', 'hidden'); // Baris ini dihapus agar tidak duplikat
-
 $form_add->edit->onSave('intern_logic_save', array(), false);
 
 $form_add->edit->action();
@@ -89,18 +90,16 @@ function intern_logic_save($intern_id)
         }
 
         $status = (date('Y-m-d') < $start) ? 3 : ((date('Y-m-d') <= $end) ? 1 : 2);
-
-        // Menggunakan addExtraField untuk menyuntikkan nilai status ke query SQL
         $form_add->edit->addExtraField('status', $status);
     }
 
     if (!is_email($email)) {
-        $form_add->edit->setFailSaveMessage('m');
+        $form_add->edit->setFailSaveMessage('Email Minimal 6 digit bro');
         $form_add->edit->error = true;
         return false;
     }
     if (!is_phone($phone)) {
-        $form_add->edit->setFailSaveMessage('t');
+        $form_add->edit->setFailSaveMessage('Phone Minimal 5 Digit Bro');
         $form_add->edit->error = true;
         return false;
     }

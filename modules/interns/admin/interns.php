@@ -23,22 +23,19 @@ if (@$_GET['act'] == 'sample_intern') {
 // ========== 2. SEARCH FORM (PEA) ==========
 $form_search = _lib('pea', 'interns');
 $form_search->initSearch();
-
+// ... (Input search tetap sama)
 $form_search->search->addInput('status', 'select');
 $form_search->search->input->status->setTitle('Status');
 $form_search->search->input->status->addOption('All Status', '');
 $form_search->search->input->status->addOption('Active', '1');
 $form_search->search->input->status->addOption('Ended', '2');
 $form_search->search->input->status->addOption('Coming Soon', '3');
-
 $form_search->search->addInput('name', 'keyword');
 $form_search->search->input->name->setTitle('Name');
 $form_search->search->input->name->addSearchField('name', false);
-
 $form_search->search->addInput('school', 'keyword');
 $form_search->search->input->school->setTitle('School');
 $form_search->search->input->school->addSearchField('school', false);
-
 $form_search->search->addInput('start_date', 'dateinterval');
 $form_search->search->input->start_date->setIsSearchRange();
 $form_search->search->input->start_date->setTitle('Start Date');
@@ -52,6 +49,10 @@ $form_list = _lib('pea', 'interns');
 $form_list->initRoll($add_sql . ' ORDER BY id DESC', 'id');
 $form_list->roll->setDeleteTool(true);
 $form_list->roll->setSaveTool(false);
+
+// --- SET PESAN CUSTOM UNTUK ROLL (PENGHAPUSAN) ---
+$form_list->roll->setSuccessDeleteMessage = 'Data intern berhasil dihapus dari sistem.';
+$form_list->roll->setFailDeleteMessage    = 'Gagal menghapus data intern.';
 
 $form_list->roll->addInput('name', 'sqllinks');
 $form_list->roll->input->name->setLinks($Bbc->mod['circuit'] . '.interns_edit');
@@ -101,7 +102,6 @@ ob_start();
 include 'interns_edit.php';
 $form_edit_content = ob_get_clean();
 
-// TAMPILKAN TABS
 $tabs = array(
   'List Interns' => $form_list->roll->getForm(),
   ($is_edit ? 'Edit Intern' : 'Add Intern') => $form_edit_content
@@ -109,148 +109,80 @@ $tabs = array(
 echo tabs($tabs, ($is_edit ? 2 : 1), 'tabs_interns');
 
 
-// ========== 4. IMPORT EXCEL LOGIC (FIXED DETAIL ERROR) ==========
+// ========== 4. IMPORT EXCEL LOGIC ==========
 if (!empty($_POST['transfer']) && $_POST['transfer'] == 'upload') {
-  $msg = '';
   if (!empty($_FILES['excel']['tmp_name']) && is_uploaded_file($_FILES['excel']['tmp_name'])) {
-    
-    // Validasi MIME Type
     $mimes = array('application/vnd.ms-excel','text/xls','text/xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     if (in_array($_FILES['excel']['type'], $mimes)) {
-        
-        // Baca File menggunakan Lib Excel Framework
         $excel_lib = _lib('excel')->read($_FILES['excel']['tmp_name']);
         $data      = $excel_lib->sheet(1)->fetch(); 
 
         if (!empty($data) && is_array($data) && count($data) > 1) {
-            
             $db->Execute("SET FOREIGN_KEY_CHECKS=0");
-            $success = 0;
-            $failed  = 0;
-            $errors  = [];
+            $success = 0; $failed  = 0; $errors  = [];
 
             foreach ($data as $i => $cells) {
-                // SKIP HEADER: Baris 1 atau jika kolom A adalah 'Email'
                 if ($i == 1 || strtolower(trim($cells['A'])) == 'email') continue;
 
                 $email = strtolower(trim($cells['A']));
                 $name  = trim($cells['B']);
 
-                // Validasi Email
                 if (is_email($email)) {
-                    // Cek duplikat di tabel interns
                     $is_exist = $db->getOne("SELECT 1 FROM interns WHERE email='".addslashes($email)."'");
-                    
                     if (!$is_exist) {
-                        // 1. Handle User Creation (BBC User)
                         $user_id = $db->getOne("SELECT id FROM bbc_user WHERE username='".addslashes($email)."'");
-                        
                         if (!$user_id) {
                             $user_params = array(
-                                'username'  => $email,
-                                'name'      => $name,
-                                'email'     => $email,
-                                'password'  => 'intern123',
-                                'group_ids' => array(3), // Group ID Intern
-                                'params'    => array('register_at' => date('Y-m-d H:i:s'))
+                                'username' => $email, 'name' => $name, 'email' => $email,
+                                'password' => 'intern123', 'group_ids' => array(3),
+                                'params'   => array('register_at' => date('Y-m-d H:i:s'))
                             );
                             $user_id = user_create($user_params);
                         }
 
                         if ($user_id) {
-                            // 2. Handle Tanggal & Status
                             $start_date = fix_excel_date_import($cells['F']);
                             $end_date   = fix_excel_date_import($cells['G']);
                             $status     = calculate_intern_status_import($start_date, $end_date);
 
-                            $q = "INSERT INTO interns SET 
-                                user_id    = $user_id, 
-                                email      = '".addslashes($email)."', 
-                                name       = '".addslashes($name)."', 
-                                phone      = '".addslashes($cells['C'])."', 
-                                school     = '".addslashes($cells['D'])."', 
-                                major      = '".addslashes($cells['E'])."', 
-                                start_date = '$start_date', 
-                                end_date   = '$end_date', 
-                                status     = $status, 
-                                created    = NOW()";
-                            
-                            if($db->Execute($q)) {
-                                $success++;
-                            } else {
-                                $failed++;
-                                $errors[] = "Baris $i: DB Error - " . $db->ErrorMsg();
-                            }
-                        } else {
-                            $failed++;
-                            $errors[] = "Baris $i: Gagal membuat User ID BBC.";
-                        }
-                    } else {
-                        // --- PERBAIKAN DISINI ---
-                        // Tambahkan pesan ke array errors agar muncul di detail
-                        $failed++; 
-                        $errors[] = "Baris $i: Email <b>$email</b> sudah terdaftar.";
-                    }
-                } else {
-                    $failed++;
-                    $errors[] = "Baris $i: Format email salah ($email).";
-                }
+                            $q = "INSERT INTO interns SET user_id=$user_id, email='".addslashes($email)."', name='".addslashes($name)."', phone='".addslashes($cells['C'])."', school='".addslashes($cells['D'])."', major='".addslashes($cells['E'])."', start_date='$start_date', end_date='$end_date', status=$status, created=NOW()";
+                            if($db->Execute($q)) $success++;
+                            else { $failed++; $errors[] = "Baris $i: DB Error."; }
+                        } else { $failed++; $errors[] = "Baris $i: Gagal User Create."; }
+                    } else { $failed++; $errors[] = "Baris $i: Email $email duplikat."; }
+                } else { $failed++; $errors[] = "Baris $i: Email salah."; }
             }
             $db->Execute("SET FOREIGN_KEY_CHECKS=1");
 
-            // TAMPILKAN HASIL
+            // --- PENGGUNAAN PESAN SUKSES/GAGAL GAYA PEA PADA IMPORT ---
             if ($success > 0) {
-                // Jika ada error tapi ada juga yang sukses, tampilkan warning/success info
-                $msg_type = ($failed > 0) ? 'warning' : 'success';
-                $extra_info = ($failed > 0) ? "<br>Gagal: $failed data (Lihat detail bawah)." : "";
-                
-                echo msg("Import Selesai! Berhasil: $success. $extra_info", $msg_type);
-                
-                // Jika ada error, tampilkan detailnya di bawah pesan sukses
-                if (!empty($errors)) {
-                    $err_str = implode("<br>", array_slice($errors, 0, 10)); // Batasi 10 error agar tidak kepanjangan
-                    echo msg("<b>Detail Data Gagal:</b><br>" . $err_str, 'danger');
-                }
-
+                $form_list->roll->setSuccessSaveMessage = "Import Berhasil! $success data masuk." . ($failed > 0 ? " ($failed gagal)" : "");
+                echo msg($form_list->roll->setSuccessSaveMessage, 'success');
             } else {
-                // Jika GAGAL SEMUA (0 success)
-                if (!empty($errors)) {
-                    $err_str = implode("<br>", array_slice($errors, 0, 10));
-                    echo msg("Gagal mengimport data.<br><b>Detail:</b><br>" . $err_str, 'danger');
-                } else {
-                    echo msg("Gagal mengimport data. Tidak ada data valid yang ditemukan.", 'danger');
-                }
+                $form_list->roll->setFailSaveMessage = "Gagal mengimport data. Periksa kembali file Anda.";
+                echo msg($form_list->roll->setFailSaveMessage, 'danger');
             }
+            if (!empty($errors)) echo msg("Detail: <br>".implode("<br>", array_slice($errors, 0, 5)), 'warning');
 
-        } else {
-             echo msg('File Excel kosong atau format tidak terbaca.', 'danger');
-        }
-    } else {
-        echo msg('Format file harus .xlsx atau .xls', 'danger');
-    }
-  } else {
-      echo msg('Mohon pilih file excel.', 'danger');
-  }
+        } else { echo msg('File Excel kosong.', 'danger'); }
+    } else { echo msg('Format file salah.', 'danger'); }
+  } else { echo msg('Pilih file excel.', 'danger'); }
 }
 
-// Helper: Fix Date format
 function fix_excel_date_import($date_str) {
     if (empty($date_str)) return date('Y-m-d');
     $date_str = str_replace('/', '-', $date_str);
     $ts = strtotime($date_str);
-    if ($ts === false || $ts < strtotime('1980-01-01')) return date('Y-m-d');
-    return date('Y-m-d', $ts);
+    return ($ts === false) ? date('Y-m-d') : date('Y-m-d', $ts);
 }
 
-// Helper: Calculate Status
 function calculate_intern_status_import($start, $end) {
   $curr = date('Y-m-d');
-  if ($curr < $start) return 3; // Coming Soon
-  if ($curr <= $end) return 1;  // Active
-  return 2;                     // Ended
+  if ($curr < $start) return 3;
+  if ($curr <= $end) return 1;
+  return 2;
 }
 ?>
-
 <div class="col-xs-12 no-both">
   <div class="panel panel-default">
     <div class="panel-heading">
