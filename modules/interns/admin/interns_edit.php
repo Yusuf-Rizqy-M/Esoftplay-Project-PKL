@@ -30,8 +30,6 @@ if ($p_action == 'add_') {
 $form_add = _lib('pea', 'interns');
 $form_add->initEdit($id > 0 ? "WHERE id=$id" : "");
 
-// --- PERUBAHAN DISINI ---
-// Kita langsung set nilai variabelnya seperti gaya library Anda
 $form_add->edit->setSuccessSaveMessage = ($id > 0) ? 'Berhasil update data intern!' : 'Berhasil menambah intern baru!';
 
 $form_add->edit->addInput('header', 'header');
@@ -92,8 +90,8 @@ function intern_logic_save($intern_id)
         $status = (date('Y-m-d') < $start) ? 3 : ((date('Y-m-d') <= $end) ? 1 : 2);
         $form_add->edit->addExtraField('status', $status);
     }
-
-    if (!is_email($email)) {
+    
+    if (isset($_POST[$p . 'email']) && !is_email($email)) {
         $form_add->edit->setFailSaveMessage('Email Minimal 6 digit bro');
         $form_add->edit->error = true;
         return false;
