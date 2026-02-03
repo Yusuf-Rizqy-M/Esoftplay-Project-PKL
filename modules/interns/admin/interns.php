@@ -3,7 +3,6 @@ if (!defined('_VALID_BBC')) exit('No direct script access allowed');
 
 _func('download');
 
-// ========== 1. HANDLE SAMPLE EXCEL DOWNLOAD ==========
 if (@$_GET['act'] == 'sample_intern') {
   $sample_data = array(
     array(
@@ -20,10 +19,9 @@ if (@$_GET['act'] == 'sample_intern') {
   die();
 }
 
-// ========== 2. SEARCH FORM (PEA) ==========
 $form_search = _lib('pea', 'interns');
 $form_search->initSearch();
-// ... (Input search tetap sama)
+
 $form_search->search->addInput('status', 'select');
 $form_search->search->input->status->setTitle('Status');
 $form_search->search->input->status->addOption('All Status', '');
@@ -43,14 +41,12 @@ $form_search->search->input->start_date->setTitle('Start Date');
 $add_sql = $form_search->search->action();
 echo $form_search->search->getForm();
 
-// ========== 3. INTERNS LIST FORM (PEA) ==========
 $is_edit   = (!empty($_GET['id']) && is_numeric($_GET['id']));
 $form_list = _lib('pea', 'interns');
 $form_list->initRoll($add_sql . ' ORDER BY id DESC', 'id');
 $form_list->roll->setDeleteTool(true);
 $form_list->roll->setSaveTool(false);
 
-// --- SET PESAN CUSTOM UNTUK ROLL (PENGHAPUSAN) ---
 $form_list->roll->setSuccessDeleteMessage = 'Data intern berhasil dihapus dari sistem.';
 $form_list->roll->setFailDeleteMessage    = 'Gagal menghapus data intern.';
 
@@ -97,7 +93,6 @@ $form_list->roll->input->task_link->setDisplayFunction(function ($intern_id) {
 
 $form_list->roll->action();
 
-// LOAD EDIT FORM
 ob_start();
 include 'interns_edit.php';
 $form_edit_content = ob_get_clean();
@@ -109,7 +104,6 @@ $tabs = array(
 echo tabs($tabs, ($is_edit ? 2 : 1), 'tabs_interns');
 
 
-// ========== 4. IMPORT EXCEL LOGIC ==========
 if (!empty($_POST['transfer']) && $_POST['transfer'] == 'upload') {
   if (!empty($_FILES['excel']['tmp_name']) && is_uploaded_file($_FILES['excel']['tmp_name'])) {
     $mimes = array('application/vnd.ms-excel','text/xls','text/xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -154,7 +148,6 @@ if (!empty($_POST['transfer']) && $_POST['transfer'] == 'upload') {
             }
             $db->Execute("SET FOREIGN_KEY_CHECKS=1");
 
-            // --- PENGGUNAAN PESAN SUKSES/GAGAL GAYA PEA PADA IMPORT ---
             if ($success > 0) {
                 $form_list->roll->setSuccessSaveMessage = "Import Berhasil! $success data masuk." . ($failed > 0 ? " ($failed gagal)" : "");
                 echo msg($form_list->roll->setSuccessSaveMessage, 'success');
