@@ -2,6 +2,7 @@
 if (!defined('_VALID_BBC')) exit('No direct script access allowed');
 
 $id = @intval($_GET['id']);
+global $db;
 
 $p_action = isset($_POST['add_submit_add']) ? 'add_' : (isset($_POST['edit_submit_edit']) ? 'edit_' : '');
 
@@ -85,17 +86,17 @@ function intern_logic_save($intern_id)
         if (strtotime($end) < strtotime($start)) {
             return "Tanggal Selesai harus setelah Tanggal Mulai!";
         }
-        
+
         $status = (date('Y-m-d') < $start) ? 3 : ((date('Y-m-d') <= $end) ? 1 : 2);
         $form_add->edit->addExtraField('status', $status);
     }
-
+    
     if (isset($_POST[$p . 'email']) && !is_email($email)) {
         $form_add->edit->setFailSaveMessage('Email Minimal 6 digit bro');
         $form_add->edit->error = true;
         return false;
     }
-    if (isset($_POST[$p . 'phone']) && !is_phone($phone)) {
+    if (!is_phone($phone)) {
         $form_add->edit->setFailSaveMessage('Phone Minimal 5 Digit Bro');
         $form_add->edit->error = true;
         return false;
@@ -107,4 +108,3 @@ function intern_logic_save($intern_id)
     return true;
 }
 ?>
-
