@@ -108,15 +108,3 @@ function intern_logic_save($intern_id)
     return true;
 }
 ?>
-
-<script type="text/javascript">
-    (function($) {
-        $(document).ready(function() {
-            $('input[name*="phone"]').on('blur', function() {
-                var val = $(this).val();
-                if (val && val.length < 5) $(this).css('border-color', 'red');
-                else $(this).css('border-color', '');
-            });
-        });
-    })(jQuery);
-</script>
