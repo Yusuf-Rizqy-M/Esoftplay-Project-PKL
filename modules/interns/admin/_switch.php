@@ -11,10 +11,6 @@ switch ($Bbc->mod['task']) {
     include 'interns_edit.php';
     break;
 
-  case 'interns_edit_autocomplete': 
-    include 'interns_edit_autocomplete.php';
-    break;
-
 
   case 'interns_tasks':
     include 'interns_tasks.php';
@@ -38,6 +34,10 @@ switch ($Bbc->mod['task']) {
 
   case 'interns_tasks_detail':
     include 'interns_tasks_detail.php';
+    break;
+
+      case 'interns_tasks_assigned':
+    include 'interns_tasks_assigned.php';
     break;
 
   default:

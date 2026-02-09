@@ -5,23 +5,29 @@ _func('download');
 
 if (!empty($_POST['transfer'])) {
     if ($_POST['transfer'] == 'download') {
-        $q = "SELECT title, description, timeline, type FROM interns_tasks ORDER BY id DESC LIMIT 10";
-        $r = $db->getAll($q);
+        $data_sample = [
+            [
+                'title'       => 'Implementasi API Login',
+                'description' => 'Membuat endpoint login menggunakan JWT',
+                'timeline'    => '2',
+                'type'        => 'Backend',
+            ],
+            [
+                'title'       => 'Slicing Landing Page',
+                'description' => 'Mengubah desain Figma ke HTML/CSS/JS',
+                'timeline'    => '3',
+                'type'        => 'Frontend',
+            ],
+            [
+                'title'       => 'Bug Fixing Dashboard',
+                'description' => 'Memperbaiki tampilan grafik yang berantakan',
+                'timeline'    => '1',
+                'type'        => 'UI/UX',
+            ]
+        ];
 
-        if (!empty($r)) {
-            foreach ($r as $k => &$val) {
-                if ($k == 0) {
-                    $val['Keterangan'] = 'Timeline dalam satuan hari (angka).';
-                }
-                if ($k == 1) {
-                    $val['Keterangan'] = 'Title tugas harus unik.';
-                }
-            }
-            download_excel('Sample_Tasks_Data_'.date('Y-m-d'), $r);
-            die();
-        } else {
-            echo msg('Maaf, tidak ada data task yang bisa dijadikan sampel.', 'danger');
-        }
+        download_excel('Sample_Tasks_Template_'.date('Y-m-d'), $data_sample);
+        die();
     }
 
     if ($_POST['transfer'] == 'upload') {
@@ -49,28 +55,28 @@ if (!empty($_POST['transfer'])) {
                     }
 
                     if ($is_valid) {
-                        $success = 0;
+                        $success_count = 0;
                         foreach ($output as $i => $cells) {
                             if ($i == 1 || empty($cells['A'])) continue;
 
-                            $title = trim($cells['A']);
-                            $desc  = trim($cells['B']);
-                            $time  = trim($cells['C']);
-                            $type  = trim($cells['D']);
+                            $task_title = trim($cells['A']);
+                            $task_desc  = trim($cells['B']);
+                            $task_time  = trim($cells['C']);
+                            $task_type  = trim($cells['D']);
 
-                            $is_exist = $db->getOne("SELECT 1 FROM interns_tasks WHERE title='" . addslashes($title) . "'");
+                            $is_exist = $db->getOne("SELECT 1 FROM interns_tasks WHERE title='" . addslashes($task_title) . "'");
                             if (!$is_exist) {
-                                $timeline_sql = !empty($time) && is_numeric($time) ? intval($time) : 0;
-                                $q = "INSERT INTO interns_tasks SET 
-                                    title       = '" . addslashes($title) . "', 
-                                    description = '" . addslashes($desc) . "', 
-                                    timeline    = $timeline_sql, 
-                                    type        = '" . addslashes($type) . "', 
+                                $timeline_val = !empty($task_time) && is_numeric($task_time) ? intval($task_time) : 0;
+                                $sql_query = "INSERT INTO interns_tasks SET 
+                                    title       = '" . addslashes($task_title) . "', 
+                                    description = '" . addslashes($task_desc) . "', 
+                                    timeline    = $timeline_val, 
+                                    type        = '" . addslashes($task_type) . "', 
                                     created     = NOW()";
-                                if ($db->Execute($q)) $success++;
+                                if ($db->Execute($sql_query)) $success_count++;
                             }
                         }
-                        $msg = msg("Upload tasks berhasil. $success data baru berhasil diimport.", 'success');
+                        $msg = msg("Upload tasks berhasil. $success_count data baru berhasil diimport.", 'success');
                     } else {
                         $msg = msg('Maaf, format kolom file tidak sesuai. Pastikan urutan: Title, Description, Timeline, Type.', 'danger');
                     }
@@ -85,62 +91,74 @@ if (!empty($_POST['transfer'])) {
     }
 }
 
-$formSearch = _lib('pea', 'interns_tasks');
-$formSearch->initSearch();
-$formSearch->search->addInput('keyword', 'keyword');
-$formSearch->search->input->keyword->setTitle('Search Task Title');
-$formSearch->search->input->keyword->addSearchField('title', false);
-$formSearch->search->addInput('type_keyword', 'keyword');
-$formSearch->search->input->type_keyword->setTitle('Search Type');
-$formSearch->search->input->type_keyword->addSearchField('type', false);
+// Variabel PEA diubah ke snake_case
+$form_search = _lib('pea', 'interns_tasks');
+$form_search->initSearch();
+$form_search->search->addInput('keyword', 'keyword');
+$form_search->search->input->keyword->setTitle('Search Task Title');
+$form_search->search->input->keyword->addSearchField('title', false);
+$form_search->search->addInput('type_keyword', 'keyword');
+$form_search->search->input->type_keyword->setTitle('Search Type');
+$form_search->search->input->type_keyword->addSearchField('type', false);
 
-$add_sql = $formSearch->search->action();
+$add_sql = $form_search->search->action();
 
 echo '<div style="margin-bottom: 20px;">';
-echo $formSearch->search->getForm();
+echo $form_search->search->getForm();
 echo '</div>';
 
-include 'interns_tasks_edit.php';
+$is_edit = (!empty($_GET['id']) && is_numeric($_GET['id']));
 
-$formList = _lib('pea', 'interns_tasks');
-$formList->initRoll($add_sql . ' ORDER BY id DESC', 'id');
-$formList->roll->setSaveTool(false);
-$formList->roll->setDeleteTool(true);
+$form_list = _lib('pea', 'interns_tasks');
+$form_list->initRoll($add_sql . ' ORDER BY id DESC', 'id');
+$form_list->roll->setSaveTool(false);
+$form_list->roll->setDeleteTool(true);
 
-$formList->roll->addInput('title', 'sqllinks');
-$formList->roll->input->title->setLinks($Bbc->mod['circuit'] . '.interns_tasks_edit');
-$formList->roll->input->title->setTitle('Title');
+$form_list->roll->addInput('title', 'sqllinks');
+$form_list->roll->input->title->setLinks($Bbc->mod['circuit'] . '.interns_tasks_edit');
+$form_list->roll->input->title->setTitle('Title');
 
-$formList->roll->addInput('description', 'sqlplaintext');
-$formList->roll->input->description->setTitle('Description');
+$form_list->roll->addInput('description', 'sqlplaintext');
+$form_list->roll->input->description->setTitle('Description');
 
-$formList->roll->addInput('timeline', 'sqlplaintext');
-$formList->roll->input->timeline->setTitle('Timeline (Days)');
+$form_list->roll->addInput('timeline', 'sqlplaintext');
+$form_list->roll->input->timeline->setTitle('Timeline (Days)');
 
-$formList->roll->addInput('type', 'sqlplaintext');
-$formList->roll->input->type->setTitle('Type');
+$form_list->roll->addInput('type', 'sqlplaintext');
+$form_list->roll->input->type->setTitle('Type');
 
-$formList->roll->addInput('task_link', 'sqllinks');
-$formList->roll->input->task_link->setLinks('#');
-$formList->roll->input->task_link->setTitle('Tasks');
-$formList->roll->input->task_link->setFieldName('title as task_link');
-$formList->roll->input->task_link->setDisplayFunction(function ($title) {
+$form_list->roll->addInput('task_link', 'sqllinks');
+$form_list->roll->input->task_link->setLinks('#');
+$form_list->roll->input->task_link->setTitle('Tasks');
+$form_list->roll->input->task_link->setFieldName('id as task_link');
+$form_list->roll->input->task_link->setDisplayFunction(function ($id) {
     global $Bbc;
-    $url = $Bbc->mod['circuit'] . '.interns_tasks_list&task_title=' . urlencode($title);
-    return '<a href="' . $url . '" class="btn btn-xs btn-primary">Lihat Pengerjaan</a>';
+    $target_url = $Bbc->mod['circuit'] . '.interns_tasks_list&internal_tasks_id=' . urlencode($id);
+    return '<a href="' . $target_url . '" class="btn btn-xs btn-primary">Lihat Pengerjaan</a>';
 });
 
-$formList->roll->action();
+$form_list->roll->addInput('task_link_assigned', 'sqllinks');
+$form_list->roll->input->task_link_assigned->setTitle('Assigned');
+$form_list->roll->input->task_link_assigned->setFieldName('id as task_link_assigned');
+$form_list->roll->input->task_link_assigned->setLinks($Bbc->mod['circuit'] . '.interns_tasks_assigned');
+$form_list->roll->input->task_link_assigned->setDisplayFunction(function ($id) {
+    global $Bbc;
+    $target_url = $Bbc->mod['circuit'] . '.interns_tasks_assigned&id=' . urlencode($id);
+    return '<a href="' . $target_url . '" class="btn btn-xs btn-primary">Assigned</a>';
+});
 
-echo '<div class="panel panel-default">';
-echo '<div class="panel-heading"><h3 class="panel-title">Daftar Tugas</h3></div>';
-echo '<div class="panel-body">' . $formList->roll->getForm() . '</div>';
-echo '</div>';
 
-echo '<div class="panel panel-default">';
-echo '<div class="panel-heading"><h3 class="panel-title">Add Task</h3></div>';
-echo '<div class="panel-body">' . $formAdd->edit->getForm() . '</div>';
-echo '</div>';
+$form_list->roll->action();
+
+ob_start();
+include 'interns_tasks_edit.php';
+$form_edit_content = ob_get_clean();
+
+$tab_list = array(
+    'Daftar Tugas' => $form_list->roll->getForm(),
+    ($is_edit ? 'Edit Task' : 'Add Task') => $form_edit_content
+);
+echo tabs($tab_list, ($is_edit ? 2 : 1), 'tabs_interns_tasks');
 ?>
 
 <div class="col-xs-12 no-both">
@@ -161,7 +179,7 @@ echo '</div>';
         </div>
         <div class="panel-footer">
           <button type="submit" name="transfer" value="upload" class="btn btn-primary"><?php echo icon('fa-upload') ?> Upload Sekarang</button>
-          <button type="submit" name="transfer" value="download" class="btn btn-default pull-right"><?php echo icon('fa-download') ?> Download Sample dari DB</button>
+          <button type="submit" name="transfer" value="download" class="btn btn-default pull-right"><?php echo icon('fa-download') ?> Download Sample Template</button>
         </div>
       </form>
     </div>

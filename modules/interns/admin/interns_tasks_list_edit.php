@@ -2,159 +2,116 @@
 if (!defined('_VALID_BBC')) exit('No direct script access allowed');
 ?>
 <style>
-  /* Hilangkan button Edit di header modal */
   .modal-header .btn:not(.close),
   .modal-header button[type="button"]:not(.close) {
     display: none !important;
   }
 </style>
 <?php
-$db = $GLOBALS['db'];
-$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$db_obj = $GLOBALS['db'];
+$task_list_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-if ($id > 0) {
-  $old = $db->getRow("SELECT * FROM interns_tasks_list WHERE id={$id}");
-  $intern_name = $db->getOne("SELECT name FROM interns WHERE id={$old['interns_id']}");
-  $task_title = $db->getOne("SELECT title FROM interns_tasks WHERE id={$old['interns_tasks_id']}");
+if ($task_list_id > 0) {
+  $old_data = $db_obj->getRow("SELECT * FROM `interns_tasks_list` WHERE `id`={$task_list_id}");
+  $intern_name = $db_obj->getOne("SELECT `name` FROM `interns` WHERE `id`=".intval($old_data['interns_id']));
+  $task_title = $db_obj->getOne("SELECT `title` FROM `interns_tasks` WHERE `id`=".intval($old_data['interns_tasks_id']));
 }
 
-$formAdd = _lib('pea', 'interns_tasks_list');
-$formAdd->initEdit($id > 0 ? "WHERE id={$id}" : "");
+$form_add = _lib('pea', 'interns_tasks_list');
+$form_add->initEdit($task_list_id > 0 ? "WHERE `id`={$task_list_id}" : "");
 
-// ========== TAMBAHKAN HEADER HANYA UNTUK EDIT MODE (ID > 0) ==========
-if ($id > 0) {
-  $formAdd->edit->addInput('header', 'header');
-  $formAdd->edit->input->header->setTitle('Edit Daftar Tugas Intern');
-}
+if ($task_list_id > 0) {
+  $form_add->edit->addInput('header', 'header');
+  $form_add->edit->input->header->setTitle('Edit Daftar Tugas Intern');
 
-if ($id > 0) {
-  // EDIT MODE: Show plaintext
+  $form_add->edit->addInput('task_title_display', 'plaintext');
+  $form_add->edit->input->task_title_display->setTitle('Task');
+  $form_add->edit->input->task_title_display->setValue($task_title);
+  $form_add->edit->addInput('interns_tasks_id', 'hidden');
 
-  // ✅ 1. TASK (PERTAMA)
-  $formAdd->edit->addInput('task_title', 'plaintext');
-  $formAdd->edit->input->task_title->setTitle('Task');
-  $formAdd->edit->input->task_title->setValue($task_title);
-
-  $formAdd->edit->addInput('interns_tasks_id', 'hidden');
-
-  // ✅ 2. INTERN (KEDUA)
-  $formAdd->edit->addInput('intern_name', 'plaintext');
-  $formAdd->edit->input->intern_name->setTitle('Intern');
-  $formAdd->edit->input->intern_name->setValue($intern_name);
-
-  $formAdd->edit->addInput('interns_id', 'hidden');
+  $form_add->edit->addInput('intern_name_display', 'plaintext');
+  $form_add->edit->input->intern_name_display->setTitle('Name');
+  $form_add->edit->input->intern_name_display->setValue($intern_name);
+  $form_add->edit->addInput('interns_id', 'hidden');
 } else {
-  // ADD MODE: Autocomplete untuk TASK dan INTERN
+  $form_add->edit->addInput('interns_tasks_id', 'selecttable');
+  $form_add->edit->input->interns_tasks_id->setTitle('Task');
+  $form_add->edit->input->interns_tasks_id->setReferenceTable('interns_tasks');
+  $form_add->edit->input->interns_tasks_id->setReferenceField('title', 'id');
+  $form_add->edit->input->interns_tasks_id->setAutoComplete(true);
+  $form_add->edit->input->interns_tasks_id->setRequire();
 
-  // ✅ 1. TASK (PERTAMA) - DENGAN AUTOCOMPLETE
-  $formAdd->edit->addInput('interns_tasks_id', 'selecttable');
-  $formAdd->edit->input->interns_tasks_id->setTitle('Task');
-  $formAdd->edit->input->interns_tasks_id->setReferenceTable('interns_tasks');
-  $formAdd->edit->input->interns_tasks_id->setReferenceField('title', 'id');
-  $formAdd->edit->input->interns_tasks_id->setAutoComplete(true);
-  $formAdd->edit->input->interns_tasks_id->setRequire();
-
-  // ✅ 2. INTERN (KEDUA) - DENGAN AUTOCOMPLETE
-  $formAdd->edit->addInput('interns_id', 'selecttable');
-  $formAdd->edit->input->interns_id->setTitle('Intern');
-  $formAdd->edit->input->interns_id->setReferenceTable('interns');
-  $formAdd->edit->input->interns_id->setReferenceField('name', 'id');
-  $formAdd->edit->input->interns_id->setAutoComplete(true);
-  $formAdd->edit->input->interns_id->setRequire();
+  $form_add->edit->addInput('interns_id', 'selecttable');
+  $form_add->edit->input->interns_id->setTitle('Intern');
+  $form_add->edit->input->interns_id->setReferenceTable('interns');
+  $form_add->edit->input->interns_id->setReferenceField('name', 'id');
+  $form_add->edit->input->interns_id->setAutoComplete(true);
+  $form_add->edit->input->interns_id->setRequire();
 }
 
-$formAdd->edit->addInput('notes', 'textarea');
-$formAdd->edit->input->notes->setTitle('Notes');
+$form_add->edit->addInput('notes', 'textarea');
+$form_add->edit->input->notes->setTitle('Notes');
 
-$formAdd->edit->addInput('status', 'select');
-$formAdd->edit->input->status->setTitle('Status');
-$formAdd->edit->input->status->addOption('To Do', 1);
-$formAdd->edit->input->status->addOption('In Progress', 2);
-$formAdd->edit->input->status->addOption('Submit', 3);
-$formAdd->edit->input->status->addOption('Revised', 4);
-$formAdd->edit->input->status->addOption('Done', 5);
-$formAdd->edit->input->status->addOption('Cancel', 6);
-$formAdd->edit->input->status->setRequire();
+$form_add->edit->addInput('status', 'select');
+$form_add->edit->input->status->setTitle('Status');
+$form_add->edit->input->status->addOption('To Do', 1);
+$form_add->edit->input->status->addOption('In Progress', 2);
+$form_add->edit->input->status->addOption('Submit', 3);
+$form_add->edit->input->status->addOption('Revised', 4);
+$form_add->edit->input->status->addOption('Done', 5);
+$form_add->edit->input->status->addOption('Cancel', 6);
+$form_add->edit->input->status->setRequire();
 
-// ========== PANGGIL action() DULU SEBELUM HANDLE POST ==========
-$formAdd->edit->action();
 
-// ========== HANDLE POST SUBMIT - SETELAH action() ==========
+
+$form_add->edit->action();
+
 if (!empty($_POST) && !empty($_POST['edit_submit_update'])) {
-  // ✅ AMBIL ID BARU SETELAH INSERT (Insert_ID() harus dipanggil SETELAH action())
-  $new_id = $db->Insert_ID();
+  $final_id = ($task_list_id > 0) ? $task_list_id : $db_obj->Insert_ID();
 
-  if ($id == 0 && $new_id > 0) {
-    // ========== ADD MODE ==========
-    $new = $db->getRow("SELECT * FROM interns_tasks_list WHERE id={$new_id}");
+  if ($final_id > 0) {
+    $current_data = $db_obj->getRow("SELECT * FROM `interns_tasks_list` WHERE `id`={$final_id}");
+    if (!empty($current_data)) {
+      $db_obj->Execute("INSERT INTO `interns_tasks_list_history` (`interns_id`, `interns_tasks_list_id`, `status`, `created`) VALUES ({$current_data['interns_id']}, {$final_id}, {$current_data['status']}, NOW())");
+      $db_obj->Execute("UPDATE `interns_tasks_list` SET `updated` = NOW() WHERE `id` = {$final_id}");
 
-    if (!empty($new)) {
-      // Insert ke history
-      $db->Execute("INSERT INTO interns_tasks_list_history (interns_id, interns_tasks_list_id, status, created) VALUES ({$new['interns_id']}, {$new_id}, {$new['status']}, NOW())");
-      $db->Execute("UPDATE interns_tasks_list SET updated = NOW() WHERE id = {$new_id}");
-
-      // ========== SET SESSION UNTUK NOTIFIKASI ==========
-      $task_title = $db->getOne("SELECT title FROM interns_tasks WHERE id = {$new['interns_tasks_id']}");
-      $intern_name = $db->getOne("SELECT name FROM interns WHERE id = {$new['interns_id']}");
-
-      $_SESSION['tasklist_add_success'] = [
-        'task' => $task_title,
-        'intern' => $intern_name
-      ];
+      if ($task_list_id == 0) {
+        $task_title_new = $db_obj->getOne("SELECT `title` FROM `interns_tasks` WHERE `id` = {$current_data['interns_tasks_id']}");
+        $intern_name_new = $db_obj->getOne("SELECT `name` FROM `interns` WHERE `id` = {$current_data['interns_id']}");
+        $_SESSION['tasklist_add_success'] = ['task' => $task_title_new, 'intern' => $intern_name_new];
+      }
     }
-
-    // Redirect ke halaman utama
-    $redirect_url = 'index.php?mod=interns.interns_tasks_list';
-    header("Location: {$redirect_url}");
-    exit;
-  } elseif ($id > 0) {
-    // ========== EDIT MODE ==========
-    $new = $db->getRow("SELECT * FROM interns_tasks_list WHERE id={$id}");
-    if (!empty($new)) {
-      $db->Execute("INSERT INTO interns_tasks_list_history (interns_id, interns_tasks_list_id, status, created) VALUES ({$new['interns_id']}, {$id}, {$new['status']}, NOW())");
-      $db->Execute("UPDATE interns_tasks_list SET updated = NOW() WHERE id = {$id}");
-    }
-
-    // Redirect ke halaman utama
-    $redirect_url = 'index.php?mod=interns.interns_tasks_list';
-    header("Location: {$redirect_url}");
+    header("Location: index.php?mod=interns.interns_tasks_list");
     exit;
   }
 }
 
-// Hanya tampilkan form untuk EDIT mode (dipanggil via modal)
-if ($id > 0) {
-  echo $formAdd->edit->getForm();
-}
+echo $form_add->edit->getForm();
 ?>
 
 <?php if (!empty($_GET['is_ajax'])): ?>
   <script>
     _Bbc($ => {
-      // ========== HILANGKAN BUTTON "EDIT" DI HEADER MODAL ==========
       setTimeout(() => {
-        // Cari modal yang sedang aktif
-        const activeModal = parent.$('.modal.in');
-        if (activeModal.length) {
-          // Hapus semua button di modal header (kecuali tombol close [X])
-          activeModal.find('.modal-header .btn, .modal-header button[type="button"]:not(.close)').remove();
+        const active_modal = parent.$('.modal.in');
+        if (active_modal.length) {
+          active_modal.find('.modal-header .btn, .modal-header button[type="button"]:not(.close)').remove();
         }
       }, 100);
 
-      const editFormURL = new URL(<?php echo json_encode(seo_url()) ?>);
-      const editForm = $('form[name="edit"]');
-      editFormURL.searchParams.delete('is_ajax');
-      editFormURL.searchParams.delete('return');
+      const edit_form_url = new URL(<?php echo json_encode(seo_url()) ?>);
+      const edit_form_obj = $('form[name="edit"]');
+      edit_form_url.searchParams.delete('is_ajax');
+      edit_form_url.searchParams.delete('return');
 
-      editForm.on('submit', e => {
+      edit_form_obj.on('submit', e => {
         e.preventDefault();
-        let data = editForm.serialize() + '&edit_submit_update=SAVE';
-
+        let form_data = edit_form_obj.serialize() + '&edit_submit_update=SAVE';
         $.ajax({
           type: "POST",
-          url: editFormURL.toString(),
-          data: data,
-          success: function(data) {
+          url: edit_form_url.toString(),
+          data: form_data,
+          success: function(response) {
             location.reload();
           }
         });
