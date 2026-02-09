@@ -770,7 +770,7 @@ CREATE TABLE `interns` (
   `email` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `school` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `school_id` int DEFAULT NULL,
   `major` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `start_date` date DEFAULT NULL,
   `end_date` date DEFAULT NULL,
@@ -780,13 +780,26 @@ CREATE TABLE `interns` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
   KEY `user_id` (`user_id`),
-  CONSTRAINT `fk_interns_user` FOREIGN KEY (`user_id`) REFERENCES `bbc_user` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
+  KEY `school_id` (`school_id`),
+  CONSTRAINT `fk_interns_user` FOREIGN KEY (`user_id`) REFERENCES `bbc_user` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_interns_school` FOREIGN KEY (`school_id`) REFERENCES `interns_school` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 INSERT INTO `interns` 
-(`id`, `user_id`, `email`, `name`, `phone`, `school`, `major`, `start_date`, `end_date`, `status`, `created`, `updated`) 
+(`id`, `user_id`, `email`, `name`, `phone`, `school_id`, `major`, `start_date`, `end_date`, `status`, `created`, `updated`) 
 VALUES 
-(1, 3, 'yusufhabib290@gmail.com', 'Yusuf Rizqy', '085786673009', 'SMK Raden Umar Said', 'PPLG', '2025-10-06', '2026-03-28', 1, '2025-12-22 12:50:41', NULL);
+(1, 3, 'yusufhabib290@gmail.com', 'Yusuf Rizqy', '085786673009', 1, 'PPLG', '2025-10-06', '2026-03-28', 1, '2025-12-22 12:50:41', NULL);
+
+DROP TABLE IF EXISTS `interns_school`;
+CREATE TABLE `interns_school` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `school_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `school_name` (`school_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+INSERT INTO `interns_school`
+VALUES(1,'SMK Raden Umar Said', NOW());
+
 DROP TABLE IF EXISTS `interns_report`;
 CREATE TABLE `interns_report` (
   `id` int NOT NULL AUTO_INCREMENT,

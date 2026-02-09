@@ -5,23 +5,21 @@ _func('download');
 
 if (!empty($_POST['transfer'])) {
     if ($_POST['transfer'] == 'download') {
-        $q = "SELECT email, name, phone, school, major, start_date, end_date FROM interns ORDER BY id DESC LIMIT 10";
-        $r = $db->getAll($q);
-
-        if (!empty($r)) {
-            foreach ($r as $k => &$val) {
-                if ($k == 0) {
-                    $val['Keterangan'] = 'Format tanggal: YYYY-MM-DD (Contoh: 2025-10-06)';
-                }
-                if ($k == 1) {
-                    $val['Keterangan'] = 'Email harus unik dan belum terdaftar di sistem.';
-                }
-            }
-            download_excel('Sample_Intern_Data_'.date('Y-m-d'), $r);
-            die();
-        } else {
-            echo msg('Maaf, tidak ada data intern yang bisa dijadikan sampel.', 'danger');
-        }
+        $sample_data = array(
+            array(
+                'Email'      => 'choirulanam@gmail.com',
+                'Name'       => 'Muhammad Choirul Anam',
+                'Phone'      => '081234567890',
+                'School'     => 'SMK Raden Umar Said',
+                'Major'      => 'PPLG',
+                'Start Date' => '2025-10-06',
+                'End Date'   => '2026-04-06',
+                'Keterangan' => 'Format tanggal: YYYY-MM-DD'
+            ),
+        );
+        
+        download_excel('Sample_Import_Intern_'.date('Y-m-d'), $sample_data, 'Intern Data');
+        die();
     }
 
     if ($_POST['transfer'] == 'upload') {
@@ -108,9 +106,14 @@ $form_search->search->input->status->addOption('Coming Soon', '3');
 $form_search->search->addInput('name', 'keyword');
 $form_search->search->input->name->setTitle('Name');
 $form_search->search->input->name->addSearchField('name', false);
-$form_search->search->addInput('school', 'keyword');
-$form_search->search->input->school->setTitle('School');
-$form_search->search->input->school->addSearchField('school', false);
+
+$form_search->search->addInput('school_id', 'selecttable'); 
+$form_search->search->input->school_id->setTitle('School');
+$form_search->search->input->school_id->setReferenceTable('interns_school');
+$form_search->search->input->school_id->setReferenceField('school_name', 'id');
+$form_search->search->input->school_id->setAutoComplete(true);
+
+
 $form_search->search->addInput('start_date', 'dateinterval');
 $form_search->search->input->start_date->setIsSearchRange();
 $form_search->search->input->start_date->setTitle('Start Date');
@@ -129,8 +132,11 @@ $form_list->roll->input->name->setLinks($Bbc->mod['circuit'] . '.interns_edit');
 $form_list->roll->input->name->setTitle('Name');
 $form_list->roll->addInput('email', 'sqlplaintext');
 $form_list->roll->input->email->setTitle('Email');
-$form_list->roll->addInput('school', 'sqlplaintext');
-$form_list->roll->input->school->setTitle('School');
+
+$form_list->roll->addInput('school_id', 'sqlplaintext');
+$form_list->roll->input->school_id->setTitle('School');
+$form_list->roll->input->school_id->setFieldName('(SELECT school_name FROM interns_school WHERE interns_school.id=interns.school_id) AS school_name');
+
 $form_list->roll->addInput('phone', 'sqlplaintext');
 $form_list->roll->input->phone->setTitle('Phone');
 
@@ -149,6 +155,15 @@ $form_list->roll->input->status->setDisplayFunction(function ($value) {
     if (empty($value) || !isset($status_map[$value])) return 'Unknown';
     $status = $status_map[$value];
     return '<span class="label" style="background-color: ' . $status['color'] . '; color: white; padding: 5px 12px; border-radius: 12px;">' . $status['label'] . '</span>';
+});
+
+$form_list->roll->addInput('task_link', 'sqllinks');
+$form_list->roll->input->task_link->setTitle('Tasks');
+$form_list->roll->input->task_link->setFieldName('id AS task_link');
+$form_list->roll->input->task_link->setDisplayFunction(function ($intern_id) {
+  global $Bbc;
+  $url = $Bbc->mod['circuit'] . '.interns_tasks_list&force_intern_id=' . intval($intern_id);
+  return '<a href="' . $url . '" class="btn btn-xs btn-primary">Lihat Pengerjaan</a>';
 });
 
 $form_list->roll->action();
@@ -182,7 +197,7 @@ function calculate_intern_status_import($start, $end) {
   <div class="panel panel-default">
     <div class="panel-heading">
       <h4 class="panel-title" data-toggle="collapse" href="#import_panel" style="cursor:pointer;">
-        <?php echo icon('fa-file-excel-o') ?> Klik disini untuk Manage Data (Import/Download)
+        <?php echo icon('fa-file-excel-o') ?> Klik disini untuk import data Excel
       </h4>
     </div>
     <div id="import_panel" class="panel-collapse collapse">
