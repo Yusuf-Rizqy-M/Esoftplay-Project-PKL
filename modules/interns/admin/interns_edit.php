@@ -1,10 +1,18 @@
 <?php
 if (!defined('_VALID_BBC')) exit('No direct script access allowed');
 
-$id = @intval($_GET['id']);
+$id = @intval($_GET['id']?? $_GET['interns_id']);
 
 $form_add = _lib('pea', 'interns');
 $form_add->initEdit($id > 0 ? "WHERE `id`=$id" : "");
+
+if ($id > 0) {
+  $form_add->edit->formEditLinks = array(
+    'Profil Intern'      => $Bbc->mod['circuit'] . '.interns_edit&id=' . $id,
+    'Tambah Pengerjaan' => $Bbc->mod['circuit'] . '.interns_tasks_list&interns_id=' . $id
+  );
+}
+
 $form_add->edit->setSuccessSaveMessage = ($id > 0) ? 'Berhasil update data intern!' : 'Berhasil menambah intern baru!';
 $form_add->edit->addInput('header', 'header');
 $form_add->edit->input->header->setTitle($id > 0 ? 'Edit Intern' : 'Add Intern');
@@ -43,27 +51,26 @@ function intern_logic_save($intern_id)
 {
   global $form_add;
   global $db;
+  global $id;
   
-  $is_edit = $db->getOne("SELECT 1 FROM `interns` WHERE `id`=" . intval($intern_id));
+  $is_edit = $db->getOne("SELECT 1 FROM `interns` WHERE `id`=" . intval($id));
   $prefix  = $is_edit ? 'edit_' : 'add_';
 
   $email = isset($_POST[$prefix . 'email']) ? $_POST[$prefix . 'email'] : '';
   $phone = isset($_POST[$prefix . 'phone']) ? $_POST[$prefix . 'phone'] : '';
 
   if (!empty($email) && !is_email($email)) {
-    $form_add->edit->setFailSaveMessage('Email tidak valid bro dan 6 digit bro');
+    $form_add->edit->setFailSaveMessage('Email tidak valid bro!');
     $form_add->edit->error = true;
     return false;
   }
-
   if (!empty($phone) && !is_phone($phone)) {
     $form_add->edit->setFailSaveMessage('Phone Minimal 5 Digit Bro');
     $form_add->edit->error = true;
     return false;
   }
-
-  $start = $_POST[$prefix . 'start_date'];
-  $end   = $_POST[$prefix . 'end_date'];
+  $start = isset($_POST[$prefix . 'start_date']) ? $_POST[$prefix . 'start_date'] : '';
+  $end   = isset($_POST[$prefix . 'end_date']) ? $_POST[$prefix . 'end_date'] : '';
 
   if (!empty($start) && !empty($end)) {
     $status = (date('Y-m-d') < $start) ? 3 : ((date('Y-m-d') <= $end) ? 1 : 2);
@@ -71,17 +78,20 @@ function intern_logic_save($intern_id)
   }
   
   if (!$is_edit) {
-    $name = $_POST['add_name'];
+    $name = isset($_POST['add_name']) ? $_POST['add_name'] : '';
     $user_id = $db->getOne("SELECT `id` FROM `bbc_user` WHERE `username`='" . addslashes($email) . "'");
+    
     if (!$user_id) {
       $user_id = user_create([
         'username'  => $email,
         'name'      => $name,
         'email'     => $email,
         'password'  => 'intern123',
-        'group_ids' => array(3)
+        'group_ids' => array(3),
+        'params'    => ['_padding' => 1], 
       ]);
     }
+
     if ($user_id) {
       $form_add->edit->addExtraField('user_id', $user_id);
     }

@@ -69,6 +69,7 @@ $form->roll->input->status->setDisplayFunction(function ($value) {
 $form->roll->addInput('created', 'sqlplaintext');
 $form->roll->input->created->setTitle('Created');
 $form->roll->input->created->setDateFormat('d M Y, H:i');
+$form->roll->input->created->setDisplayColumn(false);
 
 $output = $form->roll->getForm();
 

@@ -146,7 +146,8 @@ $form_list->roll->input->task_link_assigned->setDisplayFunction(function ($id) {
     $target_url = $Bbc->mod['circuit'] . '.interns_tasks_assigned&id=' . urlencode($id);
     return '<a href="' . $target_url . '" class="btn btn-xs btn-primary">Assigned</a>';
 });
-
+$form_list->roll->addInput('created', 'sqlplaintext');
+$form_list->roll->input->created->setDisplayColumn(false);
 
 $form_list->roll->action();
 
@@ -155,7 +156,7 @@ include 'interns_tasks_edit.php';
 $form_edit_content = ob_get_clean();
 
 $tab_list = array(
-    'Daftar Tugas' => $form_list->roll->getForm(),
+    'List Task' => $form_list->roll->getForm(),
     ($is_edit ? 'Edit Task' : 'Add Task') => $form_edit_content
 );
 echo tabs($tab_list, ($is_edit ? 2 : 1), 'tabs_interns_tasks');
@@ -165,7 +166,7 @@ echo tabs($tab_list, ($is_edit ? 2 : 1), 'tabs_interns_tasks');
   <div class="panel panel-default">
     <div class="panel-heading">
       <h4 class="panel-title" data-toggle="collapse" href="#import_tasks_panel" style="cursor:pointer;">
-        <?php echo icon('fa-file-excel-o') ?> Klik disini untuk Manage Task (Import/Download)
+        <?php echo icon('fa-file-excel-o') ?> Klik disini untuk import data Excel
       </h4>
     </div>
     <div id="import_tasks_panel" class="panel-collapse collapse">
@@ -174,12 +175,12 @@ echo tabs($tab_list, ($is_edit ? 2 : 1), 'tabs_interns_tasks');
           <div class="form-group">
             <label>Upload File Excel (.xlsx atau .xls)</label>
             <input type="file" name="excel" class="form-control" accept=".xlsx,.xls" />
-            <div class="help-block">Pastikan kolom: Title, Description, Timeline, Type.</div>
+            <div class="help-block">Pastikan kolom sesuai: Title, Description, Timeline, Type.</div>
           </div>
         </div>
         <div class="panel-footer">
           <button type="submit" name="transfer" value="upload" class="btn btn-primary"><?php echo icon('fa-upload') ?> Upload Sekarang</button>
-          <button type="submit" name="transfer" value="download" class="btn btn-default pull-right"><?php echo icon('fa-download') ?> Download Sample Template</button>
+          <button type="submit" name="transfer" value="download" class="btn btn-default pull-right"><?php echo icon('fa-download') ?> Download Sample</button>
         </div>
       </form>
     </div>

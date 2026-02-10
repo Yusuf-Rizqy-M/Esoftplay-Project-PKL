@@ -174,11 +174,11 @@ $form_list->roll->setSaveTool(false);
 
 $form_list->roll->addInput('title', 'sqlplaintext');
 $form_list->roll->input->title->setFieldName('interns_tasks_id AS title');
-$form_list->roll->input->title->setTitle('Title');
+$form_list->roll->input->title->setTitle('Tasks');
 $form_list->roll->input->title->setDisplayFunction(function ($id) {
   global $db;
   $task = $db->getRow("SELECT title, description,timeline,type FROM interns_tasks WHERE id=" . intval($id));
-
+  
   return <<<HTML
       <span class="tips" title="" data-toggle="popover" data-placement="auto" data-content="<table>
           <tbody>
@@ -266,6 +266,11 @@ $form_list->roll->input->status_intern->setDisplayFunction(function ($value) {
   return '<span class="label" style="background-color: ' . $status['color'] . '; color: white; padding: 5px 12px; border-radius: 12px;">' . $status['label'] . '</span>';
 });
 
+$form_list->roll->addInput('created', 'sqlplaintext');
+$form_list->roll->input->created->setDisplayColumn(false);
+$form_list->roll->addInput('updated', 'sqlplaintext');
+$form_list->roll->input->updated->setDisplayColumn(false);
+
 $form_list->roll->action();
 
 ob_start();
@@ -273,8 +278,8 @@ include 'interns_tasks_list_edit.php';
 $form_edit_content = ob_get_clean();
 
 $tabs = [
-  'List Tasks' => $form_list->roll->getForm(),
-  ($is_edit ? 'Edit Task' : 'Add Task') => $form_edit_content
+  'List To Do' => $form_list->roll->getForm(),
+  ($is_edit ? 'Edit Task' : 'Add To Do') => $form_edit_content
 ];
 echo tabs($tabs, ($is_edit ? 2 : 1), 'tabs_task_list');
 ?>
@@ -283,7 +288,7 @@ echo tabs($tabs, ($is_edit ? 2 : 1), 'tabs_task_list');
   <div class="panel panel-default" style="margin-top:20px;">
     <div class="panel-heading">
       <h4 class="panel-title" data-toggle="collapse" href="#import_panel" style="cursor:pointer;">
-        <?php echo icon('fa-file-excel-o') ?> Manage Data (Import/Download)
+        <?php echo icon('fa-file-excel-o') ?> Klik disini untuk import data Excel
       </h4>
     </div>
     <div id="import_panel" class="panel-collapse collapse">
@@ -296,7 +301,7 @@ echo tabs($tabs, ($is_edit ? 2 : 1), 'tabs_task_list');
           </div>
         </div>
         <div class="panel-footer">
-          <button type="submit" name="transfer" value="upload" class="btn btn-primary"><?php echo icon('fa-upload') ?> Upload</button>
+          <button type="submit" name="transfer" value="upload" class="btn btn-primary"><?php echo icon('fa-upload') ?> Upload Sekarang</button>
           <button type="submit" name="transfer" value="download" class="btn btn-default pull-right"><?php echo icon('fa-download') ?> Download Sample</button>
         </div>
       </form>

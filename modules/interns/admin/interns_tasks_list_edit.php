@@ -22,7 +22,7 @@ $form_add->initEdit($task_list_id > 0 ? "WHERE `id`={$task_list_id}" : "");
 
 if ($task_list_id > 0) {
   $form_add->edit->addInput('header', 'header');
-  $form_add->edit->input->header->setTitle('Edit Daftar Tugas Intern');
+  $form_add->edit->input->header->setTitle('Edit List To Do Intern');
 
   $form_add->edit->addInput('task_title_display', 'plaintext');
   $form_add->edit->input->task_title_display->setTitle('Task');
@@ -47,6 +47,9 @@ if ($task_list_id > 0) {
   $form_add->edit->input->interns_id->setReferenceField('name', 'id');
   $form_add->edit->input->interns_id->setAutoComplete(true);
   $form_add->edit->input->interns_id->setRequire();
+  if(!empty($_GET['interns_id'])){
+      $form_add->edit->input->interns_id->setDefaultValue(($_GET['interns_id']));
+  }
 }
 
 $form_add->edit->addInput('notes', 'textarea');

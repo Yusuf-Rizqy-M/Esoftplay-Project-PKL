@@ -57,9 +57,9 @@ if (!empty($_POST['transfer'])) {
 
                             $email = strtolower(trim($cells['A']));
                             if (is_email($email)) {
-                                $is_exist = $db->getOne("SELECT 1 FROM interns WHERE email='" . addslashes($email) . "'");
+                                $is_exist = $db->getOne("SELECT 1 FROM `interns` WHERE `email`='" . addslashes($email) . "'");
                                 if (!$is_exist) {
-                                    $user_id = $db->getOne("SELECT id FROM bbc_user WHERE username='" . addslashes($email) . "'");
+                                    $user_id = $db->getOne("SELECT `id` FROM `bbc_user` WHERE `username`='" . addslashes($email) . "'");
                                     if (!$user_id) {
                                         $user_params = array(
                                             'username' => $email, 'name' => $cells['B'], 'email' => $email,
@@ -127,15 +127,24 @@ $form_list->initRoll($add_sql . ' ORDER BY id DESC', 'id');
 $form_list->roll->setDeleteTool(true);
 $form_list->roll->setSaveTool(false);
 
-$form_list->roll->addInput('name', 'sqllinks');
-$form_list->roll->input->name->setLinks($Bbc->mod['circuit'] . '.interns_edit');
+$form_list->roll->addInput('id_menu', 'editlinks');
+$form_list->roll->input->id_menu->setTitle('Menu');
+$form_list->roll->input->id_menu->setFieldName('id'); 
+$form_list->roll->input->id_menu->setCaption('Opsi'); 
+$form_list->roll->input->id_menu->setGetName( 'interns_id' );
+$form_list->roll->input->id_menu->setLinks(array(
+  $Bbc->mod['circuit'] . '.interns_edit'=> icon('fa-user') . ' Edit Intern',
+  $Bbc->mod['circuit'] . '.interns_tasks_list' => icon('fa-list') . ' Tambah Pengerjaan'
+));
+
+$form_list->roll->addInput('name', 'sqlplaintext');
 $form_list->roll->input->name->setTitle('Name');
 $form_list->roll->addInput('email', 'sqlplaintext');
 $form_list->roll->input->email->setTitle('Email');
 
 $form_list->roll->addInput('school_id', 'sqlplaintext');
 $form_list->roll->input->school_id->setTitle('School');
-$form_list->roll->input->school_id->setFieldName('(SELECT school_name FROM interns_school WHERE interns_school.id=interns.school_id) AS school_name');
+$form_list->roll->input->school_id->setFieldName('(SELECT `school_name` FROM `interns_school` WHERE `interns_school`.id=`interns`.`school_id`) AS school_name');
 
 $form_list->roll->addInput('phone', 'sqlplaintext');
 $form_list->roll->input->phone->setTitle('Phone');
@@ -162,9 +171,12 @@ $form_list->roll->input->task_link->setTitle('Tasks');
 $form_list->roll->input->task_link->setFieldName('id AS task_link');
 $form_list->roll->input->task_link->setDisplayFunction(function ($intern_id) {
   global $Bbc;
-  $url = $Bbc->mod['circuit'] . '.interns_tasks_list&force_intern_id=' . intval($intern_id);
+$url = $Bbc->mod['circuit'] . '.interns_tasks_list&interns_id=' . intval($intern_id);
   return '<a href="' . $url . '" class="btn btn-xs btn-primary">Lihat Pengerjaan</a>';
 });
+
+$form_list->roll->addInput('created', 'sqlplaintext');
+$form_list->roll->input->created->setDisplayColumn(false);
 
 $form_list->roll->action();
 
@@ -206,12 +218,12 @@ function calculate_intern_status_import($start, $end) {
           <div class="form-group">
             <label>Upload File Excel (.xlsx atau .xls)</label>
             <input type="file" name="excel" class="form-control" accept=".xlsx,.xls" />
-            <div class="help-block">Pastikan susunan kolom sesuai dengan file sample.</div>
+              <p class="help-block">Pastikan kolom sesuai: Name, Email, School, Phone, Start Date, End Date</p>
           </div>
         </div>
         <div class="panel-footer">
           <button type="submit" name="transfer" value="upload" class="btn btn-primary"><?php echo icon('fa-upload') ?> Upload Sekarang</button>
-          <button type="submit" name="transfer" value="download" class="btn btn-default pull-right"><?php echo icon('fa-download') ?> Download Sample dari DB</button>
+          <button type="submit" name="transfer" value="download" class="btn btn-default pull-right"><?php echo icon('fa-download') ?> Download Sample</button>
         </div>
       </form>
     </div>
