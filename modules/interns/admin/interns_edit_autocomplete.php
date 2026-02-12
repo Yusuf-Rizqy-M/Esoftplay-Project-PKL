@@ -1,8 +1,6 @@
 <?php
 if (!defined('_VALID_BBC')) exit('No direct script access allowed');
 
-// Sertakan file interns_edit.php HANYA untuk mengambil fungsi intern_logic_save
-// Kita gunakan output buffering agar tampilan dari file tersebut tidak muncul
 ob_start();
 include_once 'interns_edit.php';
 ob_end_clean();
@@ -36,11 +34,9 @@ $form_add->edit->input->school_id->setTitle('School');
 $form_add->edit->input->school_id->setReferenceTable('interns_school');
 $form_add->edit->input->school_id->setReferenceField('school_name', 'id');
 
-// AKTIFKAN AUTOCOMPLETE SAJA
 $form_add->edit->input->school_id->setAutoComplete(true);
 $form_add->edit->input->school_id->setAllowNew(false);
 
-// Link untuk kembali ke mode input manual (tambah sekolah baru)
 $form_add->edit->input->school_id->addTip('Mode pencarian aktif. Jika sekolah tidak ditemukan, klik <a href="' . $Bbc->mod['circuit'] . '.interns_edit&id=' . $id . '">disini</a> untuk menambah sekolah baru.');
 
 $form_add->edit->addInput('major', 'text');
@@ -50,7 +46,6 @@ $form_add->edit->addInput('start_date', 'dateinterval');
 $form_add->edit->input->start_date->setTitle('Start Date');
 $form_add->edit->input->start_date->setEndDateField('end_date');
 
-// Gunakan fungsi save yang sudah didefinisikan di interns_edit.php
 $form_add->edit->onSave('intern_logic_save', array(), false);
 $form_add->edit->action();
 

@@ -91,7 +91,6 @@ if (!empty($_POST['transfer'])) {
   }
 }
 
-// Variabel PEA diubah ke snake_case
 $form_search = _lib('pea', 'interns_tasks');
 $form_search->initSearch();
 $form_search->search->addInput('keyword', 'keyword');
