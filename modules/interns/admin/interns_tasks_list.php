@@ -22,7 +22,7 @@ if (!empty($_POST['transfer'])) {
     download_excel('Template_Import_Task_List_' . date('Y-m-d'), $r);
     die();
   }
-
+                        
   if ($_POST['transfer'] == 'upload') {
     $msg = '';
     if (!empty($_FILES['excel']['tmp_name']) && is_uploaded_file($_FILES['excel']['tmp_name'])) {
@@ -178,7 +178,7 @@ $form_list->roll->input->title->setTitle('Tasks');
 $form_list->roll->input->title->setDisplayFunction(function ($id) {
   global $db;
   $task = $db->getRow("SELECT title, description,timeline,type FROM interns_tasks WHERE id=" . intval($id));
-  
+
   return <<<HTML
       <span class="tips" title="" data-toggle="popover" data-placement="auto" data-content="<table>
           <tbody>

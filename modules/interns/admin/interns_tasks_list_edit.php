@@ -13,8 +13,8 @@ $task_list_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 if ($task_list_id > 0) {
   $old_data = $db_obj->getRow("SELECT * FROM `interns_tasks_list` WHERE `id`={$task_list_id}");
-  $intern_name = $db_obj->getOne("SELECT `name` FROM `interns` WHERE `id`=".intval($old_data['interns_id']));
-  $task_title = $db_obj->getOne("SELECT `title` FROM `interns_tasks` WHERE `id`=".intval($old_data['interns_tasks_id']));
+  $intern_name = $db_obj->getOne("SELECT `name` FROM `interns` WHERE `id`=" . intval($old_data['interns_id']));
+  $task_title = $db_obj->getOne("SELECT `title` FROM `interns_tasks` WHERE `id`=" . intval($old_data['interns_tasks_id']));
 }
 
 $form_add = _lib('pea', 'interns_tasks_list');
@@ -47,8 +47,8 @@ if ($task_list_id > 0) {
   $form_add->edit->input->interns_id->setReferenceField('name', 'id');
   $form_add->edit->input->interns_id->setAutoComplete(true);
   $form_add->edit->input->interns_id->setRequire();
-  if(!empty($_GET['interns_id'])){
-      $form_add->edit->input->interns_id->setDefaultValue(($_GET['interns_id']));
+  if (!empty($_GET['interns_id'])) {
+    $form_add->edit->input->interns_id->setDefaultValue(($_GET['interns_id']));
   }
 }
 

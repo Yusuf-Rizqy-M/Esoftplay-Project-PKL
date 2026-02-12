@@ -5,7 +5,7 @@ if (!defined('_VALID_BBC')) exit('No direct script access allowed');
 // Kita gunakan output buffering agar tampilan dari file tersebut tidak muncul
 ob_start();
 include_once 'interns_edit.php';
-ob_end_clean(); 
+ob_end_clean();
 
 $id = @intval($_GET['id']);
 
@@ -41,7 +41,7 @@ $form_add->edit->input->school_id->setAutoComplete(true);
 $form_add->edit->input->school_id->setAllowNew(false);
 
 // Link untuk kembali ke mode input manual (tambah sekolah baru)
-$form_add->edit->input->school_id->addTip('Mode pencarian aktif. Jika sekolah tidak ditemukan, klik <a href="'.$Bbc->mod['circuit'].'.interns_edit&id='.$id.'">disini</a> untuk menambah sekolah baru.');
+$form_add->edit->input->school_id->addTip('Mode pencarian aktif. Jika sekolah tidak ditemukan, klik <a href="' . $Bbc->mod['circuit'] . '.interns_edit&id=' . $id . '">disini</a> untuk menambah sekolah baru.');
 
 $form_add->edit->addInput('major', 'text');
 $form_add->edit->input->major->setTitle('Major');
