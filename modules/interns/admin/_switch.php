@@ -10,8 +10,8 @@ switch ($Bbc->mod['task']) {
   case 'interns_edit':
     include 'interns_edit.php';
     break;
-  
-  case 'interns_edit_autocomplete': 
+
+  case 'interns_edit_autocomplete':
     include 'interns_edit_autocomplete.php';
     break;
 
@@ -40,7 +40,7 @@ switch ($Bbc->mod['task']) {
     include 'interns_tasks_detail.php';
     break;
 
-      case 'interns_tasks_assigned':
+  case 'interns_tasks_assigned':
     include 'interns_tasks_assigned.php';
     break;
 

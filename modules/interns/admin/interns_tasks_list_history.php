@@ -1,4 +1,4 @@
-<?php 
+<?php
 if (!defined('_VALID_BBC')) exit('No direct script access allowed');
 
 $form = _lib('pea', 'interns_tasks_list_history');
@@ -9,9 +9,9 @@ $form->search->input->interns_id->setTitle('Search Name');
 $form->search->input->interns_id->setReferenceTable('interns');
 $form->search->input->interns_id->setReferenceField('name', 'id');
 $form->search->input->interns_id->setAutoComplete(array(
-	'minChars'       => 2,
-	'matchContains'  => 1,
-	'autoFill'       => 'false'
+  'minChars'       => 2,
+  'matchContains'  => 1,
+  'autoFill'       => 'false'
 ));
 $form->search->input->interns_id->addOption('--- Type name to search ---', '');
 

@@ -4,95 +4,98 @@ if (!defined('_VALID_BBC')) exit('No direct script access allowed');
 _func('download');
 
 if (!empty($_POST['transfer'])) {
-    if ($_POST['transfer'] == 'download') {
-        $sample_data = array(
-            array(
-                'Email'      => 'choirulanam@gmail.com',
-                'Name'       => 'Muhammad Choirul Anam',
-                'Phone'      => '081234567890',
-                'School'     => 'SMK Raden Umar Said',
-                'Major'      => 'PPLG',
-                'Start Date' => '2025-10-06',
-                'End Date'   => '2026-04-06',
-                'Keterangan' => 'Format tanggal: YYYY-MM-DD'
-            ),
-        );
-        
-        download_excel('Sample_Import_Intern_'.date('Y-m-d'), $sample_data, 'Intern Data');
-        die();
-    }
+  if ($_POST['transfer'] == 'download') {
+    $sample_data = array(
+      array(
+        'Email'      => 'choirulanam@gmail.com',
+        'Name'       => 'Muhammad Choirul Anam',
+        'Phone'      => '081234567890',
+        'School'     => 'SMK Raden Umar Said',
+        'Major'      => 'PPLG',
+        'Start Date' => '2025-10-06',
+        'End Date'   => '2026-04-06',
+        'Keterangan' => 'Format tanggal: YYYY-MM-DD'
+      ),
+    );
 
-    if ($_POST['transfer'] == 'upload') {
-        $msg = '';
-        if (!empty($_FILES['excel']['tmp_name']) && is_uploaded_file($_FILES['excel']['tmp_name'])) {
-            $mimes = array('application/vnd.ms-excel', 'text/xls', 'text/xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            if (in_array($_FILES['excel']['type'], $mimes)) {
-                $excel_lib = _lib('excel')->read($_FILES['excel']['tmp_name']);
-                $output    = $excel_lib->sheet(1)->fetch();
+    download_excel('Sample_Import_Intern_' . date('Y-m-d'), $sample_data, 'Intern Data');
+    die();
+  }
 
-                if (!empty($output) && is_array($output)) {
-                    $headers = array(
-                        'A' => 'Email',
-                        'B' => 'Name',
-                        'C' => 'Phone',
-                        'D' => 'School',
-                        'E' => 'Major',
-                        'F' => 'Start Date',
-                        'G' => 'End Date'
-                    );
+  if ($_POST['transfer'] == 'upload') {
+    $msg = '';
+    if (!empty($_FILES['excel']['tmp_name']) && is_uploaded_file($_FILES['excel']['tmp_name'])) {
+      $mimes = array('application/vnd.ms-excel', 'text/xls', 'text/xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      if (in_array($_FILES['excel']['type'], $mimes)) {
+        $excel_lib = _lib('excel')->read($_FILES['excel']['tmp_name']);
+        $output    = $excel_lib->sheet(1)->fetch();
 
-                    $is_valid = true;
-                    foreach ($headers as $col => $title) {
-                        if (trim($output[1][$col]) != $title) {
-                            $is_valid = false;
-                            break;
-                        }
-                    }
+        if (!empty($output) && is_array($output)) {
+          $headers = array(
+            'A' => 'Email',
+            'B' => 'Name',
+            'C' => 'Phone',
+            'D' => 'School',
+            'E' => 'Major',
+            'F' => 'Start Date',
+            'G' => 'End Date'
+          );
 
-                    if ($is_valid) {
-                        $db->Execute("SET FOREIGN_KEY_CHECKS=0");
-                        $success = 0;
-                        foreach ($output as $i => $cells) {
-                            if ($i == 1 || empty($cells['A'])) continue;
-
-                            $email = strtolower(trim($cells['A']));
-                            if (is_email($email)) {
-                                $is_exist = $db->getOne("SELECT 1 FROM `interns` WHERE `email`='" . addslashes($email) . "'");
-                                if (!$is_exist) {
-                                    $user_id = $db->getOne("SELECT `id` FROM `bbc_user` WHERE `username`='" . addslashes($email) . "'");
-                                    if (!$user_id) {
-                                        $user_params = array(
-                                            'username' => $email, 'name' => $cells['B'], 'email' => $email,
-                                            'password' => 'intern123', 'group_ids' => array(3),
-                                            'params'   => array('register_at' => date('Y-m-d H:i:s'))
-                                        );
-                                        $user_id = user_create($user_params);
-                                    }
-                                    if ($user_id) {
-                                        $start_date = fix_excel_date_import($cells['F']);
-                                        $end_date   = fix_excel_date_import($cells['G']);
-                                        $status     = calculate_intern_status_import($start_date, $end_date);
-
-                                        $q = "INSERT INTO interns SET user_id=$user_id, email='" . addslashes($email) . "', name='" . addslashes($cells['B']) . "', phone='" . addslashes($cells['C']) . "', school='" . addslashes($cells['D']) . "', major='" . addslashes($cells['E']) . "', start_date='$start_date', end_date='$end_date', status=$status, created=NOW()";
-                                        if ($db->Execute($q)) $success++;
-                                    }
-                                }
-                            }
-                        }
-                        $db->Execute("SET FOREIGN_KEY_CHECKS=1");
-                        $msg = msg("Upload data berhasil dieksekusi. $success data berhasil diimport.", 'success');
-                    } else {
-                        $msg = msg('Maaf, format kolom file tidak sesuai dengan ketentuan. Mohon periksa lagi file nya.', 'danger');
-                    }
-                } else {
-                    $msg = msg('Maaf, file yang anda upload tidak terbaca.', 'danger');
-                }
-            } else {
-                $msg = msg('Mohon upload file dengan format yang benar (.xlsx)', 'danger');
+          $is_valid = true;
+          foreach ($headers as $col => $title) {
+            if (trim($output[1][$col]) != $title) {
+              $is_valid = false;
+              break;
             }
+          }
+
+          if ($is_valid) {
+            $db->Execute("SET FOREIGN_KEY_CHECKS=0");
+            $success = 0;
+            foreach ($output as $i => $cells) {
+              if ($i == 1 || empty($cells['A'])) continue;
+
+              $email = strtolower(trim($cells['A']));
+              if (is_email($email)) {
+                $is_exist = $db->getOne("SELECT 1 FROM `interns` WHERE `email`='" . addslashes($email) . "'");
+                if (!$is_exist) {
+                  $user_id = $db->getOne("SELECT `id` FROM `bbc_user` WHERE `username`='" . addslashes($email) . "'");
+                  if (!$user_id) {
+                    $user_params = array(
+                      'username' => $email,
+                      'name' => $cells['B'],
+                      'email' => $email,
+                      'password' => 'intern123',
+                      'group_ids' => array(3),
+                      'params'   => array('register_at' => date('Y-m-d H:i:s'))
+                    );
+                    $user_id = user_create($user_params);
+                  }
+                  if ($user_id) {
+                    $start_date = fix_excel_date_import($cells['F']);
+                    $end_date   = fix_excel_date_import($cells['G']);
+                    $status     = calculate_intern_status_import($start_date, $end_date);
+
+                    $q = "INSERT INTO interns SET user_id=$user_id, email='" . addslashes($email) . "', name='" . addslashes($cells['B']) . "', phone='" . addslashes($cells['C']) . "', school='" . addslashes($cells['D']) . "', major='" . addslashes($cells['E']) . "', start_date='$start_date', end_date='$end_date', status=$status, created=NOW()";
+                    if ($db->Execute($q)) $success++;
+                  }
+                }
+              }
+            }
+            $db->Execute("SET FOREIGN_KEY_CHECKS=1");
+            $msg = msg("Upload data berhasil dieksekusi. $success data berhasil diimport.", 'success');
+          } else {
+            $msg = msg('Maaf, format kolom file tidak sesuai dengan ketentuan. Mohon periksa lagi file nya.', 'danger');
+          }
+        } else {
+          $msg = msg('Maaf, file yang anda upload tidak terbaca.', 'danger');
         }
-        if (!empty($msg)) echo $msg;
+      } else {
+        $msg = msg('Mohon upload file dengan format yang benar (.xlsx)', 'danger');
+      }
     }
+    if (!empty($msg)) echo $msg;
+  }
 }
 
 $form_search = _lib('pea', 'interns');
@@ -107,7 +110,7 @@ $form_search->search->addInput('name', 'keyword');
 $form_search->search->input->name->setTitle('Name');
 $form_search->search->input->name->addSearchField('name', false);
 
-$form_search->search->addInput('school_id', 'selecttable'); 
+$form_search->search->addInput('school_id', 'selecttable');
 $form_search->search->input->school_id->setTitle('School');
 $form_search->search->input->school_id->setReferenceTable('interns_school');
 $form_search->search->input->school_id->setReferenceField('school_name', 'id');
@@ -129,11 +132,11 @@ $form_list->roll->setSaveTool(false);
 
 $form_list->roll->addInput('id_menu', 'editlinks');
 $form_list->roll->input->id_menu->setTitle('Menu');
-$form_list->roll->input->id_menu->setFieldName('id'); 
-$form_list->roll->input->id_menu->setCaption('Opsi'); 
-$form_list->roll->input->id_menu->setGetName( 'interns_id' );
+$form_list->roll->input->id_menu->setFieldName('id');
+$form_list->roll->input->id_menu->setCaption('Opsi');
+$form_list->roll->input->id_menu->setGetName('interns_id');
 $form_list->roll->input->id_menu->setLinks(array(
-  $Bbc->mod['circuit'] . '.interns_edit'=> icon('fa-user') . ' Edit Intern',
+  $Bbc->mod['circuit'] . '.interns_edit' => icon('fa-user') . ' Edit Intern',
   $Bbc->mod['circuit'] . '.interns_tasks_list' => icon('fa-list') . ' Tambah Pengerjaan'
 ));
 
@@ -156,14 +159,14 @@ $form_list->roll->input->period->setFieldName('CONCAT(DATE_FORMAT(start_date,"%d
 $form_list->roll->addInput('status', 'sqlplaintext');
 $form_list->roll->input->status->setTitle('Status');
 $form_list->roll->input->status->setDisplayFunction(function ($value) {
-    $status_map = [
-        1 => ['label' => 'Active', 'color' => '#28a745'],
-        2 => ['label' => 'Ended', 'color' => '#dc3545'],
-        3 => ['label' => 'Coming Soon', 'color' => '#007bff']
-    ];
-    if (empty($value) || !isset($status_map[$value])) return 'Unknown';
-    $status = $status_map[$value];
-    return '<span class="label" style="background-color: ' . $status['color'] . '; color: white; padding: 5px 12px; border-radius: 12px;">' . $status['label'] . '</span>';
+  $status_map = [
+    1 => ['label' => 'Active', 'color' => '#28a745'],
+    2 => ['label' => 'Ended', 'color' => '#dc3545'],
+    3 => ['label' => 'Coming Soon', 'color' => '#007bff']
+  ];
+  if (empty($value) || !isset($status_map[$value])) return 'Unknown';
+  $status = $status_map[$value];
+  return '<span class="label" style="background-color: ' . $status['color'] . '; color: white; padding: 5px 12px; border-radius: 12px;">' . $status['label'] . '</span>';
 });
 
 $form_list->roll->addInput('task_link', 'sqllinks');
@@ -171,7 +174,7 @@ $form_list->roll->input->task_link->setTitle('Tasks');
 $form_list->roll->input->task_link->setFieldName('id AS task_link');
 $form_list->roll->input->task_link->setDisplayFunction(function ($intern_id) {
   global $Bbc;
-$url = $Bbc->mod['circuit'] . '.interns_tasks_list&interns_id=' . intval($intern_id);
+  $url = $Bbc->mod['circuit'] . '.interns_tasks_list&interns_id=' . intval($intern_id);
   return '<a href="' . $url . '" class="btn btn-xs btn-primary">Lihat Pengerjaan</a>';
 });
 
@@ -185,23 +188,25 @@ include 'interns_edit.php';
 $form_edit_content = ob_get_clean();
 
 $tabs = array(
-    'List Interns' => $form_list->roll->getForm(),
-    ($is_edit ? 'Edit Intern' : 'Add Intern') => $form_edit_content
+  'List Interns' => $form_list->roll->getForm(),
+  ($is_edit ? 'Edit Intern' : 'Add Intern') => $form_edit_content
 );
 echo tabs($tabs, ($is_edit ? 2 : 1), 'tabs_interns');
 
-function fix_excel_date_import($date_str) {
-    if (empty($date_str)) return date('Y-m-d');
-    $date_str = str_replace('/', '-', $date_str);
-    $ts = strtotime($date_str);
-    return ($ts === false) ? date('Y-m-d') : date('Y-m-d', $ts);
+function fix_excel_date_import($date_str)
+{
+  if (empty($date_str)) return date('Y-m-d');
+  $date_str = str_replace('/', '-', $date_str);
+  $ts = strtotime($date_str);
+  return ($ts === false) ? date('Y-m-d') : date('Y-m-d', $ts);
 }
 
-function calculate_intern_status_import($start, $end) {
-    $curr = date('Y-m-d');
-    if ($curr < $start) return 3;
-    if ($curr <= $end) return 1;
-    return 2;
+function calculate_intern_status_import($start, $end)
+{
+  $curr = date('Y-m-d');
+  if ($curr < $start) return 3;
+  if ($curr <= $end) return 1;
+  return 2;
 }
 ?>
 
@@ -218,7 +223,7 @@ function calculate_intern_status_import($start, $end) {
           <div class="form-group">
             <label>Upload File Excel (.xlsx atau .xls)</label>
             <input type="file" name="excel" class="form-control" accept=".xlsx,.xls" />
-              <p class="help-block">Pastikan kolom sesuai: Name, Email, School, Phone, Start Date, End Date</p>
+            <p class="help-block">Pastikan kolom sesuai: Name, Email, School, Phone, Start Date, End Date</p>
           </div>
         </div>
         <div class="panel-footer">

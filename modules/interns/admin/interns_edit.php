@@ -1,7 +1,7 @@
 <?php
 if (!defined('_VALID_BBC')) exit('No direct script access allowed');
 
-$id = @intval($_GET['id']?? $_GET['interns_id']);
+$id = @intval($_GET['id'] ?? $_GET['interns_id']);
 
 $form_add = _lib('pea', 'interns');
 $form_add->initEdit($id > 0 ? "WHERE `id`=$id" : "");
@@ -35,7 +35,7 @@ $form_add->edit->input->school_id->setTitle('School');
 $form_add->edit->input->school_id->setReferenceTable('interns_school');
 $form_add->edit->input->school_id->setReferenceField('school_name', 'id');
 $form_add->edit->input->school_id->setAllowNew(true);
-$form_add->edit->input->school_id->addTip('Ketik nama sekolah atau gunakan fitur autocomplete jika data sudah tersedia. Klik <a href="'.$Bbc->mod['circuit'].'.interns_edit_autocomplete&id='.$id.'">disini</a> untuk menggunakan mode pencarian.');
+$form_add->edit->input->school_id->addTip('Ketik nama sekolah atau gunakan fitur autocomplete jika data sudah tersedia. Klik <a href="' . $Bbc->mod['circuit'] . '.interns_edit_autocomplete&id=' . $id . '">disini</a> untuk menggunakan mode pencarian.');
 
 $form_add->edit->addInput('major', 'text');
 $form_add->edit->addInput('start_date', 'dateinterval');
@@ -52,7 +52,7 @@ function intern_logic_save($intern_id)
   global $form_add;
   global $db;
   global $id;
-  
+
   $is_edit = $db->getOne("SELECT 1 FROM `interns` WHERE `id`=" . intval($id));
   $prefix  = $is_edit ? 'edit_' : 'add_';
 
@@ -76,11 +76,11 @@ function intern_logic_save($intern_id)
     $status = (date('Y-m-d') < $start) ? 3 : ((date('Y-m-d') <= $end) ? 1 : 2);
     $form_add->edit->addExtraField('status', $status);
   }
-  
+
   if (!$is_edit) {
     $name = isset($_POST['add_name']) ? $_POST['add_name'] : '';
     $user_id = $db->getOne("SELECT `id` FROM `bbc_user` WHERE `username`='" . addslashes($email) . "'");
-    
+
     if (!$user_id) {
       $user_id = user_create([
         'username'  => $email,
@@ -88,7 +88,7 @@ function intern_logic_save($intern_id)
         'email'     => $email,
         'password'  => 'intern123',
         'group_ids' => array(3),
-        'params'    => ['_padding' => 1], 
+        'params'    => ['_padding' => 1],
       ]);
     }
 
@@ -98,4 +98,3 @@ function intern_logic_save($intern_id)
   }
   return true;
 }
-?>

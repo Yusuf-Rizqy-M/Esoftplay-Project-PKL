@@ -42,4 +42,3 @@ $form_add->edit->input->interns_id->addOption('-- Select Interns --', '');
 $form_add->edit->action();
 
 echo '<div class="panel panel-default"><div class="panel-body">' . $form_add->edit->getForm() . '</div></div>';
-
