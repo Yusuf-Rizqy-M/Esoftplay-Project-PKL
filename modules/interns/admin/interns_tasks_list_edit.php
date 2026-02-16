@@ -11,61 +11,49 @@ if (!defined('_VALID_BBC')) exit('No direct script access allowed');
 $db_obj = $GLOBALS['db'];
 $task_list_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-if ($task_list_id > 0) {
-  $old_data = $db_obj->getRow("SELECT * FROM `interns_tasks_list` WHERE `id`={$task_list_id}");
-  $intern_name = $db_obj->getOne("SELECT `name` FROM `interns` WHERE `id`=".intval($old_data['interns_id']));
-  $task_title = $db_obj->getOne("SELECT `title` FROM `interns_tasks` WHERE `id`=".intval($old_data['interns_tasks_id']));
-}
-
 $form_add = _lib('pea', 'interns_tasks_list');
 $form_add->initEdit($task_list_id > 0 ? "WHERE `id`={$task_list_id}" : "");
 
 if ($task_list_id > 0) {
   $form_add->edit->addInput('header', 'header');
-  $form_add->edit->input->header->setTitle('Edit List To Do Intern');
-
-  $form_add->edit->addInput('task_title_display', 'plaintext');
-  $form_add->edit->input->task_title_display->setTitle('Task');
-  $form_add->edit->input->task_title_display->setValue($task_title);
+  $form_add->edit->input->header->setTitle('Edit Notes Intern');
   $form_add->edit->addInput('interns_tasks_id', 'hidden');
-
-  $form_add->edit->addInput('intern_name_display', 'plaintext');
-  $form_add->edit->input->intern_name_display->setTitle('Name');
-  $form_add->edit->input->intern_name_display->setValue($intern_name);
   $form_add->edit->addInput('interns_id', 'hidden');
 } else {
+  $form_add->edit->addInput('header', 'header');
+  $form_add->edit->input->header->setTitle('Add New Task');
+
   $form_add->edit->addInput('interns_tasks_id', 'selecttable');
   $form_add->edit->input->interns_tasks_id->setTitle('Task');
   $form_add->edit->input->interns_tasks_id->setReferenceTable('interns_tasks');
   $form_add->edit->input->interns_tasks_id->setReferenceField('title', 'id');
-  $form_add->edit->input->interns_tasks_id->setAutoComplete(true);
+  $form_add->edit->input->interns_tasks_id->setAllowNew(true);
   $form_add->edit->input->interns_tasks_id->setRequire();
 
   $form_add->edit->addInput('interns_id', 'selecttable');
-  $form_add->edit->input->interns_id->setTitle('Intern');
+  $form_add->edit->input->interns_id->setTitle('Name');
   $form_add->edit->input->interns_id->setReferenceTable('interns');
   $form_add->edit->input->interns_id->setReferenceField('name', 'id');
   $form_add->edit->input->interns_id->setAutoComplete(true);
   $form_add->edit->input->interns_id->setRequire();
-  if(!empty($_GET['interns_id'])){
-      $form_add->edit->input->interns_id->setDefaultValue(($_GET['interns_id']));
+
+  if (!empty($_GET['interns_id'])) {
+    $form_add->edit->input->interns_id->setDefaultValue(($_GET['interns_id']));
   }
+
+  $form_add->edit->addInput('status', 'select');
+  $form_add->edit->input->status->setTitle('Status');
+  $form_add->edit->input->status->addOption('To Do', 1);
+  $form_add->edit->input->status->addOption('In Progress', 2);
+  $form_add->edit->input->status->addOption('Submit', 3);
+  $form_add->edit->input->status->addOption('Revised', 4);
+  $form_add->edit->input->status->addOption('Done', 5);
+  $form_add->edit->input->status->addOption('Cancel', 6);
+  $form_add->edit->input->status->setRequire();
 }
 
 $form_add->edit->addInput('notes', 'textarea');
 $form_add->edit->input->notes->setTitle('Notes');
-
-$form_add->edit->addInput('status', 'select');
-$form_add->edit->input->status->setTitle('Status');
-$form_add->edit->input->status->addOption('To Do', 1);
-$form_add->edit->input->status->addOption('In Progress', 2);
-$form_add->edit->input->status->addOption('Submit', 3);
-$form_add->edit->input->status->addOption('Revised', 4);
-$form_add->edit->input->status->addOption('Done', 5);
-$form_add->edit->input->status->addOption('Cancel', 6);
-$form_add->edit->input->status->setRequire();
-
-
 
 $form_add->edit->action();
 
@@ -77,12 +65,6 @@ if (!empty($_POST) && !empty($_POST['edit_submit_update'])) {
     if (!empty($current_data)) {
       $db_obj->Execute("INSERT INTO `interns_tasks_list_history` (`interns_id`, `interns_tasks_list_id`, `status`, `created`) VALUES ({$current_data['interns_id']}, {$final_id}, {$current_data['status']}, NOW())");
       $db_obj->Execute("UPDATE `interns_tasks_list` SET `updated` = NOW() WHERE `id` = {$final_id}");
-
-      if ($task_list_id == 0) {
-        $task_title_new = $db_obj->getOne("SELECT `title` FROM `interns_tasks` WHERE `id` = {$current_data['interns_tasks_id']}");
-        $intern_name_new = $db_obj->getOne("SELECT `name` FROM `interns` WHERE `id` = {$current_data['interns_id']}");
-        $_SESSION['tasklist_add_success'] = ['task' => $task_title_new, 'intern' => $intern_name_new];
-      }
     }
     header("Location: index.php?mod=interns.interns_tasks_list");
     exit;

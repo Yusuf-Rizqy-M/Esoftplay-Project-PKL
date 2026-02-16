@@ -105,31 +105,19 @@ $form_search->search->addInput('interns_id', 'selecttable');
 $form_search->search->input->interns_id->setTitle('');
 $form_search->search->input->interns_id->setReferenceTable('interns');
 $form_search->search->input->interns_id->setReferenceField('name', 'id');
-$form_search->search->input->interns_id->setAutoComplete(array(
-  'minChars'       => 2,
-  'matchContains'  => 1,
-  'autoFill'       => 'false'
-));
+$form_search->search->input->interns_id->setAutoComplete(true);
 
 $form_search->search->addInput('interns_id', 'selecttable');
 $form_search->search->input->interns_id->setTitle('Search Name');
 $form_search->search->input->interns_id->setReferenceTable('interns');
 $form_search->search->input->interns_id->setReferenceField('name', 'id');
-$form_search->search->input->interns_id->setAutoComplete(array(
-  'minChars'       => 2,
-  'matchContains'  => 1,
-  'autoFill'       => 'false'
-));
+$form_search->search->input->interns_id->setAutoComplete(true);
 
 $form_search->search->addInput('interns_tasks_id', 'selecttable');
 $form_search->search->input->interns_tasks_id->setTitle('Search Task');
 $form_search->search->input->interns_tasks_id->setReferenceTable('interns_tasks');
 $form_search->search->input->interns_tasks_id->setReferenceField('title', 'id');
-$form_search->search->input->interns_tasks_id->setAutoComplete(array(
-  'minChars'       => 2,
-  'matchContains'  => 1,
-  'autoFill'       => 'false'
-));
+$form_search->search->input->interns_tasks_id->setAutoComplete(true);
 
 $form_search->search->addInput('status', 'select');
 $form_search->search->input->status->addOption('---- Filter Status ----', '');
@@ -142,69 +130,25 @@ $form_search->search->input->status->addOption('Cancel', '6');
 
 $form_search->search->addInput('notes', 'keyword');
 $form_search->search->input->notes->addSearchField('notes', false);
-
 echo $form_search->search->getform();
-
 $add_sql = $form_search->search->action();
 $keyword = $form_search->search->keyword();
 
-if (!empty($keyword['intern_name'])) {
-  $ids = $db->getCol("SELECT id FROM interns WHERE name LIKE '%" . addslashes($keyword['intern_name']) . "%'");
-  $add_sql .= " AND interns_id IN (" . (empty($ids) ? 0 : implode(',', $ids)) . ")";
-}
-if (!empty($keyword['task_title'])) {
-  $tk_ids = $db->getCol("SELECT id FROM interns_tasks WHERE title LIKE '%" . addslashes($keyword['task_title']) . "%'");
-  $add_sql .= " AND interns_tasks_id IN (" . (empty($tk_ids) ? 0 : implode(',', $tk_ids)) . ")";
-}
-
-if (!empty($keyword['status_intern'])) {
-  $ids = $db->getCol("SELECT id FROM interns WHERE status =  " . addslashes($keyword['status_intern']));
-  $add_sql .= " AND interns_id IN (" . (empty($ids) ? 0 : implode(',', $ids)) . ")";
-  $add_sql = preg_replace('/`status_intern`=\d+/', '1', $add_sql);
-}
-
 $is_edit = (!empty($_GET['id']) && is_numeric($_GET['id']));
-if(!empty ($_GET ['internal_tasks_id'])){
-  $add_sql .= ' AND interns_tasks_id = '.$_GET ['internal_tasks_id'];
+if (!empty($_GET['internal_tasks_id'])) {
+  $add_sql .= ' AND interns_tasks_id = ' . $_GET['internal_tasks_id'];
 }
+
 $form_list = _lib('pea', 'interns_tasks_list');
 $form_list->initRoll($add_sql . ' ORDER BY id DESC', 'id');
-$form_list->roll->setDeleteTool(false);
-$form_list->roll->setSaveTool(false);
 
-$form_list->roll->addInput('title', 'sqlplaintext');
-$form_list->roll->input->title->setFieldName('interns_tasks_id AS title');
-$form_list->roll->input->title->setTitle('Tasks');
-$form_list->roll->input->title->setDisplayFunction(function ($id) {
-  global $db;
-  $task = $db->getRow("SELECT title, description,timeline,type FROM interns_tasks WHERE id=" . intval($id));
-  
-  return <<<HTML
-      <span class="tips" title="" data-toggle="popover" data-placement="auto" data-content="<table>
-          <tbody>
-            <tr>
-              <td>Title</td>
-              <td>: {$task['title']}</td>
-            </tr>
-            <tr>
-              <td>Desc</td>
-              <td>: {$task['description']}</td>
-            </tr>
-             <tr>
-              <td>Timeline</td>
-              <td>: {$task['timeline']}</td>
-            </tr>
-             <tr>
-              <td>Type</td>
-              <td>: {$task['type']}</td>
-            </tr>
-            
-          </tbody>
-        </table>" data-original-title="{$task['title']}">{$task['title']}</span>
-    HTML;
-});
-
-
+$form_list->roll->addInput('interns_tasks_id', 'selecttable');
+$form_list->roll->input->interns_tasks_id->setTitle('Tasks Title');
+$form_list->roll->input->interns_tasks_id->setReferenceTable('interns_tasks');
+$form_list->roll->input->interns_tasks_id->setReferenceField('title', 'id');
+$form_list->roll->input->interns_tasks_id->setModal(true);
+$form_list->roll->input->interns_tasks_id->setLinks($Bbc->mod['circuit'] . '.interns_tasks_list_info');
+$form_list->roll->input->interns_tasks_id->setPlaintext(true);
 
 $form_list->roll->addInput('interns_id', 'selecttable');
 $form_list->roll->input->interns_id->setTitle('Interns Name');
@@ -214,33 +158,16 @@ $form_list->roll->input->interns_id->setPlaintext(true);
 
 $form_list->roll->addInput('notes', 'sqllinks');
 $form_list->roll->input->notes->setTitle('Notes');
+$form_list->roll->input->notes->setModal(true);
 $form_list->roll->input->notes->setLinks($Bbc->mod['circuit'] . '.interns_tasks_list_edit');
 
-$task_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$form_list->roll->addInput('timeline', 'sqlplaintext');
+$form_list->roll->input->timeline->setTitle('Timeline (Days)');
+$form_list->roll->input->timeline->setFieldName('id as timeline');
 
-$form_list->roll->addInput('timeline_display', 'sqlplaintext');
-$form_list->roll->input->timeline_display->setTitle('Timeline (Days)');
-$form_list->roll->input->timeline_display->setFieldName('id as timeline_display');
-$form_list->roll->input->timeline_display->setDisplayFunction(function ($id) {
-    global $db;
-    $row = $db->getRow("SELECT `status`, `interns_tasks_id` FROM `interns_tasks_list` WHERE `id` = " . intval($id));
-    
-    if ($row && intval($row['status']) >= 2) {
-        $timeline = $db->getOne("SELECT `timeline` FROM `interns_tasks` WHERE `id` = " . intval($row['interns_tasks_id']));
-        return $timeline ? htmlspecialchars($timeline) : '-';
-    }
-    return '-';
-});
-
-if ($task_id > 0) {
-    $task = $db->getRow("SELECT `title`, `timeline` FROM `interns_tasks` WHERE `id` = " . intval($task_id));
-    if ($task) {
-        $timeline_html = '<strong>Timeline (Days):</strong> ' . htmlspecialchars($task['timeline']);
-        echo $timeline_html;
-    }
-}
-
-$form_list->roll->addInput('status', 'sqlplaintext');
+$form_list->roll->addInput('status', 'sqllinks');
+$form_list->roll->input->status->setModal(true);
+$form_list->roll->input->status->setLinks($Bbc->mod['circuit'] . '.interns_tasks_list_status');
 $form_list->roll->input->status->setDisplayFunction(function ($v) {
   $colors = [1 => '#6c757d', 2 => '#007bff', 3 => '#ffc107', 4 => '#fd7e14', 5 => '#28a745', 6 => '#dc3545'];
   $labels = [1 => 'To Do', 2 => 'In Progress', 3 => 'Submit', 4 => 'Revised', 5 => 'Done', 6 => 'Cancel'];
@@ -248,6 +175,17 @@ $form_list->roll->input->status->setDisplayFunction(function ($v) {
   return '<span class="label" style="background-color:' . (@$colors[$v] ?: '#eee') . '; color:' . $tcolor . '; padding:5px 10px; border-radius:12px;">' . (@$labels[$v] ?: 'Unknown') . '</span>';
 });
 
+$form_list->roll->addInput('started', 'sqlplaintext');
+$form_list->roll->input->started->setTitle('Started');
+
+$form_list->roll->addInput('deadline', 'sqlplaintext');
+$form_list->roll->input->deadline->setTitle('Deadline');
+
+$form_list->roll->addInput('revised_history', 'sqlplaintext');
+$form_list->roll->input->revised_history->setTitle('Revised History');
+
+$form_list->roll->setDeleteTool(false);
+$form_list->roll->setSaveTool(false);
 
 $form_list->roll->addInput('status_intern', 'selecttable');
 $form_list->roll->input->status_intern->setTitle('Status Interns');
@@ -261,54 +199,60 @@ $form_list->roll->input->status_intern->setDisplayFunction(function ($value) {
     2 => ['label' => 'Ended', 'color' => '#dc3545'],
     3 => ['label' => 'Coming Soon', 'color' => '#007bff']
   ];
-  if (empty($value) || !isset($status_map[$value])) return 'Unknown';
-  $status = $status_map[$value];
-  return '<span class="label" style="background-color: ' . $status['color'] . '; color: white; padding: 5px 12px; border-radius: 12px;">' . $status['label'] . '</span>';
 });
-
+$form_list->roll->input->status_intern->setDisplayColumn(false);
 $form_list->roll->addInput('created', 'sqlplaintext');
 $form_list->roll->input->created->setDisplayColumn(false);
 $form_list->roll->addInput('updated', 'sqlplaintext');
 $form_list->roll->input->updated->setDisplayColumn(false);
-
 $form_list->roll->action();
+
 
 ob_start();
 include 'interns_tasks_list_edit.php';
 $form_edit_content = ob_get_clean();
+// berfungsi untuk menyembunyikan add to do, import excel dan menambahkan header ketika interns task di klik
+if (!empty($_GET['internal_tasks_id'])) {
+  echo '<div class="panel panel-default">';
+  echo '<div class="panel-heading">';
+  $task = $db->getRow('SELECT * from interns_tasks where id = ' . $_GET['internal_tasks_id']);
+  echo $task['title'];
+  echo '</div>';
+  echo '<div class="panel-body">';
+  echo $form_list->roll->getForm();
+  echo  '</div></div>';
+} else {
+  $tabs = [
+    'List To Do' => $form_list->roll->getForm(),
+    ($is_edit ? 'Edit Task' : 'Add To Do') => $form_edit_content
+  ];
+  echo tabs($tabs, ($is_edit ? 2 : 1), 'tabs_task_list');
 
-$tabs = [
-  'List To Do' => $form_list->roll->getForm(),
-  ($is_edit ? 'Edit Task' : 'Add To Do') => $form_edit_content
-];
-echo tabs($tabs, ($is_edit ? 2 : 1), 'tabs_task_list');
 ?>
-
-<div class="col-xs-12 no-both">
-  <div class="panel panel-default" style="margin-top:20px;">
-    <div class="panel-heading">
-      <h4 class="panel-title" data-toggle="collapse" href="#import_panel" style="cursor:pointer;">
-        <?php echo icon('fa-file-excel-o') ?> Klik disini untuk import data Excel
-      </h4>
-    </div>
-    <div id="import_panel" class="panel-collapse collapse">
-      <form action="" method="POST" enctype="multipart/form-data">
-        <div class="panel-body">
-          <div class="form-group">
-            <label>Upload File Excel (.xlsx atau .xls)</label>
-            <input type="file" name="excel" class="form-control" accept=".xlsx,.xls" />
-            <p class="help-block">Pastikan kolom sesuai: Task Title, Intern Email, Notes, Status</p>
+  <div class="col-xs-12 no-both" style="padding: 10px 0;">
+    <div class="panel panel-default" style="margin-top:20px;">
+      <div class="panel-heading">
+        <h4 class="panel-title" data-toggle="collapse" href="#import_panel" style="cursor:pointer;">
+          <?php echo icon('fa-file-excel-o') ?> Klik disini untuk import data Excel
+        </h4>
+      </div>
+      <div id="import_panel" class="panel-collapse collapse">
+        <form action="" method="POST" enctype="multipart/form-data">
+          <div class="panel-body">
+            <div class="form-group">
+              <label>Upload File Excel (.xlsx atau .xls)</label>
+              <input type="file" name="excel" class="form-control" accept=".xlsx,.xls" />
+              <p class="help-block">Pastikan kolom sesuai: Task Title, Intern Email, Notes, Status</p>
+            </div>
           </div>
-        </div>
-        <div class="panel-footer">
-          <button type="submit" name="transfer" value="upload" class="btn btn-primary"><?php echo icon('fa-upload') ?> Upload Sekarang</button>
-          <button type="submit" name="transfer" value="download" class="btn btn-default pull-right"><?php echo icon('fa-download') ?> Download Sample</button>
-        </div>
-      </form>
+          <div class="panel-footer">
+            <button type="submit" name="transfer" value="upload" class="btn btn-primary"><?php echo icon('fa-upload') ?> Upload Sekarang</button>
+            <button type="submit" name="transfer" value="download" class="btn btn-default pull-right"><?php echo icon('fa-download') ?> Download Sample</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
-</div>
-
-<script type="text/javascript">
-  var BS3load_popover = 1;
-</script>
+<?php
+}
+?>

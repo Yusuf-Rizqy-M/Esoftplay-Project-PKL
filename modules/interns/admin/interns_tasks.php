@@ -66,13 +66,19 @@ if (!empty($_POST['transfer'])) {
 
                             $is_exist = $db->getOne("SELECT 1 FROM interns_tasks WHERE title='" . addslashes($task_title) . "'");
                             if (!$is_exist) {
+                                $type_id = $db->getOne("SELECT id FROM interns_tasks_type WHERE type_name='" . addslashes($task_type) . "'");
+                                if (!$type_id && !empty($task_type)) {
+                                    $db->Execute("INSERT INTO interns_tasks_type SET type_name='" . addslashes($task_type) . "'");
+                                    $type_id = $db->Insert_ID();
+                                }
+
                                 $timeline_val = !empty($task_time) && is_numeric($task_time) ? intval($task_time) : 0;
                                 $sql_query = "INSERT INTO interns_tasks SET 
-                                    title       = '" . addslashes($task_title) . "', 
-                                    description = '" . addslashes($task_desc) . "', 
-                                    timeline    = $timeline_val, 
-                                    type        = '" . addslashes($task_type) . "', 
-                                    created     = NOW()";
+                                    title           = '" . addslashes($task_title) . "', 
+                                    description     = '" . addslashes($task_desc) . "', 
+                                    timeline        = $timeline_val, 
+                                    task_type_id    = " . intval($type_id) . ", 
+                                    created         = NOW()";
                                 if ($db->Execute($sql_query)) $success_count++;
                             }
                         }
@@ -91,15 +97,20 @@ if (!empty($_POST['transfer'])) {
     }
 }
 
-// Variabel PEA diubah ke snake_case
 $form_search = _lib('pea', 'interns_tasks');
 $form_search->initSearch();
-$form_search->search->addInput('keyword', 'keyword');
-$form_search->search->input->keyword->setTitle('Search Task Title');
-$form_search->search->input->keyword->addSearchField('title', false);
-$form_search->search->addInput('type_keyword', 'keyword');
-$form_search->search->input->type_keyword->setTitle('Search Type');
-$form_search->search->input->type_keyword->addSearchField('type', false);
+
+$form_search->search->addInput('title', 'selecttable');
+$form_search->search->input->title->setTitle('Search Task Title');
+$form_search->search->input->title->setReferenceTable('interns_tasks');
+$form_search->search->input->title->setReferenceField('title', 'id');
+$form_search->search->input->title->setAutoComplete(true);
+
+$form_search->search->addInput('task_type_id', 'selecttable');
+$form_search->search->input->task_type_id->setTitle('Type');
+$form_search->search->input->task_type_id->setReferenceTable('interns_tasks_type');
+$form_search->search->input->task_type_id->setReferenceField('type_name', 'id');
+$form_search->search->input->task_type_id->setAutoComplete(true);
 
 $add_sql = $form_search->search->action();
 
@@ -124,17 +135,18 @@ $form_list->roll->input->description->setTitle('Description');
 $form_list->roll->addInput('timeline', 'sqlplaintext');
 $form_list->roll->input->timeline->setTitle('Timeline (Days)');
 
-$form_list->roll->addInput('type', 'sqlplaintext');
-$form_list->roll->input->type->setTitle('Type');
+$form_list->roll->addInput('task_type_id', 'sqlplaintext');
+$form_list->roll->input->task_type_id->setTitle('Type');
+$form_list->roll->input->task_type_id->setFieldName('(SELECT `type_name` FROM `interns_tasks_type` WHERE `interns_tasks_type`.id=`interns_tasks`.`task_type_id`) AS type_name');
 
 $form_list->roll->addInput('task_link', 'sqllinks');
 $form_list->roll->input->task_link->setLinks('#');
-$form_list->roll->input->task_link->setTitle('Tasks');
+$form_list->roll->input->task_link->setTitle('Pengerjaan');
 $form_list->roll->input->task_link->setFieldName('id as task_link');
 $form_list->roll->input->task_link->setDisplayFunction(function ($id) {
     global $Bbc;
     $target_url = $Bbc->mod['circuit'] . '.interns_tasks_list&internal_tasks_id=' . urlencode($id);
-    return '<a href="' . $target_url . '" class="btn btn-xs btn-primary">Lihat Pengerjaan</a>';
+    return '<a href="' . $target_url . '" class="btn btn-xs btn-primary">Lihat Detail</a>';
 });
 
 $form_list->roll->addInput('task_link_assigned', 'sqllinks');
@@ -146,6 +158,7 @@ $form_list->roll->input->task_link_assigned->setDisplayFunction(function ($id) {
     $target_url = $Bbc->mod['circuit'] . '.interns_tasks_assigned&id=' . urlencode($id);
     return '<a href="' . $target_url . '" class="btn btn-xs btn-primary">Assigned</a>';
 });
+
 $form_list->roll->addInput('created', 'sqlplaintext');
 $form_list->roll->input->created->setDisplayColumn(false);
 
