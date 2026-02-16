@@ -32,9 +32,9 @@ CREATE TABLE `bbc_account` (
   KEY `user_id` (`user_id`),
   KEY `email` (`email`),
   FULLTEXT KEY `name` (`username`,`name`,`email`,`params`)
-) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `bbc_account` VALUES (1,1,'admin','Administrator','','tmp@fisip.net','{\"Alamat Lengkap\":\"Indonesia\",\"Phone\":\"0818550122\"}'),(2,2,'danang@fisip.net','Danang Widiantoro','','danang@fisip.net','{\"Nick Name\":\"Danang\",\"Company\":\"Fisip.net\",\"Company Position\":\"Programmer\",\"Address\":\"Jl. Janti no.10 B\",\"City\":\"Bantul\",\"State\":\"Jogjakarta\",\"Post Code\":\"55161\",\"Country\":\"ID\",\"Phone\":\"0818550122\",\"Fax\":\"02743012336\",\"Email Alternate\":\"bbc_danang@yahoo.com\"}'),(3,3,'yusuf ','Yusuf Rizqy Mubarok','','yusufhabib290@gmail.com','[]'),(4,4,'jovancho ','Jovanco Nicholas','','jojo@gmai.com','[]'),(5,5,'yusufhabib2903@gmail.com','Yusuf Rizqy','','yusufhabib2903@gmail.com','{\"Phone\":\"\",\"Alamat Lengkap\":\"\"}');
+INSERT INTO `bbc_account` VALUES (1,1,'admin','Administrator','','tmp@fisip.net','{\"Alamat Lengkap\":\"Indonesia\",\"Phone\":\"0818550122\"}'),(2,2,'danang@fisip.net','Danang Widiantoro','','danang@fisip.net','{\"Nick Name\":\"Danang\",\"Company\":\"Fisip.net\",\"Company Position\":\"Programmer\",\"Address\":\"Jl. Janti no.10 B\",\"City\":\"Bantul\",\"State\":\"Jogjakarta\",\"Post Code\":\"55161\",\"Country\":\"ID\",\"Phone\":\"0818550122\",\"Fax\":\"02743012336\",\"Email Alternate\":\"bbc_danang@yahoo.com\"}'),(3,3,'yusuf ','Yusuf Rizqy Mubarok','','yusufhabib290@gmail.com','[]'),(4,4,'jovancho ','Jovanco Nicholas','','jojo@gmai.com','[]'),(5,5,'yusufhabib2903@gmail.com','Yusuf Rizqy','','yusufhabib2903@gmail.com','{\"Phone\":\"\",\"Alamat Lengkap\":\"\"}'),(6,6,'choirulanam@gmail.com','Choirul Anam','','choirulanam@gmail.com','[]'),(7,7,'azzanslebew@gmail.com','Azzan Isham Alawiy','','azzanslebew@gmail.com','[]'),(8,8,'jojo@gmail.com','Jovanco Nicholas Rise','','jojo@gmail.com','[]'),(9,9,'fabio@gmail.com','Fahrozi Albaquila','','fabio@gmail.com','[]'),(10,10,'rusmadi@gmail.com','Rusmadi Husna','','rusmadi@gmail.com','[]'),(11,11,'vania@gmail.com','Vania Feby Arkarunia','','vania@gmail.com','[]');
 DROP TABLE IF EXISTS `bbc_account_temp`;
 CREATE TABLE `bbc_account_temp` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -565,7 +565,7 @@ CREATE TABLE `bbc_once` (
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='table untuk menyimpan action sudah dijalankan atau tidak berdasarkan waktu /jam /hari dll';
 
-INSERT INTO `bbc_once` VALUES (1,'user_iddle',1,'2026-01-23 11:08:46','2026-01-23 10:08:46');
+INSERT INTO `bbc_once` VALUES (1,'user_iddle',1,'2026-02-16 12:39:11','2026-02-16 11:39:11');
 DROP TABLE IF EXISTS `bbc_template`;
 CREATE TABLE `bbc_template` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
@@ -598,9 +598,9 @@ CREATE TABLE `bbc_user` (
   KEY `group_ids` (`group_ids`),
   KEY `active` (`active`),
   KEY `exp_checked` (`exp_checked`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `bbc_user` VALUES (1,',3,4,1,2,','admin','UGgi19s0RkhSjkCbnYmK6aOrUa29yWCRXBn2d6r6bRojLWhvHM1x5UW0l/9OTDuAgAsK0VmD6AuGO/dvNzk4bw==','::1','::1','2026-01-22 14:38:51','2026-01-22 14:37:42','2026-01-22 18:01:08',57,NULL,1),(2,',2,1,3,4,','danang@fisip.net','UGgi19s0RkhSjkCbnYmK6aOrUa29yWCRXBn2d6r6bRojLWhvHM1x5UW0l/9OTDuAgAsK0VmD6AuGO/dvNzk4bw==','127.0.0.1','127.0.0.1','2016-05-03 23:35:44','2016-05-03 23:32:34',NULL,0,NULL,1),(3,',3,','yusuf ','UGgi19s0RkhSjkCbnYmK6aOrUa29yWCRXBn2d6r6bRojLWhvHM1x5UW0l/9OTDuAgAsK0VmD6AuGO/dvNzk4bw==','::1','::1','2026-01-22 15:00:13','2026-01-22 14:55:29','2026-01-22 17:59:36',4,'2025-12-08 09:34:25',1),(4,',3,','jovancho ','UGgi19s0RkhSjkCbnYmK6aOrUa29yWCRXBn2d6r6bRojLWhvHM1x5UW0l/9OTDuAgAsK0VmD6AuGO/dvNzk4bw==','','','0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00',0,'2025-12-22 12:54:17',1),(5,',4,','yusufhabib2903@gmail.com','UGgi19s0RkhSjkCbnYmK6aOrUa29yWCRXBn2d6r6bRojLWhvHM1x5UW0l/9OTDuAgAsK0VmD6AuGO/dvNzk4bw==','127.0.0.1','','2026-01-21 10:04:02','0000-00-00 00:00:00','0000-00-00 00:00:00',1,'2026-01-21 10:02:03',1);
+INSERT INTO `bbc_user` VALUES (1,',3,4,1,2,','admin','qLQlcAydFU+BjbJQTv77+NwArBooPGwg7P4GUxx6+mZA93pH8GrHIvYhvye+ZWe+J4vfVZ1aZkBaiOVxPSLNRQ==','127.0.0.1','127.0.0.1','2026-02-16 11:39:13','2026-02-13 11:53:00','2026-02-16 14:29:41',59,NULL,1),(2,',2,1,3,4,','danang@fisip.net','qLQlcAydFU+BjbJQTv77+NwArBooPGwg7P4GUxx6+mZA93pH8GrHIvYhvye+ZWe+J4vfVZ1aZkBaiOVxPSLNRQ==','127.0.0.1','127.0.0.1','2016-05-03 23:35:44','2016-05-03 23:32:34',NULL,0,NULL,1),(3,',3,','yusuf ','qLQlcAydFU+BjbJQTv77+NwArBooPGwg7P4GUxx6+mZA93pH8GrHIvYhvye+ZWe+J4vfVZ1aZkBaiOVxPSLNRQ==','::1','::1','2026-01-22 15:00:13','2026-01-22 14:55:29','0000-00-00 00:00:00',4,'2025-12-08 09:34:25',1),(4,',3,','jovancho ','qLQlcAydFU+BjbJQTv77+NwArBooPGwg7P4GUxx6+mZA93pH8GrHIvYhvye+ZWe+J4vfVZ1aZkBaiOVxPSLNRQ==','','','0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00',0,'2025-12-22 12:54:17',1),(5,',4,','yusufhabib2903@gmail.com','qLQlcAydFU+BjbJQTv77+NwArBooPGwg7P4GUxx6+mZA93pH8GrHIvYhvye+ZWe+J4vfVZ1aZkBaiOVxPSLNRQ==','127.0.0.1','','2026-01-21 10:04:02','0000-00-00 00:00:00','0000-00-00 00:00:00',1,'2026-01-21 10:02:03',1),(6,',3,','choirulanam@gmail.com','sMB1hfkS3Xa15jNqiwA1HEzT+WAvfkQ+XToTR7IIj7nkviJWywsn8G0X+ApKk0bxsPFff7WCcxR5p+OyaNnKMw==','','','0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00',0,'2026-02-16 11:40:00',1),(7,',3,','azzanslebew@gmail.com','GilwJedV32+eBPvLQAZwIe1uQXLEg3jjgdTHoxW48S4o342Cv1x59/eASjkI6r0H2KRdKrEJrUmHy51bqKbQDw==','','','0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00',0,'2026-02-16 11:40:32',1),(8,',3,','jojo@gmail.com','VALuOxWFtQnrkuO+GNJE4KM7+fHdo3Pr7NJ/syrBadpcBY+EChOLcru6yGmTmwNMs1IFs9cVTRoy9IZbgqeaKw==','','','0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00',0,'2026-02-16 11:41:07',1),(9,',3,','fabio@gmail.com','s/FBtBXgo75q600RIs7vZ3Bw9lUYzZ9CUC+hrloQstbtYXOJQ2Qna7qFqrOphACCgKDrPXUWxpzt+cD2+44usw==','','','0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00',0,'2026-02-16 11:41:42',1),(10,',3,','rusmadi@gmail.com','z8/n5Bs8RiONsNe1fQ0ykJuH0ZWxrvknEpX6tI0SS37kCVab1pyCUUzvh8a1aEC2mN4KlQ0Yt1olbi0/kd6Yhg==','','','0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00',0,'2026-02-16 11:42:30',1),(11,',3,','vania@gmail.com','LF1ORaTIwmFGhTuxaju9Uq4tW53cHyU3170vozfQ4qpG1LHac5TlPVTz56z83l8VfW9h+3odCPYIZxDATrr3ww==','','','0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00',0,'2026-02-16 11:43:37',1);
 DROP TABLE IF EXISTS `bbc_user_field`;
 CREATE TABLE `bbc_user_field` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -774,32 +774,18 @@ CREATE TABLE `interns` (
   `major` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `start_date` date DEFAULT NULL,
   `end_date` date DEFAULT NULL,
-  `status` tinyint(1) DEFAULT 1 COMMENT '1=Active, 2=Ended, 3=Coming Soon',
+  `status` tinyint(1) DEFAULT '1' COMMENT '1=Active, 2=Ended, 3=Coming Soon',
   `created` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
   KEY `user_id` (`user_id`),
   KEY `school_id` (`school_id`),
-  CONSTRAINT `fk_interns_user` FOREIGN KEY (`user_id`) REFERENCES `bbc_user` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `fk_interns_school` FOREIGN KEY (`school_id`) REFERENCES `interns_school` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-INSERT INTO `interns` 
-(`id`, `user_id`, `email`, `name`, `phone`, `school_id`, `major`, `start_date`, `end_date`, `status`, `created`, `updated`) 
-VALUES 
-(1, 3, 'yusufhabib290@gmail.com', 'Yusuf Rizqy', '085786673009', 1, 'PPLG', '2025-10-06', '2026-03-28', 1, '2025-12-22 12:50:41', NULL);
+  CONSTRAINT `fk_interns_school` FOREIGN KEY (`school_id`) REFERENCES `interns_school` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_interns_user` FOREIGN KEY (`user_id`) REFERENCES `bbc_user` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `interns_school`;
-CREATE TABLE `interns_school` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `school_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created` datetime DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `school_name` (`school_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-INSERT INTO `interns_school`
-VALUES(1,'SMK Raden Umar Said', NOW());
-
+INSERT INTO `interns` VALUES (1,3,'yusufhabib290@gmail.com','Yusuf Rizqy','085786673009',1,'PPLG','2025-10-06','2026-03-28',1,'2025-12-22 12:50:41',NULL),(2,6,'choirulanam@gmail.com','Choirul Anam','085621212121',1,'RPL','2025-10-06','2026-03-31',1,'2026-02-16 11:40:00',NULL),(3,7,'azzanslebew@gmail.com','Azzan Isham Alawiy','08563465432',1,'RPL','2025-10-06','2026-03-31',1,'2026-02-16 11:40:32',NULL),(4,8,'jojo@gmail.com','Jovanco Nicholas Rise','08562121231',1,'RPL','2025-10-06','2026-03-31',1,'2026-02-16 11:41:07',NULL),(5,9,'fabio@gmail.com','Fahrozi Albaquila','031381321321',1,'PPLG','2026-01-01','2026-03-31',1,'2026-02-16 11:41:42',NULL),(6,10,'rusmadi@gmail.com','Rusmadi Husna','08123913913',1,'PPLG','2026-02-01','2026-04-30',1,'2026-02-16 11:42:30',NULL),(7,11,'vania@gmail.com','Vania Feby Arkarunia','0281327131232',1,'Animasi','2026-04-01','2026-07-31',3,'2026-02-16 11:43:37',NULL);
 DROP TABLE IF EXISTS `interns_report`;
 CREATE TABLE `interns_report` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -813,19 +799,31 @@ CREATE TABLE `interns_report` (
   CONSTRAINT `interns_report_ibfk_2` FOREIGN KEY (`interns_tasks_id`) REFERENCES `interns_tasks_list` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+DROP TABLE IF EXISTS `interns_school`;
+CREATE TABLE `interns_school` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `school_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `school_name` (`school_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `interns_school` VALUES (1,'SMK Raden Umar Said','2026-02-13 11:52:46');
 DROP TABLE IF EXISTS `interns_tasks`;
 CREATE TABLE `interns_tasks` (
   `id` int NOT NULL AUTO_INCREMENT,
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `timeline` int NOT NULL,
-  `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `task_type_id` int DEFAULT NULL,
   `created` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  PRIMARY KEY (`id`),
+  KEY `fk_interns_tasks_type` (`task_type_id`),
+  CONSTRAINT `fk_interns_tasks_type` FOREIGN KEY (`task_type_id`) REFERENCES `interns_tasks_type` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `interns_tasks` VALUES (1,'Install Linux','Install Linux Mint atau Ubuntu sesuai standar.',6,'Website','2025-12-08 09:32:44',NULL),(2,'Create Project Framework Esoftplay','Membuat project awal menggunakan framework Esoftplay.',10,'Website','2025-12-08 09:32:44',NULL);
+INSERT INTO `interns_tasks` VALUES (1,'Install Linux','Install Linux Mint atau Ubuntu sesuai standar.',6,1,'2025-12-08 09:32:44',NULL),(2,'Create Project Framework Esoftplay','Membuat project awal menggunakan framework Esoftplay.',10,1,'2025-12-08 09:32:44',NULL),(13,'Implementasi API Login','Membuat endpoint login menggunakan JWT',2,2,'2026-02-16 12:06:18',NULL),(14,'Slicing Landing Page','Mengubah desain Figma ke HTML/CSS/JS',3,3,'2026-02-16 12:06:18',NULL),(15,'Bug Fixing Dashboard','Memperbaiki tampilan grafik yang berantakan',1,4,'2026-02-16 12:06:18',NULL);
 DROP TABLE IF EXISTS `interns_tasks_list`;
 CREATE TABLE `interns_tasks_list` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -833,16 +831,19 @@ CREATE TABLE `interns_tasks_list` (
   `interns_tasks_id` int DEFAULT NULL,
   `notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `status` tinyint DEFAULT '1' COMMENT '1=to do, 2=in progress, 3=submit, 4=revised, 5=done, 6=cancel',
-  `created` datetime DEFAULT CURRENT_TIMESTAMP,
+  `started` datetime DEFAULT NULL,
+  `deadline` datetime DEFAULT NULL,
+  `revised_history` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created` datetime DEFAULT NULL,
   `updated` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `interns_id` (`interns_id`),
   KEY `interns_tasks_id` (`interns_tasks_id`),
   CONSTRAINT `itl_ibfk_interns` FOREIGN KEY (`interns_id`) REFERENCES `interns` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `itl_ibfk_tasks` FOREIGN KEY (`interns_tasks_id`) REFERENCES `interns_tasks` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `interns_tasks_list` VALUES (4,1,1,'test',1,'2025-12-24 16:07:52','2025-12-24 16:07:52');
+INSERT INTO `interns_tasks_list` VALUES (8,1,1,'kerjakan<br />\r\n',1,NULL,NULL,'',NULL,NULL),(9,2,1,'kerjakan nam',1,NULL,NULL,'',NULL,NULL),(10,7,1,'kerjakan ',2,NULL,NULL,'',NULL,NULL),(11,5,1,'kerjakan',1,NULL,NULL,'',NULL,NULL),(12,4,14,'kerjakan',2,NULL,NULL,'',NULL,NULL);
 DROP TABLE IF EXISTS `interns_tasks_list_history`;
 CREATE TABLE `interns_tasks_list_history` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -857,7 +858,16 @@ CREATE TABLE `interns_tasks_list_history` (
   CONSTRAINT `itl_hist_ibfk_list` FOREIGN KEY (`interns_tasks_list_id`) REFERENCES `interns_tasks_list` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `interns_tasks_list_history` VALUES (1,1,4,'2025-12-24 16:07:52',1);
+DROP TABLE IF EXISTS `interns_tasks_type`;
+CREATE TABLE `interns_tasks_type` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `type_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `type_name` (`type_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `interns_tasks_type` VALUES (1,'Website','2026-02-13 11:52:46'),(2,'Backend','2026-02-16 12:06:18'),(3,'Frontend','2026-02-16 12:06:18'),(4,'UI/UX','2026-02-16 12:06:18');
 DROP TABLE IF EXISTS `links`;
 CREATE TABLE `links` (
   `id` int NOT NULL AUTO_INCREMENT,

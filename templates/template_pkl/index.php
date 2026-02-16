@@ -15,8 +15,6 @@
         <?php echo $sys->block_show('content_bottom');?>
         <?php echo $sys->block_show('footer'); ?>
       </div>
-    
-    </div>
     <!-- Bootstrap JavaScript -->
     <script src="<?php echo _URL;?>templates/admin/bootstrap/js/bootstrap.min.js"></script>
     
