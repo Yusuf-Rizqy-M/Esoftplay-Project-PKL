@@ -72,9 +72,9 @@ if (!empty($_POST['transfer'])) {
                     $user_id = user_create($user_params);
                   }
                   if ($user_id) {
-                    $start_date = fix_excel_date_import($cells['F']);
-                    $end_date   = fix_excel_date_import($cells['G']);
-                    $status     = calculate_intern_status_import($start_date, $end_date);
+                    $start_date = _date($cells['F']);
+                    $end_date   = _date($cells['G']);
+                    $status     = _status($start_date, $end_date);
 
                     $q = "INSERT INTO interns SET user_id=$user_id, email='" . addslashes($email) . "', name='" . addslashes($cells['B']) . "', phone='" . addslashes($cells['C']) . "', school='" . addslashes($cells['D']) . "', major='" . addslashes($cells['E']) . "', start_date='$start_date', end_date='$end_date', status=$status, created=NOW()";
                     if ($db->Execute($q)) $success++;
@@ -116,7 +116,6 @@ $form_search->search->input->school_id->setReferenceTable('interns_school');
 $form_search->search->input->school_id->setReferenceField('school_name', 'id');
 $form_search->search->input->school_id->setAutoComplete(true);
 
-
 $form_search->search->addInput('start_date', 'dateinterval');
 $form_search->search->input->start_date->setIsSearchRange();
 $form_search->search->input->start_date->setTitle('Start Date');
@@ -130,18 +129,18 @@ $form_list->initRoll($add_sql . ' ORDER BY id DESC', 'id');
 $form_list->roll->setDeleteTool(true);
 $form_list->roll->setSaveTool(false);
 
-$form_list->roll->addInput('id_menu', 'editlinks');
-$form_list->roll->input->id_menu->setTitle('Menu');
-$form_list->roll->input->id_menu->setFieldName('id');
-$form_list->roll->input->id_menu->setCaption('Opsi');
-$form_list->roll->input->id_menu->setGetName('interns_id');
-$form_list->roll->input->id_menu->setLinks(array(
-  $Bbc->mod['circuit'] . '.interns_edit' => icon('fa-user') . ' Edit Intern',
-  $Bbc->mod['circuit'] . '.interns_tasks_list' => icon('fa-list') . ' Tambah Pengerjaan'
+$form_list->roll->addInput('id_menu_task', 'editlinks'); 
+$form_list->roll->input->id_menu_task->setTitle('Aksi');
+$form_list->roll->input->id_menu_task->setFieldName('id');
+$form_list->roll->input->id_menu_task->setCaption('Opsi');
+$form_list->roll->input->id_menu_task->setGetName('interns_id');
+$form_list->roll->input->id_menu_task->setLinks(array(
+  $Bbc->mod['circuit'] . '.interns_tasks_list_edit' => icon('fa-list') . ' Tambah Pengerjaan'
 ));
 
-$form_list->roll->addInput('name', 'sqlplaintext');
+$form_list->roll->addInput('name', 'sqllinks');
 $form_list->roll->input->name->setTitle('Name');
+$form_list->roll->input->name->setLinks($Bbc->mod['circuit'] . '.interns_edit');
 $form_list->roll->addInput('email', 'sqlplaintext');
 $form_list->roll->input->email->setTitle('Email');
 
@@ -169,13 +168,13 @@ $form_list->roll->input->status->setDisplayFunction(function ($value) {
   return '<span class="label" style="background-color: ' . $status['color'] . '; color: white; padding: 5px 12px; border-radius: 12px;">' . $status['label'] . '</span>';
 });
 
-$form_list->roll->addInput('task_link', 'sqllinks');
+$form_list->roll->addInput('task_link', 'sqlplaintext');
 $form_list->roll->input->task_link->setTitle('Tasks');
-$form_list->roll->input->task_link->setFieldName('id AS task_link');
-$form_list->roll->input->task_link->setDisplayFunction(function ($intern_id) {
-  global $Bbc;
-  $url = $Bbc->mod['circuit'] . '.interns_tasks_list&interns_id=' . intval($intern_id);
-  return '<a href="' . $url . '" class="btn btn-xs btn-primary">Lihat Pengerjaan</a>';
+$form_list->roll->input->task_link->setFieldName('id'); 
+$form_list->roll->input->task_link->setDisplayFunction(function($intern_id){
+	global $Bbc;
+	$url = $Bbc->mod['circuit'].'.interns_tasks_list&interns_id='.$intern_id.'&is_list=1';
+	return '<a href="'.$url.'" class="btn btn-xs btn-primary">'.' Lihat Pengerjaan User</a>';
 });
 
 $form_list->roll->addInput('created', 'sqlplaintext');
@@ -187,21 +186,26 @@ ob_start();
 include 'interns_edit.php';
 $form_edit_content = ob_get_clean();
 
+echo '<div class="btn-group" style="margin-bottom: 15px;">';
+echo '  <a href="'.$Bbc->mod['circuit'].'.interns_tasks" class="btn btn-default">'.icon('fa-tasks').' Halaman Data Tugas</a>';
+echo '  <a href="'.$Bbc->mod['circuit'].'.interns_tasks_list" class="btn btn-default">'.icon('fa-list-alt').'Halaman List Pengerjaan Tugas</a>';
+echo '  <a href="'.$Bbc->mod['circuit'].'.interns_tasks_list_history" class="btn btn-default">'.icon('fa-history').'Halaman History</a>';
+echo '</div>';
+
 $tabs = array(
   'List Interns' => $form_list->roll->getForm(),
   ($is_edit ? 'Edit Intern' : 'Add Intern') => $form_edit_content
 );
 echo tabs($tabs, ($is_edit ? 2 : 1), 'tabs_interns');
 
-function fix_excel_date_import($date_str)
+function _date($date_str)
 {
   if (empty($date_str)) return date('Y-m-d');
   $date_str = str_replace('/', '-', $date_str);
   $ts = strtotime($date_str);
   return ($ts === false) ? date('Y-m-d') : date('Y-m-d', $ts);
 }
-
-function calculate_intern_status_import($start, $end)
+function _status($start, $end)
 {
   $curr = date('Y-m-d');
   if ($curr < $start) return 3;

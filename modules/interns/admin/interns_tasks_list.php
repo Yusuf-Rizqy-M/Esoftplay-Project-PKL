@@ -22,7 +22,7 @@ if (!empty($_POST['transfer'])) {
     download_excel('Template_Import_Task_List_' . date('Y-m-d'), $r);
     die();
   }
-                        
+
   if ($_POST['transfer'] == 'upload') {
     $msg = '';
     if (!empty($_FILES['excel']['tmp_name']) && is_uploaded_file($_FILES['excel']['tmp_name'])) {
@@ -211,22 +211,49 @@ $form_list->roll->action();
 ob_start();
 include 'interns_tasks_list_edit.php';
 $form_edit_content = ob_get_clean();
-// berfungsi untuk menyembunyikan add to do, import excel dan menambahkan header ketika interns task di klik
-if (!empty($_GET['internal_tasks_id'])) {
+// Ambil ID dari URL (baik dari Task maupun dari Intern/User)
+$internal_tasks_id = @intval($_GET['internal_tasks_id']);
+$intern_id         = @intval($_GET['interns_id']);
+
+// LOGIKA HEADER: Jika sedang melihat detail pengerjaan (Filter spesifik)
+if ($internal_tasks_id > 0 || ($intern_id > 0 && !empty($_GET['is_list']))) {
   echo '<div class="panel panel-default">';
   echo '<div class="panel-heading">';
-  $task = $db->getRow('SELECT * from interns_tasks where id = ' . $_GET['internal_tasks_id']);
-  echo $task['title'];
+  
+  if ($internal_tasks_id > 0) {
+    // Jika diklik dari Interns Tasks (Lihat Detail Task)
+    $task = $db->getRow('SELECT title from interns_tasks where id = ' . $internal_tasks_id);
+    echo icon('fa-tasks').' ' . $task['title'];
+  } else {
+    // Jika diklik dari Interns (Lihat Pengerjaan User)
+    $user = $db->getRow('SELECT name from interns where id = ' . $intern_id);
+    echo icon('fa-user').' ' . $user['name']; 
+  }
+  
   echo '</div>';
   echo '<div class="panel-body">';
+  
+  // Tambahkan tombol Back kecil di atas tabel agar user bisa kembali
+  echo '<div style="margin-bottom: 15px;">';
+  echo '<a href="javascript:history.back()" class="btn btn-default btn-sm">'.icon('fa-chevron-left').' Kembali</a>';
+  echo '</div>';
+  
   echo $form_list->roll->getForm();
-  echo  '</div></div>';
+  echo '</div></div>';
+
 } else {
+  // TAMPILAN STANDAR: Jika tidak ada filter spesifik (Menampilkan Tabs)
   $tabs = [
     'List To Do' => $form_list->roll->getForm(),
     ($is_edit ? 'Edit Task' : 'Add To Do') => $form_edit_content
   ];
   echo tabs($tabs, ($is_edit ? 2 : 1), 'tabs_task_list');
+
+  echo '<div style="margin-bottom: 15px;">';
+  echo '<a href="javascript:history.back()" class="btn btn-default btn-sm">'.icon('fa-chevron-left').' Kembali</a>';
+  echo '</div>';
+
+
 
 ?>
   <div class="col-xs-12 no-both" style="padding: 10px 0;">

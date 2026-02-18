@@ -92,19 +92,9 @@ if (!empty($_POST['transfer'])) {
             } else {
                 $msg = msg('Mohon upload file dengan format Excel yang benar (.xlsx)', 'danger');
             }
-            $msg = msg("Upload tasks berhasil. $success_count data baru berhasil diimport.", 'success');
-          } else {
-            $msg = msg('Maaf, format kolom file tidak sesuai. Pastikan urutan: Title, Description, Timeline, Type.', 'danger');
-          }
-        } else {
-          $msg = msg('Maaf, file yang anda upload tidak terbaca.', 'danger');
         }
-      } else {
-        $msg = msg('Mohon upload file dengan format Excel yang benar (.xlsx)', 'danger');
-      }
+        if (!empty($msg)) echo $msg;
     }
-    if (!empty($msg)) echo $msg;
-  }
 }
 
 $form_search = _lib('pea', 'interns_tasks');
@@ -156,7 +146,7 @@ $form_list->roll->input->task_link->setFieldName('id as task_link');
 $form_list->roll->input->task_link->setDisplayFunction(function ($id) {
     global $Bbc;
     $target_url = $Bbc->mod['circuit'] . '.interns_tasks_list&internal_tasks_id=' . urlencode($id);
-    return '<a href="' . $target_url . '" class="btn btn-xs btn-primary">Lihat Detail</a>';
+    return '<a href="' . $target_url . '" class="btn btn-xs btn-primary">Lihat Pengerjaan Sesuai Task</a>';
 });
 
 $form_list->roll->addInput('task_link_assigned', 'sqllinks');
@@ -164,9 +154,9 @@ $form_list->roll->input->task_link_assigned->setTitle('Assigned');
 $form_list->roll->input->task_link_assigned->setFieldName('id as task_link_assigned');
 $form_list->roll->input->task_link_assigned->setLinks($Bbc->mod['circuit'] . '.interns_tasks_assigned');
 $form_list->roll->input->task_link_assigned->setDisplayFunction(function ($id) {
-  global $Bbc;
-  $target_url = $Bbc->mod['circuit'] . '.interns_tasks_assigned&id=' . urlencode($id);
-  return '<a href="' . $target_url . '" class="btn btn-xs btn-primary">Assigned</a>';
+    global $Bbc;
+    $target_url = $Bbc->mod['circuit'] . '.interns_tasks_assigned&id=' . urlencode($id);
+    return '<a href="' . $target_url . '" class="btn btn-xs btn-primary">Assigned</a>';
 });
 
 $form_list->roll->addInput('created', 'sqlplaintext');
@@ -179,10 +169,15 @@ include 'interns_tasks_edit.php';
 $form_edit_content = ob_get_clean();
 
 $tab_list = array(
-  'List Task' => $form_list->roll->getForm(),
-  ($is_edit ? 'Edit Task' : 'Add Task') => $form_edit_content
+    'List Task' => $form_list->roll->getForm(),
+    ($is_edit ? 'Edit Task' : 'Add Task') => $form_edit_content
 );
 echo tabs($tab_list, ($is_edit ? 2 : 1), 'tabs_interns_tasks');
+
+  echo '<div style="margin-bottom: 15px;">';
+  echo '<a href="javascript:history.back()" class="btn btn-default btn-sm">'.icon('fa-chevron-left').' Kembali</a>';
+  echo '</div>';
+  
 ?>
 
 <div class="col-xs-12 no-both">

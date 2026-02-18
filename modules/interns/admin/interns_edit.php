@@ -91,7 +91,7 @@ function intern_logic_save($intern_id)
         'params'    => ['_padding' => 1],
       ]);
     }
-
+    
     if ($user_id) {
       $form_add->edit->addExtraField('user_id', $user_id);
     }
