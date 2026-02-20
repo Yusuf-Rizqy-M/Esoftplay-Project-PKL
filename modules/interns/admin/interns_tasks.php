@@ -133,12 +133,28 @@ $form_list->roll->addInput('description', 'sqlplaintext');
 $form_list->roll->input->description->setTitle('Description');
 
 $form_list->roll->addInput('timeline', 'sqlplaintext');
-$form_list->roll->input->timeline->setTitle('Timeline (Days)');
+$form_list->roll->input->timeline->setTitle('Timeline');
 
 $form_list->roll->addInput('task_type_id', 'sqlplaintext');
 $form_list->roll->input->task_type_id->setTitle('Type');
 $form_list->roll->input->task_type_id->setFieldName('(SELECT `type_name` FROM `interns_tasks_type` WHERE `interns_tasks_type`.id=`interns_tasks`.`task_type_id`) AS type_name');
 
+// BAGIAN TAMBAHAN: Menampilkan daftar intern yang ditugaskan (Hanya yang berstatus ACTIVE)
+$form_list->roll->addInput('assigned_to', 'sqlplaintext');
+$form_list->roll->input->assigned_to->setTitle('Assigned To');
+$form_list->roll->input->assigned_to->setFieldName('id AS assigned_to');
+$form_list->roll->input->assigned_to->setDisplayFunction(function($id){
+    global $db;
+    // Menambahkan kondisi i.status = 1 untuk filter hanya yang Active
+    $names = $db->getOne("SELECT GROUP_CONCAT(i.name SEPARATOR ', ') 
+                          FROM interns_tasks_list itl 
+                          LEFT JOIN interns i ON itl.interns_id = i.id 
+                          WHERE itl.interns_tasks_id = ".intval($id)." 
+                          AND i.status = 1");
+    
+    return !empty($names) ? $names : '-';
+});
+// AKHIR BAGIAN TAMBAHAN
 $form_list->roll->addInput('task_link', 'sqllinks');
 $form_list->roll->input->task_link->setLinks('#');
 $form_list->roll->input->task_link->setTitle('Pengerjaan');
@@ -174,10 +190,10 @@ $tab_list = array(
 );
 echo tabs($tab_list, ($is_edit ? 2 : 1), 'tabs_interns_tasks');
 
-  echo '<div style="margin-bottom: 15px;">';
-  echo '<a href="javascript:history.back()" class="btn btn-default btn-sm">'.icon('fa-chevron-left').' Kembali</a>';
-  echo '</div>';
-  
+echo '<div style="margin-bottom: 15px;">';
+echo '<a href="javascript:history.back()" class="btn btn-default btn-sm">'.icon('fa-chevron-left').' Kembali</a>';
+echo '</div>';
+
 ?>
 
 <div class="col-xs-12 no-both">

@@ -9,12 +9,13 @@ $form_add->initEdit($task_list_id > 0 ? "WHERE `id`={$task_list_id}" : "");
 
 $form_add->edit->addInput('status', 'select');
 $form_add->edit->input->status->setTitle('Status');
-$form_add->edit->input->status->addOption('To Do', 1);
 $form_add->edit->input->status->addOption('In Progress', 2);
-$form_add->edit->input->status->addOption('Submit', 3);
 $form_add->edit->input->status->addOption('Revised', 4);
 $form_add->edit->input->status->addOption('Done', 5);
 $form_add->edit->input->status->addOption('Cancel', 6);
+
+$form_add->edit->addInput('notes', 'textarea');
+$form_add->edit->input->notes->setTitle('Notes');
 
 $form_add->edit->action();
 
@@ -23,7 +24,7 @@ if (!empty($_POST) && !empty($_POST['edit_submit_update'])) {
     if ($final_id > 0) {
         $current_data = $db_obj->getRow("SELECT * FROM `interns_tasks_list` WHERE `id`={$final_id}");
         if (!empty($current_data)) {
-            $db_obj->Execute("INSERT INTO `interns_tasks_list_history` (`interns_id`, `interns_tasks_list_id`, `status`, `created`) VALUES ({$current_data['interns_id']}, {$final_id}, {$current_data['status']}, NOW())");
+            $db_obj->Execute("INSERT INTO `interns_tasks_list_history` (`interns_id`, `interns_tasks_list_id`, `status`, `notes`, `created`) VALUES ({$current_data['interns_id']}, {$final_id}, {$current_data['status']}, '".addslashes($current_data['notes'])."', NOW())");
             $db_obj->Execute("UPDATE `interns_tasks_list` SET `updated` = NOW() WHERE `id` = {$final_id}");
         }
         header("Location: index.php?mod=interns.interns_tasks_list");
@@ -38,8 +39,21 @@ if (!empty($_GET['is_ajax'])): ?>
     _Bbc($ => {
       const edit_form_url = new URL(<?php echo json_encode(seo_url()) ?>);
       const edit_form_obj = $('form[name="edit"]');
+      const status_sel    = $('select[name="status"]');
+      const notes_row     = $('textarea[name="notes"]').closest('.form-group');
+
+      function toggleNotes() {
+        if (['4', '5', '6'].includes(status_sel.val())) {
+          notes_row.show();
+        } else {
+          notes_row.hide();
+        }
+      }
+
+      status_sel.on('change', toggleNotes);
+      toggleNotes();
+
       edit_form_url.searchParams.delete('is_ajax');
-      
       edit_form_obj.on('submit', e => {
         e.preventDefault();
         $.ajax({

@@ -833,6 +833,7 @@ CREATE TABLE `interns_tasks_list` (
   `status` tinyint DEFAULT '1' COMMENT '1=to do, 2=in progress, 3=submit, 4=revised, 5=done, 6=cancel',
   `started` datetime DEFAULT NULL,
   `deadline` datetime DEFAULT NULL,
+  `done_at` datetime DEFAULT NULL,
   `revised_history` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created` datetime DEFAULT NULL,
   `updated` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
@@ -843,8 +844,7 @@ CREATE TABLE `interns_tasks_list` (
   CONSTRAINT `itl_ibfk_tasks` FOREIGN KEY (`interns_tasks_id`) REFERENCES `interns_tasks` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `interns_tasks_list` VALUES (8,1,1,'kerjakan<br />\r\n',1,NULL,NULL,'',NULL,NULL),(9,2,1,'kerjakan nam',1,NULL,NULL,'',NULL,NULL),(10,7,1,'kerjakan ',2,NULL,NULL,'',NULL,NULL),(11,5,1,'kerjakan',1,NULL,NULL,'',NULL,NULL),(12,4,14,'kerjakan',2,NULL,NULL,'',NULL,NULL);
-DROP TABLE IF EXISTS `interns_tasks_list_history`;
+
 CREATE TABLE `interns_tasks_list_history` (
   `id` int NOT NULL AUTO_INCREMENT,
   `interns_id` int NOT NULL,
