@@ -156,10 +156,10 @@ $form_list->roll->input->interns_id->setReferenceTable('interns');
 $form_list->roll->input->interns_id->setReferenceField('name', 'id');
 $form_list->roll->input->interns_id->setPlaintext(true);
 
-$form_list->roll->addInput('notes', 'sqllinks');
+$form_list->roll->addInput('notes', 'sqlplaintext');
 $form_list->roll->input->notes->setTitle('Notes');
-$form_list->roll->input->notes->setModal(true);
-$form_list->roll->input->notes->setLinks($Bbc->mod['circuit'] . '.interns_tasks_list_edit');
+// $form_list->roll->input->notes->setModal(true);
+// $form_list->roll->input->notes->setLinks($Bbc->mod['circuit'] . '.interns_tasks_list_edit');
 
 $form_list->roll->addInput('timeline', 'sqlplaintext');
 $form_list->roll->input->timeline->setTitle('Timeline (Days)');
@@ -183,6 +183,9 @@ $form_list->roll->input->deadline->setTitle('Deadline');
 
 $form_list->roll->addInput('revised_history', 'sqlplaintext');
 $form_list->roll->input->revised_history->setTitle('Revised History');
+
+$form_list->roll->addInput('done_at', 'sqlplaintext');
+$form_list->roll->input->done_at->setTitle('Done At');
 
 $form_list->roll->setDeleteTool(false);
 $form_list->roll->setSaveTool(false);
