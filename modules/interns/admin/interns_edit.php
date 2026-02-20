@@ -49,26 +49,26 @@ echo '<div class="panel panel-default"><div class="panel-body">' . $form_add->ed
 
 function intern_logic_save($intern_id)
 {
-  global $form_add;
-  global $db;
-  global $id;
+  global $form_add, $db, $id;
 
-  $is_edit = $db->getOne("SELECT 1 FROM `interns` WHERE `id`=" . intval($id));
+  // Gunakan petik tunggal dan backtick
+  $is_edit = $db->getOne('SELECT 1 FROM `interns` WHERE `id`=' . intval($id));
   $prefix  = $is_edit ? 'edit_' : 'add_';
 
   $email = isset($_POST[$prefix . 'email']) ? $_POST[$prefix . 'email'] : '';
   $phone = isset($_POST[$prefix . 'phone']) ? $_POST[$prefix . 'phone'] : '';
 
   if (!empty($email) && !is_email($email)) {
-    $form_add->edit->setFailSaveMessage('Email tidak valid bro!');
+    $form_add->edit->setFailSaveMessage('Email tidak valid!');
     $form_add->edit->error = true;
     return false;
   }
   if (!empty($phone) && !is_phone($phone)) {
-    $form_add->edit->setFailSaveMessage('Phone Minimal 5 Digit Bro');
+    $form_add->edit->setFailSaveMessage('Phone Minimal 5 Digit');
     $form_add->edit->error = true;
     return false;
   }
+  
   $start = isset($_POST[$prefix . 'start_date']) ? $_POST[$prefix . 'start_date'] : '';
   $end   = isset($_POST[$prefix . 'end_date']) ? $_POST[$prefix . 'end_date'] : '';
 
@@ -79,7 +79,8 @@ function intern_logic_save($intern_id)
 
   if (!$is_edit) {
     $name = isset($_POST['add_name']) ? $_POST['add_name'] : '';
-    $user_id = $db->getOne("SELECT `id` FROM `bbc_user` WHERE `username`='" . addslashes($email) . "'");
+    // Gunakan backtick dan petik tunggal untuk keamanan & standar
+    $user_id = $db->getOne('SELECT `id` FROM `bbc_user` WHERE `username`=\'' . addslashes($email) . '\'');
 
     if (!$user_id) {
       $user_id = user_create([

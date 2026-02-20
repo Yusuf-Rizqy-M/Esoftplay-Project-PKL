@@ -130,7 +130,7 @@ $form_search->search->input->status->addOption('Cancel', '6');
 
 $form_search->search->addInput('notes', 'keyword');
 $form_search->search->input->notes->addSearchField('notes', false);
-echo $form_search->search->getform();
+
 $add_sql = $form_search->search->action();
 $keyword = $form_search->search->keyword();
 
@@ -211,29 +211,24 @@ $form_list->roll->action();
 ob_start();
 include 'interns_tasks_list_edit.php';
 $form_edit_content = ob_get_clean();
-// Ambil ID dari URL (baik dari Task maupun dari Intern/User)
 $internal_tasks_id = @intval($_GET['internal_tasks_id']);
 $intern_id         = @intval($_GET['interns_id']);
 
-// LOGIKA HEADER: Jika sedang melihat detail pengerjaan (Filter spesifik)
 if ($internal_tasks_id > 0 || ($intern_id > 0 && !empty($_GET['is_list']))) {
   echo '<div class="panel panel-default">';
   echo '<div class="panel-heading">';
   
   if ($internal_tasks_id > 0) {
-    // Jika diklik dari Interns Tasks (Lihat Detail Task)
+
     $task = $db->getRow('SELECT title from interns_tasks where id = ' . $internal_tasks_id);
     echo icon('fa-tasks').' ' . $task['title'];
   } else {
-    // Jika diklik dari Interns (Lihat Pengerjaan User)
     $user = $db->getRow('SELECT name from interns where id = ' . $intern_id);
     echo icon('fa-user').' ' . $user['name']; 
   }
   
   echo '</div>';
   echo '<div class="panel-body">';
-  
-  // Tambahkan tombol Back kecil di atas tabel agar user bisa kembali
   echo '<div style="margin-bottom: 15px;">';
   echo '<a href="javascript:history.back()" class="btn btn-default btn-sm">'.icon('fa-chevron-left').' Kembali</a>';
   echo '</div>';
@@ -242,7 +237,10 @@ if ($internal_tasks_id > 0 || ($intern_id > 0 && !empty($_GET['is_list']))) {
   echo '</div></div>';
 
 } else {
-  // TAMPILAN STANDAR: Jika tidak ada filter spesifik (Menampilkan Tabs)
+  echo '<div style="margin-bottom: 20px;">';
+  echo $form_search->search->getform();
+  echo '</div>';
+
   $tabs = [
     'List To Do' => $form_list->roll->getForm(),
     ($is_edit ? 'Edit Task' : 'Add To Do') => $form_edit_content
@@ -250,10 +248,8 @@ if ($internal_tasks_id > 0 || ($intern_id > 0 && !empty($_GET['is_list']))) {
   echo tabs($tabs, ($is_edit ? 2 : 1), 'tabs_task_list');
 
   echo '<div style="margin-bottom: 15px;">';
-  echo '<a href="javascript:history.back()" class="btn btn-default btn-sm">'.icon('fa-chevron-left').' Kembali</a>';
+  echo '<a href="'.$Bbc->mod['circuit'].'.interns" class="btn btn-default btn-sm">'.icon('fa-chevron-left').' Kembali</a>';
   echo '</div>';
-
-
 
 ?>
   <div class="col-xs-12 no-both" style="padding: 10px 0;">
@@ -282,4 +278,3 @@ if ($internal_tasks_id > 0 || ($intern_id > 0 && !empty($_GET['is_list']))) {
   </div>
 <?php
 }
-?>
