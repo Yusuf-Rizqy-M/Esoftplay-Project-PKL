@@ -34,9 +34,12 @@ $form->roll->input->interns_id->setPlaintext(true);
 $form->roll->input->interns_id->setReferenceTable('interns');
 $form->roll->input->interns_id->setReferenceField('name', 'id');
 
-$form->roll->addInput('intern_email', 'sqlplaintext');
-$form->roll->input->intern_email->setTitle('Email');
-$form->roll->input->intern_email->setFieldName('(SELECT email FROM interns WHERE id = interns_id) as intern_email');
+$form->roll->addInput('email', 'selecttable');
+$form->roll->input->email->setTitle('Email');
+$form->roll->input->email->setReferenceTable('interns');
+$form->roll->input->email->setReferenceField('email', 'id');
+$form->roll->input->email->setPlaintext(true);
+$form->roll->input->email->setFieldName('interns_id AS email'); 
 
 $form->roll->addInput('interns_tasks_list_id', 'selecttable');
 $form->roll->input->interns_tasks_list_id->setTitle('Tasks');

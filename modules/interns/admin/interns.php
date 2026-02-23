@@ -151,7 +151,6 @@ $form_list->roll->input->name->setLinks($Bbc->mod['circuit'] . '.interns_edit');
 $form_list->roll->addInput('email', 'sqlplaintext');
 $form_list->roll->input->email->setTitle('Email');
 
-// Menggunakan selecttable + setPlaintext(true) agar ringan (JOIN otomatis oleh PEA)
 $form_list->roll->addInput('school_id', 'selecttable');
 $form_list->roll->input->school_id->setTitle('School');
 $form_list->roll->input->school_id->setReferenceTable('interns_school');

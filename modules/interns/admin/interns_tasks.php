@@ -154,7 +154,9 @@ $form_list->roll->input->assigned_to->setDisplayFunction(function($id){
     
     return !empty($names) ? $names : '-';
 });
-// AKHIR BAGIAN TAMBAHAN
+
+
+
 $form_list->roll->addInput('task_link', 'sqllinks');
 $form_list->roll->input->task_link->setLinks('#');
 $form_list->roll->input->task_link->setTitle('Pengerjaan');
@@ -164,16 +166,13 @@ $form_list->roll->input->task_link->setDisplayFunction(function ($id) {
     $target_url = $Bbc->mod['circuit'] . '.interns_tasks_list&internal_tasks_id=' . urlencode($id);
     return '<a href="' . $target_url . '" class="btn btn-xs btn-primary">Lihat Pengerjaan Sesuai Task</a>';
 });
-
-$form_list->roll->addInput('task_link_assigned', 'sqllinks');
-$form_list->roll->input->task_link_assigned->setTitle('Assigned');
-$form_list->roll->input->task_link_assigned->setFieldName('id as task_link_assigned');
-$form_list->roll->input->task_link_assigned->setLinks($Bbc->mod['circuit'] . '.interns_tasks_assigned');
-$form_list->roll->input->task_link_assigned->setDisplayFunction(function ($id) {
-    global $Bbc;
-    $target_url = $Bbc->mod['circuit'] . '.interns_tasks_assigned&id=' . urlencode($id);
-    return '<a href="' . $target_url . '" class="btn btn-xs btn-primary">Assigned</a>';
-});
+// opt?
+$form_list->roll->addInput('opt', 'editlinks');
+$form_list->roll->input->opt->setTitle('Assigned');
+$form_list->roll->input->opt->setCaption(icon('fa-list') . ' Assigned');
+$form_list->roll->input->opt->setFieldName('id');
+$form_list->roll->input->opt->setGetName('interns_tasks_id');
+$form_list->roll->input->opt->setLinks($Bbc->mod['circuit'] . '.interns_tasks_assigned');
 
 $form_list->roll->addInput('created', 'sqlplaintext');
 $form_list->roll->input->created->setDisplayColumn(false);

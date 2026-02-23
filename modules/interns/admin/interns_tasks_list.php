@@ -158,12 +158,13 @@ $form_list->roll->input->interns_id->setPlaintext(true);
 
 $form_list->roll->addInput('notes', 'sqlplaintext');
 $form_list->roll->input->notes->setTitle('Notes');
-// $form_list->roll->input->notes->setModal(true);
-// $form_list->roll->input->notes->setLinks($Bbc->mod['circuit'] . '.interns_tasks_list_edit');
 
-$form_list->roll->addInput('timeline', 'sqlplaintext');
+$form_list->roll->addInput('timeline', 'selecttable');
 $form_list->roll->input->timeline->setTitle('Timeline (Days)');
-$form_list->roll->input->timeline->setFieldName('id as timeline');
+$form_list->roll->input->timeline->setReferenceTable('interns_tasks');
+$form_list->roll->input->timeline->setReferenceField('timeline', 'id');
+$form_list->roll->input->timeline->setPlaintext(true);
+$form_list->roll->input->timeline->setFieldName('interns_tasks_id AS timeline'); 
 
 $form_list->roll->addInput('status', 'sqllinks');
 $form_list->roll->input->status->setModal(true);
@@ -182,7 +183,13 @@ $form_list->roll->addInput('deadline', 'sqlplaintext');
 $form_list->roll->input->deadline->setTitle('Deadline');
 
 $form_list->roll->addInput('revised_history', 'sqlplaintext');
-$form_list->roll->input->revised_history->setTitle('Revised History');
+$form_list->roll->input->revised_history->setTitle('History');
+$form_list->roll->input->revised_history->setFieldName('id');
+$form_list->roll->input->revised_history->setDisplayFunction(function($id){
+	global $Bbc;
+	$url = $Bbc->mod['circuit'].'.interns_tasks_list_history&tasks_list_id='.$id;
+	return '<a href="'.$url.'" class="btn btn-xs btn-primary">'.icon('fa-history').' View History</a>';
+});
 
 $form_list->roll->addInput('done_at', 'sqlplaintext');
 $form_list->roll->input->done_at->setTitle('Done At');
