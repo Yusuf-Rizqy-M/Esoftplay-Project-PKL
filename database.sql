@@ -835,7 +835,7 @@ CREATE TABLE `interns_tasks_list` (
   `deadline` datetime DEFAULT NULL,
   `done_at` datetime DEFAULT NULL,
   `revised_history` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created` datetime DEFAULT NULL,
+  `created` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `interns_id` (`interns_id`),
