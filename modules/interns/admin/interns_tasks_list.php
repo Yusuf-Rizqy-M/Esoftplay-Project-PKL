@@ -91,6 +91,7 @@ if (!empty($_POST['transfer'])) {
   }
 }
 
+
 $form_search = _lib('pea', 'interns_tasks_list');
 $form_search->initSearch();
 
@@ -164,7 +165,7 @@ $form_list->roll->input->timeline->setTitle('Timeline (Days)');
 $form_list->roll->input->timeline->setReferenceTable('interns_tasks');
 $form_list->roll->input->timeline->setReferenceField('timeline', 'id');
 $form_list->roll->input->timeline->setPlaintext(true);
-$form_list->roll->input->timeline->setFieldName('interns_tasks_id AS timeline'); 
+$form_list->roll->input->timeline->setFieldName('interns_tasks_id AS timeline');
 
 $form_list->roll->addInput('status', 'sqllinks');
 $form_list->roll->input->status->setModal(true);
@@ -185,10 +186,10 @@ $form_list->roll->input->deadline->setTitle('Deadline');
 $form_list->roll->addInput('revised_history', 'sqlplaintext');
 $form_list->roll->input->revised_history->setTitle('History');
 $form_list->roll->input->revised_history->setFieldName('id');
-$form_list->roll->input->revised_history->setDisplayFunction(function($id){
-	global $Bbc;
-	$url = $Bbc->mod['circuit'].'.interns_tasks_list_history&tasks_list_id='.$id;
-	return '<a href="'.$url.'" class="btn btn-xs btn-primary">'.icon('fa-history').' View History</a>';
+$form_list->roll->input->revised_history->setDisplayFunction(function ($id) {
+  global $Bbc;
+  $url = $Bbc->mod['circuit'] . '.interns_tasks_list_history&tasks_list_id=' . $id;
+  return '<a href="' . $url . '" class="btn btn-xs btn-primary">' . icon('fa-history') . ' View History</a>';
 });
 
 $form_list->roll->addInput('done_at', 'sqlplaintext');
@@ -209,7 +210,14 @@ $form_list->roll->input->status_intern->setDisplayFunction(function ($value) {
     2 => ['label' => 'Ended', 'color' => '#dc3545'],
     3 => ['label' => 'Coming Soon', 'color' => '#007bff']
   ];
+  if (isset($status_map[$value])) {
+    $status = $status_map[$value];
+    return '<span class="label" style="background-color: ' . $status['color'] . '; color: white; padding: 5px 12px; border-radius: 12px;">' . $status['label'] . '</span>';
+  }
+  return '<span class="label" style="background-color: #6c757d; color: white; padding: 5px 12px; border-radius: 12px;">Unknown</span>';
 });
+$form_list->roll->input->status_intern->setDisplayColumn(false);
+
 $form_list->roll->input->status_intern->setDisplayColumn(false);
 $form_list->roll->addInput('created', 'sqlplaintext');
 $form_list->roll->input->created->setDisplayColumn(false);
@@ -227,25 +235,24 @@ $intern_id         = @intval($_GET['interns_id']);
 if ($internal_tasks_id > 0 || ($intern_id > 0 && !empty($_GET['is_list']))) {
   echo '<div class="panel panel-default">';
   echo '<div class="panel-heading">';
-  
+
   if ($internal_tasks_id > 0) {
 
     $task = $db->getRow('SELECT title from interns_tasks where id = ' . $internal_tasks_id);
-    echo icon('fa-tasks').' ' . $task['title'];
+    echo icon('fa-tasks') . ' ' . $task['title'];
   } else {
     $user = $db->getRow('SELECT name from interns where id = ' . $intern_id);
-    echo icon('fa-user').' ' . $user['name']; 
+    echo icon('fa-user') . ' ' . $user['name'];
   }
-  
+
   echo '</div>';
   echo '<div class="panel-body">';
   echo '<div style="margin-bottom: 15px;">';
-  echo '<a href="javascript:history.back()" class="btn btn-default btn-sm">'.icon('fa-chevron-left').' Kembali</a>';
+  echo '<a href="javascript:history.back()" class="btn btn-default btn-sm">' . icon('fa-chevron-left') . ' Kembali</a>';
   echo '</div>';
-  
+
   echo $form_list->roll->getForm();
   echo '</div></div>';
-
 } else {
   echo '<div style="margin-bottom: 20px;">';
   echo $form_search->search->getform();
@@ -258,7 +265,7 @@ if ($internal_tasks_id > 0 || ($intern_id > 0 && !empty($_GET['is_list']))) {
   echo tabs($tabs, ($is_edit ? 2 : 1), 'tabs_task_list');
 
   echo '<div style="margin-bottom: 15px;">';
-  echo '<a href="'.$Bbc->mod['circuit'].'.interns" class="btn btn-default btn-sm">'.icon('fa-chevron-left').' Kembali</a>';
+  echo '<a href="' . $Bbc->mod['circuit'] . '.interns" class="btn btn-default btn-sm">' . icon('fa-chevron-left') . ' Kembali</a>';
   echo '</div>';
 
 ?>
