@@ -161,22 +161,22 @@ $form_list->roll->addInput('phone', 'sqlplaintext');
 $form_list->roll->input->phone->setTitle('Phone');
 
 $form_list->roll->addInput('custom_interval', 'sqlplaintext');
-$form_list->roll->input->custom_interval->setTitle(lang('Internship Period'));
-$form_list->roll->input->custom_interval->setFieldName('CONCAT(`start_date`,\' - \',`end_date`)');
+$form_list->roll->input->custom_interval->setTitle(lang('Custom Date'));
+$form_list->roll->input->custom_interval->setFieldName('CONCAT(start_date,"-",end_date) AS custom_interval');
 $form_list->roll->input->custom_interval->setDisplayFunction(function($value) {
-  $parts = explode('-', $value);
-  if (count($parts) < 6) return $value;
-  list($a_y, $a_m, $a_d, $b_y, $b_m, $b_d) = $parts;
-  $a_ts = strtotime($a_y . '-' . $a_m . '-' . $a_d);
-  $b_ts = strtotime($b_y . '-' . $b_m . '-' . $b_d);
-  if ($a_y === $b_y) {
-    if ($a_m === $b_m) {
-      if ($a_d === $b_d) return date('d F Y', $a_ts);
-      return date('d - ', $a_ts) . date('d F Y', $b_ts);
+  list($a_yyyy, $a_mm, $a_dd, $b_yyyy, $b_mm, $b_dd) = explode('-', $value);
+  $a_ts = strtotime("$a_yyyy-$a_mm-$a_dd");
+  $b_ts = strtotime("$b_yyyy-$b_mm-$b_dd");
+  if ($a_yyyy === $b_yyyy) {
+    if ($a_mm === $b_mm) {
+      if ($a_dd === $b_dd) {
+        return date('d M Y', $a_ts);
+      }
+      return date('d M Y - ', $a_ts).date('d M Y', $b_ts);
     }
-    return date('d F - ', $a_ts) . date('d F Y', $b_ts);
-  }
-  return date('d F Y - ', $a_ts) . date('d F Y', $b_ts);
+    return date('d M Y - ', $a_ts).date('d M Y', $b_ts);
+  } 
+  return date('d M Y - ' , $a_ts).date('d M Y', $b_ts);
 });
 
 $form_list->roll->addInput('status', 'sqlplaintext');
