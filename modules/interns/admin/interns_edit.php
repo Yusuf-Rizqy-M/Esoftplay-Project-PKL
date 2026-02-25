@@ -51,7 +51,6 @@ function intern_logic_save($intern_id)
 {
   global $form_add, $db, $id;
 
-  // Gunakan petik tunggal dan backtick
   $is_edit = $db->getOne('SELECT 1 FROM `interns` WHERE `id`=' . intval($id));
   $prefix  = $is_edit ? 'edit_' : 'add_';
 
@@ -79,7 +78,6 @@ function intern_logic_save($intern_id)
 
   if (!$is_edit) {
     $name = isset($_POST['add_name']) ? $_POST['add_name'] : '';
-    // Gunakan backtick dan petik tunggal untuk keamanan & standar
     $user_id = $db->getOne('SELECT `id` FROM `bbc_user` WHERE `username`=\'' . addslashes($email) . '\'');
 
     if (!$user_id) {

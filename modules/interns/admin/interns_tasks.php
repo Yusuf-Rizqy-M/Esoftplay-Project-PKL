@@ -4,97 +4,97 @@ if (!defined('_VALID_BBC')) exit('No direct script access allowed');
 _func('download');
 
 if (!empty($_POST['transfer'])) {
-    if ($_POST['transfer'] == 'download') {
-        $data_sample = [
-            [
-                'title'       => 'Implementasi API Login',
-                'description' => 'Membuat endpoint login menggunakan JWT',
-                'timeline'    => '2',
-                'type'        => 'Backend',
-            ],
-            [
-                'title'       => 'Slicing Landing Page',
-                'description' => 'Mengubah desain Figma ke HTML/CSS/JS',
-                'timeline'    => '3',
-                'type'        => 'Frontend',
-            ],
-            [
-                'title'       => 'Bug Fixing Dashboard',
-                'description' => 'Memperbaiki tampilan grafik yang berantakan',
-                'timeline'    => '1',
-                'type'        => 'UI/UX',
-            ]
-        ];
+  if ($_POST['transfer'] == 'download') {
+    $data_sample = [
+      [
+        'title'       => 'Implementasi API Login',
+        'description' => 'Membuat endpoint login menggunakan JWT',
+        'timeline'    => '2',
+        'type'        => 'Backend',
+      ],
+      [
+        'title'       => 'Slicing Landing Page',
+        'description' => 'Mengubah desain Figma ke HTML/CSS/JS',
+        'timeline'    => '3',
+        'type'        => 'Frontend',
+      ],
+      [
+        'title'       => 'Bug Fixing Dashboard',
+        'description' => 'Memperbaiki tampilan grafik yang berantakan',
+        'timeline'    => '1',
+        'type'        => 'UI/UX',
+      ]
+    ];
 
-        download_excel('Sample_Tasks_Template_'.date('Y-m-d'), $data_sample);
-        die();
-    }
+    download_excel('Sample_Tasks_Template_' . date('Y-m-d'), $data_sample);
+    die();
+  }
 
-    if ($_POST['transfer'] == 'upload') {
-        $msg = '';
-        if (!empty($_FILES['excel']['tmp_name']) && is_uploaded_file($_FILES['excel']['tmp_name'])) {
-            $mimes = array('application/vnd.ms-excel', 'text/xls', 'text/xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            if (in_array($_FILES['excel']['type'], $mimes)) {
-                $excel_lib = _lib('excel')->read($_FILES['excel']['tmp_name']);
-                $output    = $excel_lib->sheet(1)->fetch();
+  if ($_POST['transfer'] == 'upload') {
+    $msg = '';
+    if (!empty($_FILES['excel']['tmp_name']) && is_uploaded_file($_FILES['excel']['tmp_name'])) {
+      $mimes = array('application/vnd.ms-excel', 'text/xls', 'text/xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      if (in_array($_FILES['excel']['type'], $mimes)) {
+        $excel_lib = _lib('excel')->read($_FILES['excel']['tmp_name']);
+        $output    = $excel_lib->sheet(1)->fetch();
 
-                if (!empty($output) && is_array($output)) {
-                    $headers = array(
-                        'A' => 'Title',
-                        'B' => 'Description',
-                        'C' => 'Timeline',
-                        'D' => 'Type'
-                    );
+        if (!empty($output) && is_array($output)) {
+          $headers = array(
+            'A' => 'Title',
+            'B' => 'Description',
+            'C' => 'Timeline',
+            'D' => 'Type'
+          );
 
-                    $is_valid = true;
-                    foreach ($headers as $col => $title_col) {
-                        if (trim($output[1][$col]) != $title_col) {
-                            $is_valid = false;
-                            break;
-                        }
-                    }
+          $is_valid = true;
+          foreach ($headers as $col => $title_col) {
+            if (trim($output[1][$col]) != $title_col) {
+              $is_valid = false;
+              break;
+            }
+          }
 
-                    if ($is_valid) {
-                        $success_count = 0;
-                        foreach ($output as $i => $cells) {
-                            if ($i == 1 || empty($cells['A'])) continue;
+          if ($is_valid) {
+            $success_count = 0;
+            foreach ($output as $i => $cells) {
+              if ($i == 1 || empty($cells['A'])) continue;
 
-                            $task_title = trim($cells['A']);
-                            $task_desc  = trim($cells['B']);
-                            $task_time  = trim($cells['C']);
-                            $task_type  = trim($cells['D']);
+              $task_title = trim($cells['A']);
+              $task_desc  = trim($cells['B']);
+              $task_time  = trim($cells['C']);
+              $task_type  = trim($cells['D']);
 
-                            $is_exist = $db->getOne("SELECT 1 FROM interns_tasks WHERE title='" . addslashes($task_title) . "'");
-                            if (!$is_exist) {
-                                $type_id = $db->getOne("SELECT id FROM interns_tasks_type WHERE type_name='" . addslashes($task_type) . "'");
-                                if (!$type_id && !empty($task_type)) {
-                                    $db->Execute("INSERT INTO interns_tasks_type SET type_name='" . addslashes($task_type) . "'");
-                                    $type_id = $db->Insert_ID();
-                                }
+              $is_exist = $db->getOne("SELECT 1 FROM interns_tasks WHERE title='" . addslashes($task_title) . "'");
+              if (!$is_exist) {
+                $type_id = $db->getOne("SELECT id FROM interns_tasks_type WHERE type_name='" . addslashes($task_type) . "'");
+                if (!$type_id && !empty($task_type)) {
+                  $db->Execute("INSERT INTO interns_tasks_type SET type_name='" . addslashes($task_type) . "'");
+                  $type_id = $db->Insert_ID();
+                }
 
-                                $timeline_val = !empty($task_time) && is_numeric($task_time) ? intval($task_time) : 0;
-                                $sql_query = "INSERT INTO interns_tasks SET 
+                $timeline_val = !empty($task_time) && is_numeric($task_time) ? intval($task_time) : 0;
+                $sql_query = "INSERT INTO interns_tasks SET 
                                     title           = '" . addslashes($task_title) . "', 
                                     description     = '" . addslashes($task_desc) . "', 
                                     timeline        = $timeline_val, 
                                     task_type_id    = " . intval($type_id) . ", 
                                     created         = NOW()";
-                                if ($db->Execute($sql_query)) $success_count++;
-                            }
-                        }
-                        $msg = msg("Upload tasks berhasil. $success_count data baru berhasil diimport.", 'success');
-                    } else {
-                        $msg = msg('Maaf, format kolom file tidak sesuai. Pastikan urutan: Title, Description, Timeline, Type.', 'danger');
-                    }
-                } else {
-                    $msg = msg('Maaf, file yang anda upload tidak terbaca.', 'danger');
-                }
-            } else {
-                $msg = msg('Mohon upload file dengan format Excel yang benar (.xlsx)', 'danger');
+                if ($db->Execute($sql_query)) $success_count++;
+              }
             }
+            $msg = msg("Upload tasks berhasil. $success_count data baru berhasil diimport.", 'success');
+          } else {
+            $msg = msg('Maaf, format kolom file tidak sesuai. Pastikan urutan: Title, Description, Timeline, Type.', 'danger');
+          }
+        } else {
+          $msg = msg('Maaf, file yang anda upload tidak terbaca.', 'danger');
         }
-        if (!empty($msg)) echo $msg;
+      } else {
+        $msg = msg('Mohon upload file dengan format Excel yang benar (.xlsx)', 'danger');
+      }
     }
+    if (!empty($msg)) echo $msg;
+  }
 }
 
 $form_search = _lib('pea', 'interns_tasks');
@@ -139,20 +139,19 @@ $form_list->roll->addInput('task_type_id', 'sqlplaintext');
 $form_list->roll->input->task_type_id->setTitle('Type');
 $form_list->roll->input->task_type_id->setFieldName('(SELECT `type_name` FROM `interns_tasks_type` WHERE `interns_tasks_type`.id=`interns_tasks`.`task_type_id`) AS type_name');
 
-// BAGIAN TAMBAHAN: Menampilkan daftar intern yang ditugaskan (Hanya yang berstatus ACTIVE)
+
 $form_list->roll->addInput('assigned_to', 'sqlplaintext');
 $form_list->roll->input->assigned_to->setTitle('Assigned To');
 $form_list->roll->input->assigned_to->setFieldName('id AS assigned_to');
-$form_list->roll->input->assigned_to->setDisplayFunction(function($id){
-    global $db;
-    // Menambahkan kondisi i.status = 1 untuk filter hanya yang Active
-    $names = $db->getOne("SELECT GROUP_CONCAT(i.name SEPARATOR ', ') 
+$form_list->roll->input->assigned_to->setDisplayFunction(function ($id) {
+  global $db;
+  $names = $db->getOne("SELECT GROUP_CONCAT(i.name SEPARATOR ', ') 
                           FROM interns_tasks_list itl 
                           LEFT JOIN interns i ON itl.interns_id = i.id 
-                          WHERE itl.interns_tasks_id = ".intval($id)." 
+                          WHERE itl.interns_tasks_id = " . intval($id) . " 
                           AND i.status = 1");
-    
-    return !empty($names) ? $names : '-';
+
+  return !empty($names) ? $names : '-';
 });
 
 
@@ -162,11 +161,11 @@ $form_list->roll->input->task_link->setLinks('#');
 $form_list->roll->input->task_link->setTitle('Pengerjaan');
 $form_list->roll->input->task_link->setFieldName('id as task_link');
 $form_list->roll->input->task_link->setDisplayFunction(function ($id) {
-    global $Bbc;
-    $target_url = $Bbc->mod['circuit'] . '.interns_tasks_list&internal_tasks_id=' . urlencode($id);
-    return '<a href="' . $target_url . '" class="btn btn-xs btn-primary">Lihat Pengerjaan Sesuai Task</a>';
+  global $Bbc;
+  $target_url = $Bbc->mod['circuit'] . '.interns_tasks_list&internal_tasks_id=' . urlencode($id);
+  return '<a href="' . $target_url . '" class="btn btn-xs btn-primary">Lihat Pengerjaan Sesuai Task</a>';
 });
-// opt?
+
 $form_list->roll->addInput('opt', 'editlinks');
 $form_list->roll->input->opt->setTitle('Assigned');
 $form_list->roll->input->opt->setCaption(icon('fa-list') . ' Assigned');
@@ -184,13 +183,13 @@ include 'interns_tasks_edit.php';
 $form_edit_content = ob_get_clean();
 
 $tab_list = array(
-    'List Task' => $form_list->roll->getForm(),
-    ($is_edit ? 'Edit Task' : 'Add Task') => $form_edit_content
+  'List Task' => $form_list->roll->getForm(),
+  ($is_edit ? 'Edit Task' : 'Add Task') => $form_edit_content
 );
 echo tabs($tab_list, ($is_edit ? 2 : 1), 'tabs_interns_tasks');
 
 echo '<div style="margin-bottom: 15px;">';
-echo '<a href="javascript:history.back()" class="btn btn-default btn-sm">'.icon('fa-chevron-left').' Kembali</a>';
+echo '<a href="javascript:history.back()" class="btn btn-default btn-sm">' . icon('fa-chevron-left') . ' Kembali</a>';
 echo '</div>';
 
 ?>

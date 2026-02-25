@@ -3,16 +3,13 @@ if (!defined('_VALID_BBC')) exit('No direct script access allowed');
 
 $db = $GLOBALS['db'];
 
-// 1. Sesuaikan dengan setGetName yang kamu buat di list (interns_tasks_id)
 $id = isset($_GET['interns_tasks_id']) ? intval($_GET['interns_tasks_id']) : 0;
 
 $form_add = _lib('pea', 'interns_tasks');
 $form_add->initEdit($id > 0 ? "WHERE id=$id" : "");
 
-// 2. Ambil data task
 $task = $db->getRow('SELECT title, description FROM interns_tasks WHERE id = ' . $id);
 
-// 3. Tambahkan pengecekan agar tidak error "Trying to access array offset"
 $task_title = !empty($task['title']) ? $task['title'] : 'Task Not Found';
 
 $form_add->edit->addInput('header', 'header');
@@ -39,11 +36,9 @@ $form_add->edit->input->interns->setTitle(lang('Add Tasks Interns'));
 $form_add->edit->input->interns->setReferenceTable('interns_tasks_list');
 $form_add->edit->input->interns->setReferenceField('interns_tasks_id', 'id');
 
-// Setup field untuk multiform
 $form_add->edit->input->interns->addInput('interns_id', 'selecttable', 'Name');
 $form_add->edit->input->interns->addInput('notes', 'text', 'Notes');
 
-// Akses sub-input multiform harus melalui objek interns-nya
 $form_add->edit->input->interns->elements->interns_id->setReferenceTable('interns');
 $form_add->edit->input->interns->elements->interns_id->setReferenceField('name', 'id');
 $form_add->edit->input->interns->elements->interns_id->addOption('-- Select Interns --', '');

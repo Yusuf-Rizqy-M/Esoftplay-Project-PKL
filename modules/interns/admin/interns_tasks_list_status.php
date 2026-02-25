@@ -23,14 +23,11 @@ if (!empty($_POST) && !empty($_POST['edit_submit_update'])) {
   $final_id = ($task_list_id > 0) ? $task_list_id : $db_obj->Insert_ID();
 
   if ($final_id > 0) {
-    // Ambil data lengkap termasuk timeline dari table interns_tasks
     $current_data = $db_obj->getRow("SELECT * FROM `interns_tasks_list` WHERE `id`={$final_id}");
     if (!empty($current_data)) {
-      // 1. Simpan ke History (
       $db_obj->Execute("INSERT INTO `interns_tasks_list_history` (`interns_id`, `interns_tasks_list_id`, `status`, `created`) VALUES ({$current_data['interns_id']}, {$final_id}, {$current_data['status']}, NOW())");
       $db_obj->Execute("UPDATE `interns_tasks_list` SET `updated` = NOW() WHERE `id` = {$final_id}");;
 
-      // 2. Logika Jika Status = In Progress (2) -> Set Start & Deadline
       if ($current_data['status'] == 2) {
         if (empty($current_data['started']) || $current_data['started'] == '0000-00-00 00:00:00') {
           $update_fields[] = "`started` = NOW()";
@@ -39,7 +36,6 @@ if (!empty($_POST) && !empty($_POST['edit_submit_update'])) {
         }
       }
 
-      // 3. Logika Jika Status = Done (5) -> Set Done At
       if ($current_data['status'] == 5) {
         $update_fields[] = "`done_at` = NOW()";
       }

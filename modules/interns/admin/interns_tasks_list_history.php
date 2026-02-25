@@ -17,21 +17,19 @@ $form->search->input->interns_id->addOption('--- Type name to search ---', '');
 
 $add_sql = $form->search->action();
 
-// 1. TANGKAP PARAMETER DARI URL (SAMA SEPERTI DI TASK LIST)
 $tasks_list_id = isset($_GET['tasks_list_id']) ? intval($_GET['tasks_list_id']) : 0;
 $intern_id     = isset($_GET['interns_id']) ? intval($_GET['interns_id']) : 0;
 
 if ($tasks_list_id > 0) {
-	$add_sql .= " AND `interns_tasks_list_id` = {$tasks_list_id}";
+  $add_sql .= " AND `interns_tasks_list_id` = {$tasks_list_id}";
 } elseif ($intern_id > 0) {
-	$add_sql .= " AND `interns_id` = {$intern_id}";
+  $add_sql .= " AND `interns_id` = {$intern_id}";
 }
 
 $form->initRoll($add_sql . ' ORDER BY created DESC, id DESC', 'id');
 $form->roll->setDeleteTool(false);
 $form->roll->setSaveTool(false);
 
-// INPUT COLUMNS
 $form->roll->addInput('id', 'sqlplaintext');
 $form->roll->input->id->setDisplayColumn(false);
 
@@ -46,16 +44,16 @@ $form->roll->input->email->setTitle('Email');
 $form->roll->input->email->setReferenceTable('interns');
 $form->roll->input->email->setReferenceField('email', 'id');
 $form->roll->input->email->setPlaintext(true);
-$form->roll->input->email->setFieldName('interns_id AS email'); 
+$form->roll->input->email->setFieldName('interns_id AS email');
 
 $form->roll->addInput('interns_tasks_list_id', 'sqlplaintext');
 $form->roll->input->interns_tasks_list_id->setTitle('Tasks');
-$form->roll->input->interns_tasks_list_id->setDisplayFunction(function($list_id) {
-    global $db;
-    $sql = "SELECT `title` FROM `interns_tasks` 
-            WHERE `id` = (SELECT `interns_tasks_id` FROM `interns_tasks_list` WHERE `id` = ".intval($list_id).")";
-    $title = $db->getOne($sql);
-    return $title ? $title : '-';
+$form->roll->input->interns_tasks_list_id->setDisplayFunction(function ($list_id) {
+  global $db;
+  $sql = "SELECT `title` FROM `interns_tasks` 
+            WHERE `id` = (SELECT `interns_tasks_id` FROM `interns_tasks_list` WHERE `id` = " . intval($list_id) . ")";
+  $title = $db->getOne($sql);
+  return $title ? $title : '-';
 });
 
 $form->roll->addInput('task_notes', 'selecttable');
@@ -88,39 +86,39 @@ $form->roll->input->created->setDisplayColumn(false);
 $form->roll->action();
 
 if ($tasks_list_id > 0 || $intern_id > 0) {
-	echo '<div class="panel panel-default">';
-	echo '<div class="panel-heading">';
-	
-	if ($tasks_list_id > 0) {
-		$info = $db->getRow("SELECT i.name, t.title FROM interns_tasks_list l 
+  echo '<div class="panel panel-default">';
+  echo '<div class="panel-heading">';
+
+  if ($tasks_list_id > 0) {
+    $info = $db->getRow("SELECT i.name, t.title FROM interns_tasks_list l 
 							 LEFT JOIN interns i ON l.interns_id=i.id 
 							 LEFT JOIN interns_tasks t ON l.interns_tasks_id=t.id 
 							 WHERE l.id={$tasks_list_id}");
-		echo icon('fa-history').' History: ' . $info['name'] . ' - ' . $info['title'];
-	} else {
-		$name = $db->getOne("SELECT name FROM interns WHERE id={$intern_id}");
-		echo icon('fa-user').' History User: ' . $name;
-	}
-	
-	echo '</div>';
-	echo '<div class="panel-body">';
-	echo '<div style="margin-bottom: 15px;">';
-	echo '<a href="javascript:history.back()" class="btn btn-default btn-sm">'.icon('fa-chevron-left').' Kembali</a>';
-	echo '</div>';
-	
-	echo $form->roll->getForm();
-	echo '</div></div>';
+    echo icon('fa-history') . ' History: ' . $info['name'] . ' - ' . $info['title'];
+  } else {
+    $name = $db->getOne("SELECT name FROM interns WHERE id={$intern_id}");
+    echo icon('fa-user') . ' History User: ' . $name;
+  }
+
+  echo '</div>';
+  echo '<div class="panel-body">';
+  echo '<div style="margin-bottom: 15px;">';
+  echo '<a href="javascript:history.back()" class="btn btn-default btn-sm">' . icon('fa-chevron-left') . ' Kembali</a>';
+  echo '</div>';
+
+  echo $form->roll->getForm();
+  echo '</div></div>';
 } else {
-	echo '<div style="margin-bottom: 20px;">';
-	echo $form->search->getForm();
-	echo '</div>';
-	
-	echo '<div class="panel panel-default">';
-	echo '<div class="panel-heading"><h3 class="panel-title">Daftar Semua History Tugas</h3></div>';
-	echo '<div class="panel-body">' . $form->roll->getForm() . '</div>';
-	echo '</div>';
-	
-	echo '<div style="margin-bottom: 15px;">';
-	echo '<a href="'.$Bbc->mod['circuit'].'.interns_tasks_list" class="btn btn-default btn-sm">'.icon('fa-chevron-left').' Kembali ke Task List</a>';
-	echo '</div>';
+  echo '<div style="margin-bottom: 20px;">';
+  echo $form->search->getForm();
+  echo '</div>';
+
+  echo '<div class="panel panel-default">';
+  echo '<div class="panel-heading"><h3 class="panel-title">Daftar Semua History Tugas</h3></div>';
+  echo '<div class="panel-body">' . $form->roll->getForm() . '</div>';
+  echo '</div>';
+
+  echo '<div style="margin-bottom: 15px;">';
+  echo '<a href="' . $Bbc->mod['circuit'] . '.interns_tasks_list" class="btn btn-default btn-sm">' . icon('fa-chevron-left') . ' Kembali ke Task List</a>';
+  echo '</div>';
 }
