@@ -140,71 +140,85 @@ if (!empty($_GET['internal_tasks_id'])) {
   $add_sql .= ' AND interns_tasks_id = ' . $_GET['internal_tasks_id'];
 }
 
-$form_list = _lib('pea', 'interns_tasks_list');
-$form_list->initRoll($add_sql . ' ORDER BY id DESC', 'id');
+$form = _lib('pea', 'interns_tasks_list');
+$form->initRoll($add_sql . ' ORDER BY id DESC', 'id');
 
-$form_list->roll->addInput('interns_tasks_id', 'selecttable');
-$form_list->roll->input->interns_tasks_id->setTitle('Tasks Title');
-$form_list->roll->input->interns_tasks_id->setReferenceTable('interns_tasks');
-$form_list->roll->input->interns_tasks_id->setReferenceField('title', 'id');
-$form_list->roll->input->interns_tasks_id->setModal(true);
-$form_list->roll->input->interns_tasks_id->setLinks($Bbc->mod['circuit'] . '.interns_tasks_list_info');
-$form_list->roll->input->interns_tasks_id->setPlaintext(true);
+$form->roll->addInput('interns_tasks_id', 'selecttable');
+$form->roll->input->interns_tasks_id->setTitle('Tasks Title');
+$form->roll->input->interns_tasks_id->setReferenceTable('interns_tasks');
+$form->roll->input->interns_tasks_id->setReferenceField('title', 'id');
+$form->roll->input->interns_tasks_id->setModal(true);
+$form->roll->input->interns_tasks_id->setLinks($Bbc->mod['circuit'] . '.interns_tasks_list_info');
+$form->roll->input->interns_tasks_id->setPlaintext(true);
 
-$form_list->roll->addInput('interns_id', 'selecttable');
-$form_list->roll->input->interns_id->setTitle('Interns Name');
-$form_list->roll->input->interns_id->setReferenceTable('interns');
-$form_list->roll->input->interns_id->setReferenceField('name', 'id');
-$form_list->roll->input->interns_id->setPlaintext(true);
+$form->roll->addInput('interns_id', 'selecttable');
+$form->roll->input->interns_id->setTitle('Interns Name');
+$form->roll->input->interns_id->setReferenceTable('interns');
+$form->roll->input->interns_id->setReferenceField('name', 'id');
+$form->roll->input->interns_id->setPlaintext(true);
 
-$form_list->roll->addInput('notes', 'sqlplaintext');
-$form_list->roll->input->notes->setTitle('Notes');
+$form->roll->addInput('notes', 'sqllinks');
+$form->roll->input->notes->setTitle('Notes');
+$form->roll->input->notes->setModal(true);
+$form->roll->input->notes->setLinks($Bbc->mod['circuit'] . '.interns_tasks_list_edit');
 
-$form_list->roll->addInput('timeline', 'selecttable');
-$form_list->roll->input->timeline->setTitle('Timeline (Days)');
-$form_list->roll->input->timeline->setReferenceTable('interns_tasks');
-$form_list->roll->input->timeline->setReferenceField('timeline', 'id');
-$form_list->roll->input->timeline->setPlaintext(true);
-$form_list->roll->input->timeline->setFieldName('interns_tasks_id AS timeline');
+$form->roll->addInput('timeline', 'selecttable');
+$form->roll->input->timeline->setTitle('Timeline (Days)');
+$form->roll->input->timeline->setReferenceTable('interns_tasks');
+$form->roll->input->timeline->setReferenceField('timeline', 'id');
+$form->roll->input->timeline->setPlaintext(true);
+$form->roll->input->timeline->setFieldName('interns_tasks_id AS timeline');
 
-$form_list->roll->addInput('status', 'sqllinks');
-$form_list->roll->input->status->setModal(true);
-$form_list->roll->input->status->setLinks($Bbc->mod['circuit'] . '.interns_tasks_list_status');
-$form_list->roll->input->status->setDisplayFunction(function ($v) {
+$form->roll->addInput('status', 'sqllinks');
+$form->roll->input->status->setModal(true);
+$form->roll->input->status->setLinks($Bbc->mod['circuit'] . '.interns_tasks_list_status');
+$form->roll->input->status->setDisplayFunction(function ($v) {
   $colors = [1 => '#6c757d', 2 => '#007bff', 3 => '#ffc107', 4 => '#fd7e14', 5 => '#28a745', 6 => '#dc3545'];
   $labels = [1 => 'To Do', 2 => 'In Progress', 3 => 'Submit', 4 => 'Revised', 5 => 'Done', 6 => 'Cancel'];
   $tcolor = ($v == 3) ? 'black' : 'white';
   return '<span class="label" style="background-color:' . (@$colors[$v] ?: '#eee') . '; color:' . $tcolor . '; padding:5px 10px; border-radius:12px;">' . (@$labels[$v] ?: 'Unknown') . '</span>';
 });
 
-$form_list->roll->addInput('started', 'sqlplaintext');
-$form_list->roll->input->started->setTitle('Started');
+$form->roll->addInput('started', 'sqlplaintext');
+$form->roll->input->started->setTitle('Started');
+$form->roll->input->started->setDisplayFunction(function ($value) {
+  if (empty($value)) return '-';
 
-$form_list->roll->addInput('deadline', 'sqlplaintext');
-$form_list->roll->input->deadline->setTitle('Deadline');
+  $ts = strtotime($value);
+  return date('d M Y H:i', $ts);
+});
 
-$form_list->roll->addInput('revised_history', 'sqlplaintext');
-$form_list->roll->input->revised_history->setTitle('History');
-$form_list->roll->input->revised_history->setFieldName('id');
-$form_list->roll->input->revised_history->setDisplayFunction(function ($id) {
+$form->roll->addInput('deadline', 'sqlplaintext');
+$form->roll->input->deadline->setTitle('Deadline');
+$form->roll->input->deadline->setDisplayFunction(function ($value) {
+  if (empty($value)) return '-';
+
+  $ts = strtotime($value);
+  return date('d M Y H:i', $ts);
+});
+$form->roll->addInput('revised_history', 'sqlplaintext');
+$form->roll->input->revised_history->setTitle('History');
+$form->roll->input->revised_history->setFieldName('id');
+$form->roll->input->revised_history->setDisplayFunction(function ($id) {
   global $Bbc;
   $url = $Bbc->mod['circuit'] . '.interns_tasks_list_history&tasks_list_id=' . $id;
   return '<a href="' . $url . '" class="btn btn-xs btn-primary">' . icon('fa-history') . ' View History</a>';
 });
 
-$form_list->roll->addInput('done_at', 'sqlplaintext');
-$form_list->roll->input->done_at->setTitle('Done At');
+$form->roll->addInput('done_at', 'sqlplaintext');
+$form->roll->input->done_at->setTitle('Done At');
+$form->roll->input->done_at->setDisplayColumn(false);
 
-$form_list->roll->setDeleteTool(false);
-$form_list->roll->setSaveTool(false);
+$form->roll->setDeleteTool(false);
+$form->roll->setSaveTool(false);
 
-$form_list->roll->addInput('status_intern', 'selecttable');
-$form_list->roll->input->status_intern->setTitle('Status Interns');
-$form_list->roll->input->status_intern->setReferenceTable('interns');
-$form_list->roll->input->status_intern->setReferenceField('status', 'id');
-$form_list->roll->input->status_intern->setPlaintext(true);
-$form_list->roll->input->status_intern->setFieldName('interns_id AS status_intern');
-$form_list->roll->input->status_intern->setDisplayFunction(function ($value) {
+$form->roll->addInput('status_intern', 'selecttable');
+$form->roll->input->status_intern->setTitle('Status Interns');
+$form->roll->input->status_intern->setReferenceTable('interns');
+$form->roll->input->status_intern->setReferenceField('status', 'id');
+$form->roll->input->status_intern->setPlaintext(true);
+$form->roll->input->status_intern->setFieldName('interns_id AS status_intern');
+$form->roll->input->status_intern->setDisplayFunction(function ($value) {
   $status_map = [
     1 => ['label' => 'Active', 'color' => '#28a745'],
     2 => ['label' => 'Ended', 'color' => '#dc3545'],
@@ -216,14 +230,14 @@ $form_list->roll->input->status_intern->setDisplayFunction(function ($value) {
   }
   return '<span class="label" style="background-color: #6c757d; color: white; padding: 5px 12px; border-radius: 12px;">Unknown</span>';
 });
-$form_list->roll->input->status_intern->setDisplayColumn(false);
+$form->roll->input->status_intern->setDisplayColumn(false);
 
-$form_list->roll->input->status_intern->setDisplayColumn(false);
-$form_list->roll->addInput('created', 'sqlplaintext');
-$form_list->roll->input->created->setDisplayColumn(false);
-$form_list->roll->addInput('updated', 'sqlplaintext');
-$form_list->roll->input->updated->setDisplayColumn(false);
-$form_list->roll->action();
+$form->roll->input->status_intern->setDisplayColumn(false);
+$form->roll->addInput('created', 'sqlplaintext');
+$form->roll->input->created->setDisplayColumn(false);
+$form->roll->addInput('updated', 'sqlplaintext');
+$form->roll->input->updated->setDisplayColumn(false);
+$form->roll->action();
 
 
 ob_start();
@@ -251,7 +265,7 @@ if ($internal_tasks_id > 0 || ($intern_id > 0 && !empty($_GET['is_list']))) {
   echo '<a href="javascript:history.back()" class="btn btn-default btn-sm">' . icon('fa-chevron-left') . ' Kembali</a>';
   echo '</div>';
 
-  echo $form_list->roll->getForm();
+  echo $form->roll->getForm();
   echo '</div></div>';
 } else {
   echo '<div style="margin-bottom: 20px;">';
@@ -259,15 +273,10 @@ if ($internal_tasks_id > 0 || ($intern_id > 0 && !empty($_GET['is_list']))) {
   echo '</div>';
 
   $tabs = [
-    'List To Do' => $form_list->roll->getForm(),
+    'List To Do' => $form->roll->getForm(),
     ($is_edit ? 'Edit Task' : 'Add To Do') => $form_edit_content
   ];
   echo tabs($tabs, ($is_edit ? 2 : 1), 'tabs_task_list');
-
-  echo '<div style="margin-bottom: 15px;">';
-  echo '<a href="' . $Bbc->mod['circuit'] . '.interns" class="btn btn-default btn-sm">' . icon('fa-chevron-left') . ' Kembali</a>';
-  echo '</div>';
-
 ?>
   <div class="col-xs-12 no-both" style="padding: 10px 0;">
     <div class="panel panel-default" style="margin-top:20px;">
