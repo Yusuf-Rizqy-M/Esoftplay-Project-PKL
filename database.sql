@@ -848,6 +848,7 @@ INSERT INTO `interns_tasks_list` VALUES (13,1,1,'tanya temen',1,NULL,NULL,NULL,'
 DROP TABLE IF EXISTS `interns_tasks_list_history`;
 CREATE TABLE `interns_tasks_list_history` (
   `id` int NOT NULL AUTO_INCREMENT,
+  `notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `interns_id` int NOT NULL,
   `interns_tasks_list_id` int DEFAULT NULL,
   `created` datetime DEFAULT CURRENT_TIMESTAMP,
@@ -859,17 +860,22 @@ CREATE TABLE `interns_tasks_list_history` (
   CONSTRAINT `itl_hist_ibfk_list` FOREIGN KEY (`interns_tasks_list_id`) REFERENCES `interns_tasks_list` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `interns_tasks_list_history` VALUES (2,4,14,'2026-02-25 10:30:56',2);
 DROP TABLE IF EXISTS `interns_tasks_type`;
 CREATE TABLE `interns_tasks_type` (
   `id` int NOT NULL AUTO_INCREMENT,
+  `notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `type_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `type_name` (`type_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `interns_tasks_type` VALUES (1,'Website','2026-02-13 11:52:46'),(2,'Backend','2026-02-16 12:06:18'),(3,'Frontend','2026-02-16 12:06:18'),(4,'UI/UX','2026-02-16 12:06:18');
+-- Perbaikan: Menambahkan string kosong/NULL untuk kolom 'notes' agar jumlah kolom pas (4 kolom)
+INSERT INTO `interns_tasks_type` VALUES 
+(1, '', 'Website', '2026-02-13 11:52:46'),
+(2, '', 'Backend', '2026-02-16 12:06:18'),
+(3, '', 'Frontend', '2026-02-16 12:06:18'),
+(4, '', 'UI/UX', '2026-02-16 12:06:18');
 DROP TABLE IF EXISTS `links`;
 CREATE TABLE `links` (
   `id` int NOT NULL AUTO_INCREMENT,

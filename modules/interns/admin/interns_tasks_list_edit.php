@@ -44,11 +44,6 @@ if ($task_list_id > 0) {
   $form_add->edit->addInput('status', 'select');
   $form_add->edit->input->status->setTitle('Status');
   $form_add->edit->input->status->addOption('To Do', 1);
-  $form_add->edit->input->status->addOption('In Progress', 2);
-  $form_add->edit->input->status->addOption('Submit', 3);
-  $form_add->edit->input->status->addOption('Revised', 4);
-  $form_add->edit->input->status->addOption('Done', 5);
-  $form_add->edit->input->status->addOption('Cancel', 6);
   $form_add->edit->input->status->setRequire();
 }
 
@@ -57,21 +52,39 @@ $form_add->edit->input->notes->setTitle('Notes');
 
 $form_add->edit->action();
 
+
+
+$form_html = $form_add->edit->getForm();
+
+
 if (!empty($_POST) && !empty($_POST['edit_submit_update'])) {
+  
   $final_id = ($task_list_id > 0) ? $task_list_id : $db_obj->Insert_ID();
 
   if ($final_id > 0) {
     $current_data = $db_obj->getRow("SELECT * FROM `interns_tasks_list` WHERE `id`={$final_id}");
     if (!empty($current_data)) {
-      $db_obj->Execute("INSERT INTO `interns_tasks_list_history` (`interns_id`, `interns_tasks_list_id`, `status`, `created`) VALUES ({$current_data['interns_id']}, {$final_id}, {$current_data['status']}, NOW())");
+      $notes_safe = addslashes($current_data['notes']);
+      
+      
+      $db_obj->Execute("INSERT INTO `interns_tasks_list_history` 
+        (`interns_id`, `interns_tasks_list_id`, `status`, `notes`, `created`) 
+        VALUES 
+        ({$current_data['interns_id']}, {$final_id}, {$current_data['status']}, '{$notes_safe}', NOW())");
+      
       $db_obj->Execute("UPDATE `interns_tasks_list` SET `updated` = NOW() WHERE `id` = {$final_id}");
     }
-    header("Location: index.php?mod=interns.interns_tasks_list");
+    
+    
+    if (empty($_GET['is_ajax'])) {
+      header("Location: index.php?mod=interns.interns_tasks_list");
+    }
     exit;
   }
 }
 
-echo $form_add->edit->getForm();
+
+echo $form_html;
 ?>
 
 <?php if (!empty($_GET['is_ajax'])): ?>

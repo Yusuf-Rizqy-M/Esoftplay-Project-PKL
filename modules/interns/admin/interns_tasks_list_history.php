@@ -45,7 +45,7 @@ $form->roll->input->email->setReferenceTable('interns');
 $form->roll->input->email->setReferenceField('email', 'id');
 $form->roll->input->email->setPlaintext(true);
 $form->roll->input->email->setFieldName('interns_id AS email');
-
+$form->roll->input->email->setDisplayColumn(false);
 $form->roll->addInput('interns_tasks_list_id', 'sqlplaintext');
 $form->roll->input->interns_tasks_list_id->setTitle('Tasks');
 $form->roll->input->interns_tasks_list_id->setDisplayFunction(function ($list_id) {
@@ -56,12 +56,9 @@ $form->roll->input->interns_tasks_list_id->setDisplayFunction(function ($list_id
   return $title ? $title : '-';
 });
 
-$form->roll->addInput('task_notes', 'selecttable');
-$form->roll->input->task_notes->setTitle('Notes');
-$form->roll->input->task_notes->setFieldName('interns_tasks_list_id');
-$form->roll->input->task_notes->setPlaintext(true);
-$form->roll->input->task_notes->setReferenceTable('interns_tasks_list');
-$form->roll->input->task_notes->setReferenceField('notes', 'id');
+
+$form->roll->addInput('notes', 'sqlplaintext');
+$form->roll->input->notes->setTitle('Notes');
 
 $form->roll->addInput('status', 'sqlplaintext');
 $form->roll->input->status->setTitle('Status');
