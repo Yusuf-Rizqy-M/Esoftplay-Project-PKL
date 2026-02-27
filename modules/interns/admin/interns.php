@@ -161,7 +161,7 @@ $form_list->roll->addInput('phone', 'sqlplaintext');
 $form_list->roll->input->phone->setTitle('Phone');
 
 $form_list->roll->addInput('custom_interval', 'sqlplaintext');
-$form_list->roll->input->custom_interval->setTitle(lang('Custom Date'));
+$form_list->roll->input->custom_interval->setTitle(lang('Internship Period'));
 $form_list->roll->input->custom_interval->setFieldName('CONCAT(start_date,"-",end_date) AS custom_interval');
 $form_list->roll->input->custom_interval->setDisplayFunction(function($value) {
   list($a_yyyy, $a_mm, $a_dd, $b_yyyy, $b_mm, $b_dd) = explode('-', $value);
@@ -198,7 +198,7 @@ $form_list->roll->input->id_menu_task->setFieldName('id');
 $form_list->roll->input->id_menu_task->setCaption('Opsi');
 $form_list->roll->input->id_menu_task->setGetName('interns_id');
 $form_list->roll->input->id_menu_task->setLinks(array(
-  $Bbc->mod['circuit'] . '.interns_tasks_list_edit' => icon('fa-list') . ' Tambah Pengerjaan'
+  $Bbc->mod['circuit'] . '.interns_tasks_list_edit' => icon('fa-list') . ' Assigned '
 ));
 
 $form_list->roll->addInput('task_link', 'sqlplaintext');
@@ -206,8 +206,14 @@ $form_list->roll->input->task_link->setTitle('View');
 $form_list->roll->input->task_link->setFieldName('id'); 
 $form_list->roll->input->task_link->setDisplayFunction(function($intern_id){
   global $Bbc;
-  $url = $Bbc->mod['circuit'] . '.interns_tasks_list&interns_id=' . $intern_id . '&is_list=1';
-  return '<a href="' . $url . '" class="btn btn-xs btn-primary"> Lihat Pengerjaan User</a>';
+  
+  // Ambil URL halaman daftar intern saat ini, lalu di-encode agar bisa disisipkan ke URL
+  $return_url = urlencode(seo_url());
+  
+  // Masukkan parameter &return= kedalam URL
+  $url = $Bbc->mod['circuit'] . '.interns_tasks_list&interns_id=' . $intern_id . '&is_list=1&return=' . $return_url;
+  
+  return '<a href="' . $url . '" class="btn btn-xs btn-primary"> Activities </a>';
 });
 
 $form_list->roll->addInput('created', 'sqlplaintext');
@@ -217,12 +223,6 @@ $form_list->roll->action();
 ob_start();
 include 'interns_edit.php';
 $form_edit_content = ob_get_clean();
-
-echo '<div class="btn-group" style="margin-bottom: 15px;">';
-echo '  <a href="' . $Bbc->mod['circuit'] . '.interns_tasks" class="btn btn-default">' . icon('fa-tasks') . ' Halaman Data Tugas</a>';
-echo '  <a href="' . $Bbc->mod['circuit'] . '.interns_tasks_list" class="btn btn-default">' . icon('fa-list-alt') . ' Halaman List Pengerjaan Tugas</a>';
-echo '  <a href="' . $Bbc->mod['circuit'] . '.interns_tasks_list_history" class="btn btn-default">' . icon('fa-history') . ' Halaman History</a>';
-echo '</div>';
 
 $tabs = array(
   'List Interns' => $form_list->roll->getForm(),

@@ -83,39 +83,35 @@ $form->roll->input->created->setDisplayColumn(false);
 $form->roll->action();
 
 if ($tasks_list_id > 0 || $intern_id > 0) {
+  // TAMPILAN SAAT FILTER (VIEW HISTORY)
   echo '<div class="panel panel-default">';
-  echo '<div class="panel-heading">';
-
+  echo '  <div class="panel-heading">';
   if ($tasks_list_id > 0) {
     $info = $db->getRow("SELECT i.name, t.title FROM interns_tasks_list l 
-							 LEFT JOIN interns i ON l.interns_id=i.id 
-							 LEFT JOIN interns_tasks t ON l.interns_tasks_id=t.id 
-							 WHERE l.id={$tasks_list_id}");
-    echo icon('fa-history') . ' History: ' . $info['name'] . ' - ' . $info['title'];
+               LEFT JOIN interns i ON l.interns_id=i.id 
+               LEFT JOIN interns_tasks t ON l.interns_tasks_id=t.id 
+               WHERE l.id={$tasks_list_id}");
+    echo $info['name'] . ' - ' . $info['title'];
   } else {
     $name = $db->getOne("SELECT name FROM interns WHERE id={$intern_id}");
-    echo icon('fa-user') . ' History User: ' . $name;
+    echo $name;
   }
-
-  echo '</div>';
-  echo '<div class="panel-body">';
-  echo '<div style="margin-bottom: 15px;">';
-  echo '<a href="javascript:history.back()" class="btn btn-default btn-sm">' . icon('fa-chevron-left') . ' Kembali</a>';
-  echo '</div>';
-
+  echo '  </div>';
+  echo '  <div class="panel-body">';
+  
   echo $form->roll->getForm();
-  echo '</div></div>';
+  echo '  </div>';
+  echo '</div>';
 } else {
+  // TAMPILAN MENU UTAMA (SESUAI GAMBAR KEDUA)
   echo '<div style="margin-bottom: 20px;">';
-  echo $form->search->getForm();
+  echo $form->search->getForm(); // Search di luar panel, paling atas
   echo '</div>';
 
   echo '<div class="panel panel-default">';
-  echo '<div class="panel-heading"><h3 class="panel-title">Daftar Semua History Tugas</h3></div>';
-  echo '<div class="panel-body">' . $form->roll->getForm() . '</div>';
-  echo '</div>';
-
-  echo '<div style="margin-bottom: 15px;">';
-  echo '<a href="' . $Bbc->mod['circuit'] . '.interns_tasks_list" class="btn btn-default btn-sm">' . icon('fa-chevron-left') . ' Kembali ke Task List</a>';
+  echo '  <div class="panel-heading"><h3 class="panel-title">' . ' Daftar Semua History Tugas</h3></div>';
+  echo '  <div class="panel-body">';
+  echo $form->roll->getForm();
+  echo '  </div>';
   echo '</div>';
 }

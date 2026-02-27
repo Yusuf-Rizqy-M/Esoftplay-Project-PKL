@@ -35,7 +35,7 @@ $form_add->edit->input->school_id->setTitle('School');
 $form_add->edit->input->school_id->setReferenceTable('interns_school');
 $form_add->edit->input->school_id->setReferenceField('school_name', 'id');
 $form_add->edit->input->school_id->setAllowNew(true);
-$form_add->edit->input->school_id->addTip('Ketik nama sekolah atau gunakan fitur autocomplete jika data sudah tersedia. Klik <a href="' . $Bbc->mod['circuit'] . '.interns_edit_autocomplete&id=' . $id . '">disini</a> untuk menggunakan mode pencarian.');
+
 
 $form_add->edit->addInput('major', 'text');
 $form_add->edit->addInput('start_date', 'dateinterval');

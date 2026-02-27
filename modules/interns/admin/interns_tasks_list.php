@@ -3,6 +3,9 @@ if (!defined('_VALID_BBC')) exit('No direct script access allowed');
 
 _func('download');
 
+// KODE KAMU: Ambil ID dari URL untuk logika sembunyikan kolom
+$interns_id = isset($_GET['interns_id']) ? intval($_GET['interns_id']) : 0;
+
 if (!empty($_POST['transfer'])) {
   if ($_POST['transfer'] == 'download') {
     $r = [
@@ -151,11 +154,15 @@ $form->roll->input->interns_tasks_id->setModal(true);
 $form->roll->input->interns_tasks_id->setLinks($Bbc->mod['circuit'] . '.interns_tasks_list_info');
 $form->roll->input->interns_tasks_id->setPlaintext(true);
 
+// GABUNGAN: Logika Kamu ada di sini
 $form->roll->addInput('interns_id', 'selecttable');
 $form->roll->input->interns_id->setTitle('Interns Name');
 $form->roll->input->interns_id->setReferenceTable('interns');
 $form->roll->input->interns_id->setReferenceField('name', 'id');
 $form->roll->input->interns_id->setPlaintext(true);
+if ($interns_id > 0) {
+  $form->roll->input->interns_id->setDisplayColumn(false);
+}
 
 $form->roll->addInput('notes', 'sqllinks');
 $form->roll->input->notes->setTitle('Notes');
@@ -200,8 +207,9 @@ $form->roll->addInput('revised_history', 'sqlplaintext');
 $form->roll->input->revised_history->setTitle('History');
 $form->roll->input->revised_history->setFieldName('id');
 $form->roll->input->revised_history->setDisplayFunction(function ($id) {
-  global $Bbc;
-  $url = $Bbc->mod['circuit'] . '.interns_tasks_list_history&tasks_list_id=' . $id;
+global $Bbc;
+  $return = urlencode(seo_url()); // Tangkap URL saat ini
+  $url = $Bbc->mod['circuit'] . '.interns_tasks_list_history&tasks_list_id=' . $id . '&return=' . $return;
   return '<a href="' . $url . '" class="btn btn-xs btn-primary">' . icon('fa-history') . ' View History</a>';
 });
 
@@ -243,40 +251,45 @@ $form->roll->action();
 ob_start();
 include 'interns_tasks_list_edit.php';
 $form_edit_content = ob_get_clean();
+
 $internal_tasks_id = @intval($_GET['internal_tasks_id']);
 $intern_id         = @intval($_GET['interns_id']);
 
-if ($internal_tasks_id > 0 || ($intern_id > 0 && !empty($_GET['is_list']))) {
-  echo '<div class="panel panel-default">';
-  echo '<div class="panel-heading">';
+// Jika sedang memfilter berdasarkan Intern atau Task tertentu
+if ($internal_tasks_id > 0 || $intern_id > 0) {
+	echo '<div class="panel panel-default">';
+	echo '<div class="panel-heading">';
+	if ($internal_tasks_id > 0) {
+		$task = $db->getRow('SELECT title from interns_tasks where id = ' . $internal_tasks_id);
+		echo $task['title'];
+	} else {
+		$user = $db->getRow('SELECT name from interns where id = ' . $intern_id);
+		echo $user['name'];
+	}
+	echo '</div>';
+	echo '<div class="panel-body">';
 
-  if ($internal_tasks_id > 0) {
+	// Kita tetap gunakan TABS agar user bisa "Add To Do" langsung untuk intern tersebut
+	$tabs = [
+		'List To Do' => $form->roll->getForm(),
+		($is_edit ? 'Edit Task' : 'Add To Do') => $form_edit_content
+	];
 
-    $task = $db->getRow('SELECT title from interns_tasks where id = ' . $internal_tasks_id);
-    echo icon('fa-tasks') . ' ' . $task['title'];
-  } else {
-    $user = $db->getRow('SELECT name from interns where id = ' . $intern_id);
-    echo icon('fa-user') . ' ' . $user['name'];
-  }
 
-  echo '</div>';
-  echo '<div class="panel-body">';
-  echo '<div style="margin-bottom: 15px;">';
-  echo '<a href="javascript:history.back()" class="btn btn-default btn-sm">' . icon('fa-chevron-left') . ' Kembali</a>';
-  echo '</div>';
+	echo tabs($tabs, ($is_edit ? 2 : 1), 'tabs_task_list_filtered');
+	echo '</div></div>';
 
-  echo $form->roll->getForm();
-  echo '</div></div>';
 } else {
-  echo '<div style="margin-bottom: 20px;">';
-  echo $form_search->search->getform();
-  echo '</div>';
+	// Tampilan Default (Tanpa Filter)
+	echo '<div style="margin-bottom: 20px;">';
+	echo $form_search->search->getform();
+	echo '</div>';
 
-  $tabs = [
-    'List To Do' => $form->roll->getForm(),
-    ($is_edit ? 'Edit Task' : 'Add To Do') => $form_edit_content
-  ];
-  echo tabs($tabs, ($is_edit ? 2 : 1), 'tabs_task_list');
+	$tabs = [
+		'List To Do' => $form->roll->getForm(),
+		($is_edit ? 'Edit Task' : 'Add To Do') => $form_edit_content
+	];
+	echo tabs($tabs, ($is_edit ? 2 : 1), 'tabs_task_list');
 ?>
   <div class="col-xs-12 no-both" style="padding: 10px 0;">
     <div class="panel panel-default" style="margin-top:20px;">

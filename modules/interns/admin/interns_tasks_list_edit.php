@@ -10,18 +10,29 @@ if (!defined('_VALID_BBC')) exit('No direct script access allowed');
 <?php
 $db_obj = $GLOBALS['db'];
 $task_list_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$interns_id   = isset($_GET['interns_id']) ? intval($_GET['interns_id']) : 0;
+// FITUR KAMU: AMBIL NAMA INTERN UNTUK HEADER
+$intern_name = '';
+if ($interns_id > 0) {
+  $intern_name = $db_obj->getOne("SELECT `name` FROM `interns` WHERE `id`={$interns_id}");
+}
 
 $form_add = _lib('pea', 'interns_tasks_list');
 $form_add->initEdit($task_list_id > 0 ? "WHERE `id`={$task_list_id}" : "");
 
 if ($task_list_id > 0) {
   $form_add->edit->addInput('header', 'header');
-  $form_add->edit->input->header->setTitle('Edit Notes Intern');
+  // FITUR KAMU: Header Dinamis saat Edit
+  $title = 'Edit Notes Intern' . (!empty($intern_name) ? ' - ' . $intern_name : '');
+  $form_add->edit->input->header->setTitle($title);
+  
   $form_add->edit->addInput('interns_tasks_id', 'hidden');
   $form_add->edit->addInput('interns_id', 'hidden');
 } else {
   $form_add->edit->addInput('header', 'header');
-  $form_add->edit->input->header->setTitle('Add New Task');
+  // FITUR KAMU: Header Dinamis saat Add
+  $title = 'Add New Task' . (!empty($intern_name) ?' '. $intern_name : '');
+  $form_add->edit->input->header->setTitle($title);
 
   $form_add->edit->addInput('interns_tasks_id', 'selecttable');
   $form_add->edit->input->interns_tasks_id->setTitle('Task');
@@ -30,15 +41,21 @@ if ($task_list_id > 0) {
   $form_add->edit->input->interns_tasks_id->setAllowNew(true);
   $form_add->edit->input->interns_tasks_id->setRequire();
 
-  $form_add->edit->addInput('interns_id', 'selecttable');
-  $form_add->edit->input->interns_id->setTitle('Name');
-  $form_add->edit->input->interns_id->setReferenceTable('interns');
-  $form_add->edit->input->interns_id->setReferenceField('name', 'id');
-  $form_add->edit->input->interns_id->setAutoComplete(true);
-  $form_add->edit->input->interns_id->setRequire();
-
-  if (!empty($_GET['interns_id'])) {
-    $form_add->edit->input->interns_id->setDefaultValue(($_GET['interns_id']));
+if ($interns_id > 0) {
+    $form_add->edit->addInput('interns_id_text', 'sqlplaintext');
+    $form_add->edit->input->interns_id_text->setTitle('Name');
+    $form_add->edit->input->interns_id_text->setDisplayFunction(function() use ($intern_name) {
+      return '<strong>'.$intern_name.'</strong>';
+    });
+    $form_add->edit->addInput('interns_id', 'hidden');
+    $form_add->edit->input->interns_id->setDefaultValue($interns_id);
+  } else {
+    $form_add->edit->addInput('interns_id', 'selecttable');
+    $form_add->edit->input->interns_id->setTitle('Name');
+    $form_add->edit->input->interns_id->setReferenceTable('interns');
+    $form_add->edit->input->interns_id->setReferenceField('name', 'id');
+    $form_add->edit->input->interns_id->setAutoComplete(true);
+    $form_add->edit->input->interns_id->setRequire();
   }
 
   $form_add->edit->addInput('status', 'select');

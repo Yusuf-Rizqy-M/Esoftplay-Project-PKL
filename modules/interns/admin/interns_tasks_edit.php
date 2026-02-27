@@ -7,6 +7,9 @@ $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $form_add = _lib('pea', 'interns_tasks');
 $form_add->initEdit($id > 0 ? "WHERE id=$id" : "");
 
+$form_add->edit->addInput('header', 'header');
+$form_add->edit->input->header->setTitle($id > 0 ? 'Edit Task' : 'Add New Task');
+
 $form_add->edit->addInput('title', 'text');
 $form_add->edit->input->title->setTitle('Title');
 $form_add->edit->input->title->setRequire();

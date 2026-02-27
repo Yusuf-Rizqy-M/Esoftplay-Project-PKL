@@ -156,22 +156,29 @@ $form_list->roll->input->assigned_to->setDisplayFunction(function ($id) {
 
 
 
-$form_list->roll->addInput('task_link', 'sqllinks');
-$form_list->roll->input->task_link->setLinks('#');
-$form_list->roll->input->task_link->setTitle('Pengerjaan');
-$form_list->roll->input->task_link->setFieldName('id as task_link');
-$form_list->roll->input->task_link->setDisplayFunction(function ($id) {
-  global $Bbc;
-  $target_url = $Bbc->mod['circuit'] . '.interns_tasks_list&internal_tasks_id=' . urlencode($id);
-  return '<a href="' . $target_url . '" class="btn btn-xs btn-primary">Lihat Pengerjaan Sesuai Task</a>';
-});
-
 $form_list->roll->addInput('assigned', 'editlinks');
-$form_list->roll->input->assigned->setTitle('Assigned');
+$form_list->roll->input->assigned->setTitle('Action');
 $form_list->roll->input->assigned->setCaption(icon('fa-list') . ' Assigned');
 $form_list->roll->input->assigned->setFieldName('id');
 $form_list->roll->input->assigned->setGetName('interns_tasks_id');
 $form_list->roll->input->assigned->setLinks($Bbc->mod['circuit'] . '.interns_tasks_assigned');
+
+
+$form_list->roll->addInput('task_link', 'sqllinks');
+$form_list->roll->input->task_link->setLinks('#');
+$form_list->roll->input->task_link->setTitle('View');
+$form_list->roll->input->task_link->setFieldName('id as task_link');
+$form_list->roll->input->task_link->setDisplayFunction(function ($id) {
+  global $Bbc;
+  
+  // 1. Ambil URL halaman daftar Task saat ini untuk tombol Back
+  $return_url = urlencode(seo_url());
+  
+  // 2. Tambahkan &return= ke URL tujuan
+  $target_url = $Bbc->mod['circuit'] . '.interns_tasks_list&internal_tasks_id=' . $id . '&return=' . $return_url;
+  
+  return '<a href="' . $target_url . '" class="btn btn-xs btn-primary">Activities</a>';
+});
 
 $form_list->roll->addInput('created', 'sqlplaintext');
 $form_list->roll->input->created->setDisplayColumn(false);
@@ -187,10 +194,6 @@ $tab_list = array(
   ($is_edit ? 'Edit Task' : 'Add Task') => $form_edit_content
 );
 echo tabs($tab_list, ($is_edit ? 2 : 1), 'tabs_interns_tasks');
-
-echo '<div style="margin-bottom: 15px;">';
-echo '<a href="javascript:history.back()" class="btn btn-default btn-sm">' . icon('fa-chevron-left') . ' Kembali</a>';
-echo '</div>';
 
 ?>
 
