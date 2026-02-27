@@ -255,41 +255,36 @@ $form_edit_content = ob_get_clean();
 $internal_tasks_id = @intval($_GET['internal_tasks_id']);
 $intern_id         = @intval($_GET['interns_id']);
 
-// Jika sedang memfilter berdasarkan Intern atau Task tertentu
+// 2. LOGIKA BARU: Jika sedang memfilter (lewat button Activities/info)
 if ($internal_tasks_id > 0 || $intern_id > 0) {
-	echo '<div class="panel panel-default">';
-	echo '<div class="panel-heading">';
-	if ($internal_tasks_id > 0) {
-		$task = $db->getRow('SELECT title from interns_tasks where id = ' . $internal_tasks_id);
-		echo $task['title'];
-	} else {
-		$user = $db->getRow('SELECT name from interns where id = ' . $intern_id);
-		echo $user['name'];
-	}
-	echo '</div>';
-	echo '<div class="panel-body">';
-
-	// Kita tetap gunakan TABS agar user bisa "Add To Do" langsung untuk intern tersebut
-	$tabs = [
-		'List To Do' => $form->roll->getForm(),
-		($is_edit ? 'Edit Task' : 'Add To Do') => $form_edit_content
-	];
-
-
-	echo tabs($tabs, ($is_edit ? 2 : 1), 'tabs_task_list_filtered');
-	echo '</div></div>';
+  echo '<div class="panel panel-default">';
+  echo '  <div class="panel-heading">';
+  if ($internal_tasks_id > 0) {
+    $task = $db->getRow('SELECT title from interns_tasks where id = ' . $internal_tasks_id);
+    echo '<h3 class="panel-title">' .  $task['title'] . '</h3>';
+  } else {
+    $user = $db->getRow('SELECT name from interns where id = ' . $intern_id);
+    echo '<h3 class="panel-title">' . $user['name'] . '</h3>';
+  }
+  echo '  </div>';
+  echo '  <div class="panel-body">';
+  
+  // Langsung tampilkan FORM ROLL-nya saja, TANPA TABS
+  echo $form->roll->getForm();
+  
+  echo '  </div>';
 
 } else {
-	// Tampilan Default (Tanpa Filter)
-	echo '<div style="margin-bottom: 20px;">';
-	echo $form_search->search->getform();
-	echo '</div>';
+  // 3. Tampilan Default Menu Utama (Tetap pakai Tabs)
+  echo '<div style="margin-bottom: 20px;">';
+  echo $form_search->search->getform();
+  echo '</div>';
 
-	$tabs = [
-		'List To Do' => $form->roll->getForm(),
-		($is_edit ? 'Edit Task' : 'Add To Do') => $form_edit_content
-	];
-	echo tabs($tabs, ($is_edit ? 2 : 1), 'tabs_task_list');
+  $tabs = [
+    'List To Do' => $form->roll->getForm(),
+    ($is_edit ? 'Edit Task' : 'Add To Do') => $form_edit_content
+  ];
+  echo tabs($tabs, ($is_edit ? 2 : 1), 'tabs_task_list');
 ?>
   <div class="col-xs-12 no-both" style="padding: 10px 0;">
     <div class="panel panel-default" style="margin-top:20px;">
