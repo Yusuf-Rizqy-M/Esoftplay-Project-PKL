@@ -1,0 +1,268 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.diff-section {
+    padding: 80px 20px;
+    text-align: center;
+    background-color: #ffffff;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+.diff-container {
+    max-width: 700px;
+    margin: 0 auto;
+}
+.diff-title {
+    font-size: 36px;
+    font-weight: 700;
+    color: #000000;
+    margin-bottom: 25px;
+    letter-spacing: -0.5px;
+}
+.diff-desc {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #555555;
+}
+.diff-download-text {
+    font-size: 16px;
+    color: #333333;
+    margin-bottom: 10px;
+    display: block;
+}
+.diff-icon {
+    display: block;
+    margin: 0 auto 20px auto;
+    width: 30px;
+    height: 30px;
+}
+.btn-github {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #000000;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 15px 100px;
+    border-radius: 8px;
+    font-size: 24px;
+    font-weight: 600;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    gap: 15px;
+}
+.btn-github:hover {
+    background-color: #222222;
+    transform: translateY(-2px);
+    color: #ffffff;
+}
+.btn-github svg {
+    width: 32px;
+    height: 32px;
+    fill: currentColor;
+}
+
+.stats-section {
+    width: 100%;
+    background-color: #ffffff;
+    border-top: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+.stats-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+}
+.stats-item {
+    flex: 1;
+    min-width: 250px;
+    padding: 60px 20px;
+    text-align: center;
+    border-right: 1px solid #e0e0e0;
+}
+.stats-item:last-child {
+    border-right: none;
+}
+.stats-number {
+    display: block;
+    font-size: 84px;
+    font-weight: 700;
+    color: #000000;
+    line-height: 1;
+    margin-bottom: 15px;
+    letter-spacing: -2px;
+}
+.stats-label {
+    display: block;
+    font-size: 20px;
+    color: #555555;
+    font-weight: 500;
+}
+
+.team-section {
+    font-family: 'Arial', sans-serif;
+    padding: 60px 0;
+    background: #fff;
+}
+.team-title {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 500;
+    margin-bottom: 50px;
+    color: #000;
+}
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+.team-card {
+    display: flex;
+    flex-direction: column;
+}
+.team-image {
+    width: 100%;
+    height: 230px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+.team-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.team-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+}
+.team-role {
+    font-size: 15px;
+    font-weight: 600;
+    color: #0084ff;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.team-role span.pipe {
+    color: #333;
+    font-weight: normal;
+}
+.team-desc {
+    font-size: 13.5px;
+    color: #666;
+    line-height: 1.8;
+    margin-bottom: 15px;
+    text-align: justify;
+}
+.team-social {
+    display: flex;
+    gap: 15px;
+}
+.team-social a {
+    color: #000;
+    font-size: 22px;
+    text-decoration: none;
+    transition: 0.2s;
+}
+.team-social a:hover {
+    opacity: 0.6;
+}
+
+.story-block {
+    font-family: 'Inter', sans-serif;
+    padding: 80px 0;
+    background-color: #fff;
+    color: #000;
+}
+.story-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+.story-hero {
+    width: 100%;
+    margin-bottom: 60px;
+}
+.story-hero img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.story-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 40px;
+    align-items: start;
+}
+.story-header h2 {
+    font-size: 36px;
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    line-height: 1.2;
+}
+.story-header p {
+    font-size: 14px;
+    color: #777;
+    margin: 0;
+}
+.story-body {
+    font-size: 13px;
+    line-height: 1.8;
+    color: #333;
+    text-align: justify;
+}
+.story-body p {
+    margin: 0 0 20px 0;
+}
+
+.stats-grid-small {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid #ddd;
+    padding-top: 50px;
+    margin-top: 50px;
+    text-align: center;
+}
+.stat-number {
+    font-size: 80px;
+    font-weight: 700;
+    color: #000;
+    display: block;
+    line-height: 1;
+    margin-bottom: 12px;
+}
+.stat-label {
+    font-size: 18px;
+    color: #666;
+    font-weight: 500;
+}
+
+@media (max-width: 992px) {
+    .team-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+    .stats-item {
+        flex: 0 0 100%;
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    .stats-number { font-size: 60px; }
+    .story-grid { grid-template-columns: 1fr; }
+    .stats-grid-small { flex-direction: column; }
+    .btn-github { width: 100%; padding: 15px 20px; }
+}
+
+@media (max-width: 600px) {
+    .team-grid { grid-template-columns: 1fr; }
+}
