@@ -1,39 +1,27 @@
 <?php  if (!defined('_VALID_BBC')) exit('No direct script access allowed');
 
-$_setting = [
-    'heading' => [
-        'text' => 'Heading',
+$_setting = [];
+
+for ($i = 1; $i <= 6; $i++) {
+    $_setting['item'.$i.'_logo'] = [
+        'text' => 'Logo Item '.$i,
         'type' => 'text',
-        'default' => 'The business software for design agencies'
-    ],
-    'tagline' => [
-        'text' => 'Tagline',
-        'type' => 'textarea',
-        'default' => 'Designed to simplify project management, delight clients, and increase profitability. Book your free demo or sign up today and get 30% off.'
-    ],
-    'btn_primary_text' => [
-        'text' => 'Primary Button Text',
+        'default' => 'https://via.placeholder.com/50x50/FFD700/000000?text=bbo'
+    ];
+    $_setting['item'.$i.'_image'] = [
+        'text' => 'Image Item '.$i,
         'type' => 'text',
-        'default' => 'Book a web'
-    ],
-    'btn_secondary_text' => [
-        'text' => 'Secondary Button Text',
+        'default' => 'https://via.placeholder.com/400x250/333333/FFFFFF?text=Preview+'.$i
+    ];
+    $_setting['item'.$i.'_title'] = [
+        'text' => 'Title Item '.$i,
         'type' => 'text',
-        'default' => 'Book a apk'
-    ],
-    'rating_score' => [
-        'text' => 'Rating Score',
+        'default' => 'BBO Web App Ticketing '.$i
+    ];
+    // Variabel baru untuk link
+    $_setting['item'.$i.'_link'] = [
+        'text' => 'Link Item '.$i,
         'type' => 'text',
-        'default' => '4.9'
-    ],
-    'rating_count' => [
-        'text' => 'Rating Count Text',
-        'type' => 'text',
-        'default' => '27 ulasan di google'
-    ],
-    'hero' => [
-        'text' => 'Hero Image URL',
-        'type' => 'text',
-        'attr' => 'id="txtUrl"',
-    ],
-];
+        'default' => '#'
+    ];
+}

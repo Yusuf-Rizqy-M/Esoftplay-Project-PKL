@@ -1,0 +1,47 @@
+body.admin-layout {
+  margin: 0;
+  background: #fff;
+  font-family: Arial, sans-serif;
+}
+
+
+body.admin-layout .admin-wrapper {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+}
+
+
+body.admin-layout .admin-sidebar {
+  position: relative;
+  width: 280px;
+  flex-shrink: 0;
+  margin: 0;
+  box-sizing: border-box;
+  color: #fff;
+}
+
+
+body.admin-layout .admin-content {
+  flex: 1;
+  min-width: 0;
+  width: auto;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+
+body.admin-layout .admin-content>* {
+  margin: 0;
+}
+
+
+body.admin-layout .admin-content .container,
+body.admin-layout .admin-content .container-fluid,
+body.admin-layout .admin-content .panel,
+body.admin-layout .admin-content .content,
+body.admin-layout .admin-content .bbc-content {
+  margin: 0;
+  padding: 0;
+}

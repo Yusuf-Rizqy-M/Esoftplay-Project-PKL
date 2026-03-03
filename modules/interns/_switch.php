@@ -30,7 +30,6 @@ switch ($Bbc->mod['task']) {
 		echo 'hi dashboard';
 		break;
 
-
 	case 'print_sertif':
 		$sys->set_layout('dashboard');
 		break;
@@ -45,10 +44,25 @@ switch ($Bbc->mod['task']) {
 		break;
 
 	case 'login':
-		echo 'login';
 		break;
 
 	case 'kontak':
+		break;
+		
+	case 'beranda':
+	include 'beranda.php';
+		break;
+
+	case 'our_client':
+	include 'our_client.php';
+		break;
+
+	case 'internshipp':
+	include 'internship.php';
+		break;
+
+	case 'contact_us':
+	include 'contact_us.php';
 		break;
 	default:
 
