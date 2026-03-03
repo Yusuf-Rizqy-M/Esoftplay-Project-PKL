@@ -64,6 +64,10 @@ switch ($Bbc->mod['task']) {
 	case 'contact_us':
 	include 'contact_us.php';
 		break;
+		
+	case 'about_us':
+	include 'about_us.php';
+		break;
 	default:
 
 		echo 'Invalid action <b>' . $Bbc->mod['task'] . '</b> has been received...';
