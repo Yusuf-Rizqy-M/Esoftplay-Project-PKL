@@ -3,12 +3,8 @@
 
 switch ($Bbc->mod['task']) {
 	case 'main':
-
 	case 'intern':
-		include 'intern.php';
-		break;
-
-	case 'home':
+		include 'beranda.php';
 		break;
 
 	case 'laporan_harian':
@@ -49,10 +45,6 @@ switch ($Bbc->mod['task']) {
 	case 'kontak':
 		break;
 		
-	case 'beranda':
-	include 'beranda.php';
-		break;
-
 	case 'our_client':
 	include 'our_client.php';
 		break;

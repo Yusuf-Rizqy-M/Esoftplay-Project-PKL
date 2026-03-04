@@ -20,6 +20,9 @@ $add_sql = $form->search->action();
 $tasks_list_id = isset($_GET['tasks_list_id']) ? intval($_GET['tasks_list_id']) : 0;
 $intern_id     = isset($_GET['interns_id']) ? intval($_GET['interns_id']) : 0;
 
+// Logika penentu apakah sedang mode filter (View History)
+$is_filtered = ($tasks_list_id > 0 || $intern_id > 0);
+
 if ($tasks_list_id > 0) {
   $add_sql .= " AND `interns_tasks_list_id` = {$tasks_list_id}";
 } elseif ($intern_id > 0) {
@@ -33,19 +36,28 @@ $form->roll->setSaveTool(false);
 $form->roll->addInput('id', 'sqlplaintext');
 $form->roll->input->id->setDisplayColumn(false);
 
+// Kolom Name
 $form->roll->addInput('interns_id', 'selecttable');
 $form->roll->input->interns_id->setTitle('Name');
 $form->roll->input->interns_id->setPlaintext(true);
 $form->roll->input->interns_id->setReferenceTable('interns');
 $form->roll->input->interns_id->setReferenceField('name', 'id');
+if ($is_filtered) {
+  $form->roll->input->interns_id->setDisplayColumn(false); // Sembunyikan jika masuk Activities/History
+}
 
+// Kolom Email
 $form->roll->addInput('email', 'selecttable');
 $form->roll->input->email->setTitle('Email');
 $form->roll->input->email->setReferenceTable('interns');
 $form->roll->input->email->setReferenceField('email', 'id');
 $form->roll->input->email->setPlaintext(true);
 $form->roll->input->email->setFieldName('interns_id AS email');
-$form->roll->input->email->setDisplayColumn(false);
+if ($is_filtered) {
+  $form->roll->input->email->setDisplayColumn(false); // Sembunyikan jika masuk Activities/History
+}
+
+// Kolom Tasks
 $form->roll->addInput('interns_tasks_list_id', 'sqlplaintext');
 $form->roll->input->interns_tasks_list_id->setTitle('Tasks');
 $form->roll->input->interns_tasks_list_id->setDisplayFunction(function ($list_id) {
@@ -55,7 +67,9 @@ $form->roll->input->interns_tasks_list_id->setDisplayFunction(function ($list_id
   $title = $db->getOne($sql);
   return $title ? $title : '-';
 });
-
+if ($is_filtered) {
+  $form->roll->input->interns_tasks_list_id->setDisplayColumn(false); // Sembunyikan jika masuk Activities/History
+}
 
 $form->roll->addInput('notes', 'sqlplaintext');
 $form->roll->input->notes->setTitle('Notes');
@@ -76,40 +90,40 @@ $form->roll->input->status->setDisplayFunction(function ($value) {
 });
 
 $form->roll->addInput('created', 'sqlplaintext');
-$form->roll->input->created->setTitle('Changed At');
+$form->roll->input->created->setTitle('Created');
 $form->roll->input->created->setDateFormat('d M Y, H:i');
-$form->roll->input->created->setDisplayColumn(false);
+// created dibiarkan true agar riwayat waktu perubahan tetap terlihat
 
 $form->roll->action();
 
-if ($tasks_list_id > 0 || $intern_id > 0) {
-  // TAMPILAN SAAT FILTER (VIEW HISTORY)
+if ($is_filtered) {
+  // TAMPILAN SAAT FILTER (VIEW HISTORY) - Kolom Name/Email/Task Hilang
   echo '<div class="panel panel-default">';
-  echo '  <div class="panel-heading">';
+  echo '  <div class="panel-heading"><h3 class="panel-title">';
   if ($tasks_list_id > 0) {
     $info = $db->getRow("SELECT i.name, t.title FROM interns_tasks_list l 
                LEFT JOIN interns i ON l.interns_id=i.id 
                LEFT JOIN interns_tasks t ON l.interns_tasks_id=t.id 
                WHERE l.id={$tasks_list_id}");
-    echo $info['name'] . ' - ' . $info['title'];
+    echo  $info['name'] . ' - ' . $info['title'];
   } else {
     $name = $db->getOne("SELECT name FROM interns WHERE id={$intern_id}");
-    echo $name;
+    echo 'History User: ' . $name;
   }
-  echo '  </div>';
+  echo '  </h3></div>';
   echo '  <div class="panel-body">';
-  
+
   echo $form->roll->getForm();
   echo '  </div>';
   echo '</div>';
 } else {
-  // TAMPILAN MENU UTAMA (SESUAI GAMBAR KEDUA)
+  // TAMPILAN MENU UTAMA - Semua Kolom Muncul
   echo '<div style="margin-bottom: 20px;">';
-  echo $form->search->getForm(); // Search di luar panel, paling atas
+  echo $form->search->getForm();
   echo '</div>';
 
   echo '<div class="panel panel-default">';
-  echo '  <div class="panel-heading"><h3 class="panel-title">' . ' Daftar Semua History Tugas</h3></div>';
+  echo '  <div class="panel-heading"><h3 class="panel-title">Daftar Semua History Tugas</h3></div>';
   echo '  <div class="panel-body">';
   echo $form->roll->getForm();
   echo '  </div>';

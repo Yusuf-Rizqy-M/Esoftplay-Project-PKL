@@ -3,6 +3,8 @@ if (!defined('_VALID_BBC')) exit('No direct script access allowed');
 
 _func('download');
 
+$internal_tasks_id = @intval($_GET['internal_tasks_id']);
+
 // KODE KAMU: Ambil ID dari URL untuk logika sembunyikan kolom
 $interns_id = isset($_GET['interns_id']) ? intval($_GET['interns_id']) : 0;
 
@@ -153,6 +155,10 @@ $form->roll->input->interns_tasks_id->setReferenceField('title', 'id');
 $form->roll->input->interns_tasks_id->setModal(true);
 $form->roll->input->interns_tasks_id->setLinks($Bbc->mod['circuit'] . '.interns_tasks_list_info');
 $form->roll->input->interns_tasks_id->setPlaintext(true);
+if ($internal_tasks_id > 0) {
+  $form->roll->input->interns_tasks_id->setDisplayColumn(false);
+}
+
 
 // GABUNGAN: Logika Kamu ada di sini
 $form->roll->addInput('interns_id', 'selecttable');
@@ -216,6 +222,7 @@ global $Bbc;
 $form->roll->addInput('done_at', 'sqlplaintext');
 $form->roll->input->done_at->setTitle('Done At');
 $form->roll->input->done_at->setDisplayColumn(false);
+$form->roll->input->done_at->setDateFormat('d M Y, H:i');
 
 $form->roll->setDeleteTool(false);
 $form->roll->setSaveTool(false);
@@ -255,26 +262,27 @@ $form_edit_content = ob_get_clean();
 $internal_tasks_id = @intval($_GET['internal_tasks_id']);
 $intern_id         = @intval($_GET['interns_id']);
 
+
 // 2. LOGIKA BARU: Jika sedang memfilter (lewat button Activities/info)
 if ($internal_tasks_id > 0 || $intern_id > 0) {
   echo '<div class="panel panel-default">';
   echo '  <div class="panel-heading">';
+  $form->roll->addReport('excel');
   if ($internal_tasks_id > 0) {
-    $task = $db->getRow('SELECT title from interns_tasks where id = ' . $internal_tasks_id);
-    echo '<h3 class="panel-title">' .  $task['title'] . '</h3>';
+    $task = $db->getOne('SELECT title from interns_tasks where id = ' . $internal_tasks_id);
+    echo '<h3 class="panel-title">' . $task . '</h3>';
   } else {
-    $user = $db->getRow('SELECT name from interns where id = ' . $intern_id);
-    echo '<h3 class="panel-title">' . $user['name'] . '</h3>';
+    $user = $db->getOne('SELECT name from interns where id = ' . $intern_id);
+    echo '<h3 class="panel-title">' . $user . '</h3>';
   }
   echo '  </div>';
   echo '  <div class="panel-body">';
-  
-  // Langsung tampilkan FORM ROLL-nya saja, TANPA TABS
-  echo $form->roll->getForm();
-  
+  echo $form->roll->getForm(); // Langsung Roll tanpa Tab
   echo '  </div>';
+  echo '</div>';
+}
 
-} else {
+ else {
   // 3. Tampilan Default Menu Utama (Tetap pakai Tabs)
   echo '<div style="margin-bottom: 20px;">';
   echo $form_search->search->getform();
