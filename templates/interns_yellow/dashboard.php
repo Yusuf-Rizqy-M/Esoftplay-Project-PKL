@@ -7,11 +7,11 @@
     <![endif]-->
   </head>
   <body>
-	<div class="row">
-      <div class="col-md-3">
+	<div class="">
+      <div class="">
         <?php echo $sys->block_show('left');?>
       </div>
-      <div class="col-md-9">
+      <div style="margin-left: 260px;">
         <?php echo $sys->block_show('content_top');?>
         <?php echo trim($Bbc->content);?>
         <?php echo $sys->block_show('content_bottom');?>

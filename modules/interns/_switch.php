@@ -4,65 +4,51 @@
 switch ($Bbc->mod['task']) {
 	case 'main':
 	case 'beranda':
-		include 'beranda.php';
-		break;
-
-	case 'laporan_harian':
-		$sys->set_layout('dashboard');
-		echo 'laporan_harian';
-		break;
-
-	case 'laporan_pkl':
-		$sys->set_layout('dashboard');
-		break;
-
-	case 'task_pkl':
-		$sys->set_layout('dashboard');
-			include 'task_pkl.php';
-		echo 'task_pkl';
-		break;
-
-	case 'dashboard':
-		$sys->set_layout('dashboard');
-		echo 'hi dashboard';
-		break;
-
-	case 'print_sertif':
-		$sys->set_layout('dashboard');
-		break;
-
-	case 'client_esoftplay':
-		break;
-
-	case 'internship':
-		break;
-
-	case 'tentang_kami':
-		break;
-
-	case 'login':
-		break;
-
-	case 'kontak':
-		break;
+	include 'beranda.php';
+	break;
 		
 	case 'our_client':
 	include 'our_client.php';
-		break;
+	break;
 
 	case 'internshipp':
 	include 'internship.php';
-		break;
+	break;
 
 	case 'contact_us':
 	include 'contact_us.php';
-		break;
+	break;
 		
 	case 'about_us':
 	include 'about_us.php';
-		break;
-	default:
+	break;
 
-		echo 'Invalid action <b>' . $Bbc->mod['task'] . '</b> has been received...';
-		break;
+	case 'laporan_harian':
+	$sys->set_layout('dashboard');
+	include 'internship.php';
+	break;
+
+	case 'laporan_pkl':
+	$sys->set_layout('dashboard');
+	include 'report.php';
+	break;
+
+	case 'task_pkl':
+	$sys->set_layout('dashboard');
+	include 'task_pkl.php';
+	break;
+
+	case 'print_sertif':
+	$sys->set_layout('dashboard');
+	break;
+	default:
+	
+	
+	case 'dashboard':
+	$sys->set_layout('dashboard');
+	// include 'dashboard.php';
+	break;
+
+	echo 'Invalid action <b>' . $Bbc->mod['task'] . '</b> has been received...';
+	break;
 }

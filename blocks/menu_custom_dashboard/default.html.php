@@ -173,7 +173,7 @@ $current_mod     = isset($_GET['mod']) ? $_GET['mod'] : '';
         <div class="logo-wrapper">
             <img src="<?php echo $config['logo']; ?>" alt="Logo Esoftplay">
         </div>
-        <h2>Esoftplay</h2>
+        <h2>Esoftplay Internship</h2>
     </div>
 
     <div class="nav-container">
