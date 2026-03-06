@@ -156,7 +156,7 @@
     
     <nav class="navbar">
         <div class="navbar-inner">
-            <a href="home83.html" class="nav-logo">
+            <a href="beranda.html" class="nav-logo">
                 <img src="<?php echo $config['logo']; ?>" alt="Logo">
                 <span>Esoftplay Internship</span>
             </a>

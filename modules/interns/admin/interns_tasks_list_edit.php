@@ -67,41 +67,25 @@ if ($interns_id > 0) {
 $form_add->edit->addInput('notes', 'textarea');
 $form_add->edit->input->notes->setTitle('Notes');
 
-$form_add->edit->action();
-
-
-
-$form_html = $form_add->edit->getForm();
-
-
-if (!empty($_POST) && !empty($_POST['edit_submit_update'])) {
-  
-  $final_id = ($task_list_id > 0) ? $task_list_id : $db_obj->Insert_ID();
-
-  if ($final_id > 0) {
-    $current_data = $db_obj->getRow("SELECT * FROM `interns_tasks_list` WHERE `id`={$final_id}");
+// --- LOGIKA HISTORY START ---
+$form_add->edit->onSave(function($id) use ($db_obj) {
+    $current_data = $db_obj->getRow("SELECT * FROM `interns_tasks_list` WHERE `id`={$id}");
     if (!empty($current_data)) {
-      $notes_safe = addslashes($current_data['notes']);
-      
-      
-      $db_obj->Execute("INSERT INTO `interns_tasks_list_history` 
-        (`interns_id`, `interns_tasks_list_id`, `status`, `notes`, `created`) 
-        VALUES 
-        ({$current_data['interns_id']}, {$final_id}, {$current_data['status']}, '{$notes_safe}', NOW())");
-      
-      $db_obj->Execute("UPDATE `interns_tasks_list` SET `updated` = NOW() WHERE `id` = {$final_id}");
+        $notes_safe = addslashes($current_data['notes']);
+        // Masukkan ke history
+        $db_obj->Execute("INSERT INTO `interns_tasks_list_history` 
+            (`interns_id`, `interns_tasks_list_id`, `status`, `notes`, `created`) 
+            VALUES 
+            ({$current_data['interns_id']}, {$id}, {$current_data['status']}, '{$notes_safe}', NOW())");
+        
+        // Update updated time di table utama
+        $db_obj->Execute("UPDATE `interns_tasks_list` SET `updated` = NOW() WHERE `id` = {$id}");
     }
-    
-    
-    if (empty($_GET['is_ajax'])) {
-      header("Location: index.php?mod=interns.interns_tasks_list");
-    }
-    exit;
-  }
-}
+});
+// --- LOGIKA HISTORY END ---
 
-
-echo $form_html;
+$form_add->edit->action();
+echo $form_add->edit->getForm();
 ?>
 
 <?php if (!empty($_GET['is_ajax'])): ?>
@@ -114,19 +98,14 @@ echo $form_html;
         }
       }, 100);
 
-      const edit_form_url = new URL(<?php echo json_encode(seo_url()) ?>);
       const edit_form_obj = $('form[name="edit"]');
-      edit_form_url.searchParams.delete('is_ajax');
-      edit_form_url.searchParams.delete('return');
-
       edit_form_obj.on('submit', e => {
         e.preventDefault();
-        let form_data = edit_form_obj.serialize() + '&edit_submit_update=SAVE';
         $.ajax({
           type: "POST",
-          url: edit_form_url.toString(),
-          data: form_data,
-          success: function(response) {
+          url: window.location.href.replace('&is_ajax=1', ''),
+          data: edit_form_obj.serialize() + '&edit_submit_update=SAVE',
+          success: function() {
             location.reload();
           }
         });

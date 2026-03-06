@@ -3,7 +3,7 @@
 
 switch ($Bbc->mod['task']) {
 	case 'main':
-	case 'intern':
+	case 'beranda':
 		include 'beranda.php';
 		break;
 
@@ -18,6 +18,7 @@ switch ($Bbc->mod['task']) {
 
 	case 'task_pkl':
 		$sys->set_layout('dashboard');
+			include 'task_pkl.php';
 		echo 'task_pkl';
 		break;
 
