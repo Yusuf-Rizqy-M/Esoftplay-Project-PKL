@@ -20,14 +20,11 @@ $form->roll->addInput('interns_tasks_id', 'selecttable');
 $form->roll->input->interns_tasks_id->setTitle('Tasks Title');
 $form->roll->input->interns_tasks_id->setReferenceTable('interns_tasks');
 $form->roll->input->interns_tasks_id->setReferenceField('title', 'id');
-$form->roll->input->interns_tasks_id->setModal(true);
-$form->roll->input->interns_tasks_id->setLinks($Bbc->mod['circuit'] . '.interns_tasks_list_info');
 $form->roll->input->interns_tasks_id->setPlaintext(true);
 
-$form->roll->addInput('notes', 'sqllinks');
+$form->roll->addInput('notes', 'sqlplaintext');
 $form->roll->input->notes->setTitle('Notes');
-$form->roll->input->notes->setModal(true);
-$form->roll->input->notes->setLinks($Bbc->mod['circuit'] . '.interns_tasks_list_edit');
+
 
 $form->roll->addInput('timeline', 'selecttable');
 $form->roll->input->timeline->setTitle('Timeline (Days)');
