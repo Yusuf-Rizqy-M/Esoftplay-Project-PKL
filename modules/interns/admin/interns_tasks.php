@@ -171,10 +171,8 @@ $form_list->roll->input->task_link->setFieldName('id as task_link');
 $form_list->roll->input->task_link->setDisplayFunction(function ($id) {
   global $Bbc;
   
-  // 1. Ambil URL halaman daftar Task saat ini untuk tombol Back
   $return_url = urlencode(seo_url());
   
-  // 2. Tambahkan &return= ke URL tujuan
   $target_url = $Bbc->mod['circuit'] . '.interns_tasks_list&internal_tasks_id=' . $id . '&return=' . $return_url;
   
   return '<a href="' . $target_url . '" class="btn btn-xs btn-primary">Activities</a>';

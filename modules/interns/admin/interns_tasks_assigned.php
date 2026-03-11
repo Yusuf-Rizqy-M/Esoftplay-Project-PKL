@@ -41,29 +41,23 @@ $form_add->edit->input->interns->elements->interns_id->setReferenceTable('intern
 $form_add->edit->input->interns->elements->interns_id->setReferenceField('name', 'id');
 $form_add->edit->input->interns->elements->interns_id->addOption('-- Select Interns --', '');
 
-// --- LOGIKA HISTORY MENGGUNAKAN ONSAVE ---
 $form_add->edit->onSave(function($main_task_id) use ($db) {
-    // 1. Perbaiki status "Unknown" (set ke 1 / To Do jika masih 0 atau NULL)
     $db->Execute("UPDATE `interns_tasks_list` SET `status` = 1 
                   WHERE `interns_tasks_id` = {$main_task_id} 
                   AND (`status` IS NULL OR `status` = 0)");
 
-    // 2. Ambil semua data dari interns_tasks_list untuk task ini
     $assignments = $db->getAll("SELECT * FROM `interns_tasks_list` WHERE `interns_tasks_id` = {$main_task_id}");
 
     if (!empty($assignments)) {
         foreach ($assignments as $row) {
             $notes_safe = addslashes($row['notes']);
             $status     = ($row['status'] > 0) ? $row['status'] : 1;
-
-            // 3. Cek apakah record ini sudah ada di history agar tidak duplikat
             $is_exists = $db->getOne("SELECT 1 FROM `interns_tasks_list_history` 
                                       WHERE `interns_tasks_list_id` = {$row['id']} 
                                       AND `status` = {$status} 
                                       AND `notes` = '{$notes_safe}' LIMIT 1");
 
             if (!$is_exists) {
-                // 4. Masukkan ke history
                 $db->Execute("INSERT INTO `interns_tasks_list_history` 
                     (`interns_id`, `interns_tasks_list_id`, `status`, `notes`, `created`) 
                     VALUES 

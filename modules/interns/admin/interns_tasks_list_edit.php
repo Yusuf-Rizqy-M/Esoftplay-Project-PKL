@@ -11,7 +11,6 @@ if (!defined('_VALID_BBC')) exit('No direct script access allowed');
 $db_obj = $GLOBALS['db'];
 $task_list_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $interns_id   = isset($_GET['interns_id']) ? intval($_GET['interns_id']) : 0;
-// FITUR KAMU: AMBIL NAMA INTERN UNTUK HEADER
 $intern_name = '';
 if ($interns_id > 0) {
   $intern_name = $db_obj->getOne("SELECT `name` FROM `interns` WHERE `id`={$interns_id}");
@@ -22,7 +21,6 @@ $form_add->initEdit($task_list_id > 0 ? "WHERE `id`={$task_list_id}" : "");
 
 if ($task_list_id > 0) {
   $form_add->edit->addInput('header', 'header');
-  // FITUR KAMU: Header Dinamis saat Edit
   $title = 'Edit Notes Intern' . (!empty($intern_name) ? ' - ' . $intern_name : '');
   $form_add->edit->input->header->setTitle($title);
   
@@ -30,7 +28,6 @@ if ($task_list_id > 0) {
   $form_add->edit->addInput('interns_id', 'hidden');
 } else {
   $form_add->edit->addInput('header', 'header');
-  // FITUR KAMU: Header Dinamis saat Add
   $title = 'Add New Task' . (!empty($intern_name) ?' '. $intern_name : '');
   $form_add->edit->input->header->setTitle($title);
 
@@ -67,22 +64,18 @@ if ($interns_id > 0) {
 $form_add->edit->addInput('notes', 'textarea');
 $form_add->edit->input->notes->setTitle('Notes');
 
-// --- LOGIKA HISTORY START ---
 $form_add->edit->onSave(function($id) use ($db_obj) {
     $current_data = $db_obj->getRow("SELECT * FROM `interns_tasks_list` WHERE `id`={$id}");
     if (!empty($current_data)) {
         $notes_safe = addslashes($current_data['notes']);
-        // Masukkan ke history
         $db_obj->Execute("INSERT INTO `interns_tasks_list_history` 
             (`interns_id`, `interns_tasks_list_id`, `status`, `notes`, `created`) 
             VALUES 
             ({$current_data['interns_id']}, {$id}, {$current_data['status']}, '{$notes_safe}', NOW())");
         
-        // Update updated time di table utama
         $db_obj->Execute("UPDATE `interns_tasks_list` SET `updated` = NOW() WHERE `id` = {$id}");
     }
 });
-// --- LOGIKA HISTORY END ---
 
 $form_add->edit->action();
 echo $form_add->edit->getForm();

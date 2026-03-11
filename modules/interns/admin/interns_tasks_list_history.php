@@ -20,7 +20,6 @@ $add_sql = $form->search->action();
 $tasks_list_id = isset($_GET['tasks_list_id']) ? intval($_GET['tasks_list_id']) : 0;
 $intern_id     = isset($_GET['interns_id']) ? intval($_GET['interns_id']) : 0;
 
-// Logika penentu apakah sedang mode filter (View History)
 $is_filtered = ($tasks_list_id > 0 || $intern_id > 0);
 
 if ($tasks_list_id > 0) {
@@ -36,17 +35,15 @@ $form->roll->setSaveTool(false);
 $form->roll->addInput('id', 'sqlplaintext');
 $form->roll->input->id->setDisplayColumn(false);
 
-// Kolom Name
 $form->roll->addInput('interns_id', 'selecttable');
 $form->roll->input->interns_id->setTitle('Name');
 $form->roll->input->interns_id->setPlaintext(true);
 $form->roll->input->interns_id->setReferenceTable('interns');
 $form->roll->input->interns_id->setReferenceField('name', 'id');
 if ($is_filtered) {
-  $form->roll->input->interns_id->setDisplayColumn(false); // Sembunyikan jika masuk Activities/History
+  $form->roll->input->interns_id->setDisplayColumn(false); 
 }
 
-// Kolom Email
 $form->roll->addInput('email', 'selecttable');
 $form->roll->input->email->setTitle('Email');
 $form->roll->input->email->setReferenceTable('interns');
@@ -54,10 +51,9 @@ $form->roll->input->email->setReferenceField('email', 'id');
 $form->roll->input->email->setPlaintext(true);
 $form->roll->input->email->setFieldName('interns_id AS email');
 if ($is_filtered) {
-  $form->roll->input->email->setDisplayColumn(false); // Sembunyikan jika masuk Activities/History
+  $form->roll->input->email->setDisplayColumn(false);
 }
 
-// Kolom Tasks
 $form->roll->addInput('interns_tasks_list_id', 'sqlplaintext');
 $form->roll->input->interns_tasks_list_id->setTitle('Tasks');
 $form->roll->input->interns_tasks_list_id->setDisplayFunction(function ($list_id) {
@@ -68,7 +64,7 @@ $form->roll->input->interns_tasks_list_id->setDisplayFunction(function ($list_id
   return $title ? $title : '-';
 });
 if ($is_filtered) {
-  $form->roll->input->interns_tasks_list_id->setDisplayColumn(false); // Sembunyikan jika masuk Activities/History
+  $form->roll->input->interns_tasks_list_id->setDisplayColumn(false); 
 }
 
 $form->roll->addInput('notes', 'sqlplaintext');
@@ -92,12 +88,10 @@ $form->roll->input->status->setDisplayFunction(function ($value) {
 $form->roll->addInput('created', 'sqlplaintext');
 $form->roll->input->created->setTitle('Created');
 $form->roll->input->created->setDateFormat('d M Y, H:i');
-// created dibiarkan true agar riwayat waktu perubahan tetap terlihat
 
 $form->roll->action();
 
 if ($is_filtered) {
-  // TAMPILAN SAAT FILTER (VIEW HISTORY) - Kolom Name/Email/Task Hilang
   echo '<div class="panel panel-default">';
   echo '  <div class="panel-heading"><h3 class="panel-title">';
   if ($tasks_list_id > 0) {
@@ -117,7 +111,6 @@ if ($is_filtered) {
   echo '  </div>';
   echo '</div>';
 } else {
-  // TAMPILAN MENU UTAMA - Semua Kolom Muncul
   echo '<div style="margin-bottom: 20px;">';
   echo $form->search->getForm();
   echo '</div>';

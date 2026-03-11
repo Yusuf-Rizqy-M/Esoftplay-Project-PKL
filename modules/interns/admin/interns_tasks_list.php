@@ -5,7 +5,6 @@ _func('download');
 
 $internal_tasks_id = @intval($_GET['internal_tasks_id']);
 
-// KODE KAMU: Ambil ID dari URL untuk logika sembunyikan kolom
 $interns_id = isset($_GET['interns_id']) ? intval($_GET['interns_id']) : 0;
 
 if (!empty($_POST['transfer'])) {

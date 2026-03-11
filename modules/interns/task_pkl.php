@@ -3,16 +3,13 @@ if (!defined('_VALID_BBC')) exit('No direct script access allowed');
 
 $db = $GLOBALS['db'];
 
-// Mengambil data intern berdasarkan user yang sedang login
 $interns = $db->getRow('SELECT id FROM interns WHERE user_id = ' . $user->id);
 $intern_id = intval($interns['id']);
 
 $form = _lib('pea', 'interns_tasks_list');
 
-// Inisialisasi list berdasarkan interns_id
 $form->initRoll('WHERE interns_id = ' . $intern_id . ' ORDER BY id DESC', 'id');
 
-// Menggunakan header native framework
 $form->roll->addInput('header', 'header');
 $form->roll->input->header->setTitle('Daftar List Tugas');
 

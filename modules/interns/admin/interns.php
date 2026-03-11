@@ -207,10 +207,8 @@ $form_list->roll->input->task_link->setFieldName('id');
 $form_list->roll->input->task_link->setDisplayFunction(function($intern_id){
   global $Bbc;
   
-  // Ambil URL halaman daftar intern saat ini, lalu di-encode agar bisa disisipkan ke URL
   $return_url = urlencode(seo_url());
   
-  // Masukkan parameter &return= kedalam URL
   $url = $Bbc->mod['circuit'] . '.interns_tasks_list&interns_id=' . $intern_id . '&is_list=1&return=' . $return_url;
   
   return '<a href="' . $url . '" class="btn btn-xs btn-primary"> Activities </a>';

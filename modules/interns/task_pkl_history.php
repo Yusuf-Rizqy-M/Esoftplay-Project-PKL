@@ -3,16 +3,13 @@ if (!defined('_VALID_BBC')) exit('No direct script access allowed');
 
 $db = $GLOBALS['db'];
 
-// Mendapatkan ID Intern berdasarkan user yang sedang login
 $interns   = $db->getRow('SELECT id FROM interns WHERE user_id = ' . $user->id);
 $intern_id = intval($interns['id']);
 
-// Mendapatkan filter task jika datang dari tombol "View History" di halaman list
 $tasks_list_id = isset($_GET['tasks_list_id']) ? intval($_GET['tasks_list_id']) : 0;
 
 $form = _lib('pea', 'interns_tasks_list_history');
 
-// Menentukan SQL dasar (Hanya menampilkan history milik intern yang sedang login)
 $add_sql = "WHERE `interns_id` = {$intern_id}";
 if ($tasks_list_id > 0) {
 	$add_sql .= " AND `interns_tasks_list_id` = {$tasks_list_id}";
@@ -20,7 +17,6 @@ if ($tasks_list_id > 0) {
 
 $form->initRoll($add_sql . ' ORDER BY created DESC, id DESC', 'id');
 
-// --- HEADER NATIVE ---
 $header_title = 'History Aktivitas Tugas';
 if ($tasks_list_id > 0) {
 	$task_title = $db->getOne("SELECT t.title FROM interns_tasks_list l 
@@ -32,7 +28,6 @@ if ($tasks_list_id > 0) {
 $form->roll->addInput('header', 'header');
 $form->roll->input->header->setTitle($header_title);
 
-// --- KOLOM DATA ---
 $form->roll->addInput('interns_tasks_list_id', 'sqlplaintext');
 $form->roll->input->interns_tasks_list_id->setTitle('Tasks Title');
 $form->roll->input->interns_tasks_list_id->setDisplayFunction(function ($list_id) {
@@ -65,13 +60,11 @@ $form->roll->addInput('created', 'sqlplaintext');
 $form->roll->input->created->setTitle('Waktu Perubahan');
 $form->roll->input->created->setDateFormat('d M Y, H:i');
 
-// Pengaturan Tool
 $form->roll->setDeleteTool(false);
 $form->roll->setSaveTool(false);
 
 $form->roll->action();
 
-// Menampilkan output di dalam panel agar seragam dengan task_pkl.php
 echo '<div class="panel panel-default">';
 echo '  <div class="panel-body">';
 echo $form->roll->getForm();
