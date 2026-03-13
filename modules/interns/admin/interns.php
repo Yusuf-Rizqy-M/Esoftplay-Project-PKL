@@ -1,8 +1,6 @@
 <?php
 if (!defined('_VALID_BBC')) exit('No direct script access allowed');
 
-_func('download');
-
 if (!empty($_POST['transfer'])) {
   if ($_POST['transfer'] == 'download') {
     $sample_data = array(
@@ -17,7 +15,7 @@ if (!empty($_POST['transfer'])) {
         'Keterangan' => 'Format tanggal: YYYY-MM-DD'
       ),
     );
-
+    _func('download');
     download_excel('Sample_Import_Intern_' . date('Y-m-d'), $sample_data, 'Intern Data');
     die();
   }
@@ -144,6 +142,9 @@ $form_list->initRoll($add_sql . ' ORDER BY `id` DESC', 'id');
 $form_list->roll->setDeleteTool(true);
 $form_list->roll->setSaveTool(false);
 
+$form_list->roll->addHeader('header', 'header');
+$form_list->roll->input->header->setTitle('Daftar Interns');
+
 $form_list->roll->addInput('name', 'sqllinks');
 $form_list->roll->input->name->setTitle('Name');
 $form_list->roll->input->name->setLinks($Bbc->mod['circuit'] . '.interns_edit');
@@ -192,17 +193,17 @@ $form_list->roll->input->status->setDisplayFunction(function ($value) {
   return '<span class="label" style="background-color: ' . $status['color'] . '; color: white; padding: 5px 12px; border-radius: 12px;">' . $status['label'] . '</span>';
 });
 
-$form_list->roll->addInput('id_menu_task', 'editlinks'); 
-$form_list->roll->input->id_menu_task->setTitle('Action');
-$form_list->roll->input->id_menu_task->setFieldName('id');
-$form_list->roll->input->id_menu_task->setCaption('Opsi');
-$form_list->roll->input->id_menu_task->setGetName('interns_id');
-$form_list->roll->input->id_menu_task->setLinks(array(
-  $Bbc->mod['circuit'] . '.interns_tasks_list_edit' => icon('fa-list') . ' Assigned '
-));
+// $form_list->roll->addInput('id_menu_task', 'editlinks'); 
+// $form_list->roll->input->id_menu_task->setTitle('Action');
+// $form_list->roll->input->id_menu_task->setFieldName('id');
+// $form_list->roll->input->id_menu_task->setCaption('Opsi');
+// $form_list->roll->input->id_menu_task->setGetName('interns_id');
+// $form_list->roll->input->id_menu_task->setLinks(array(
+//   $Bbc->mod['circuit'] . '.interns_tasks_list_edit' => icon('fa-list') . ' Assigned '
+// ));
 
 $form_list->roll->addInput('task_link', 'sqlplaintext');
-$form_list->roll->input->task_link->setTitle('View');
+$form_list->roll->input->task_link->setTitle('Action');
 $form_list->roll->input->task_link->setFieldName('id'); 
 $form_list->roll->input->task_link->setDisplayFunction(function($intern_id){
   global $Bbc;
@@ -211,7 +212,7 @@ $form_list->roll->input->task_link->setDisplayFunction(function($intern_id){
   
   $url = $Bbc->mod['circuit'] . '.interns_tasks_list&interns_id=' . $intern_id . '&is_list=1&return=' . $return_url;
   
-  return '<a href="' . $url . '" class="btn btn-xs btn-primary"> Activities </a>';
+  return '<a href="' . $url . '" class="btn btn-xs btn-primary"> Assigned </a>';
 });
 
 $form_list->roll->addInput('created', 'sqlplaintext');

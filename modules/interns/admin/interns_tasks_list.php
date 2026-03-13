@@ -262,23 +262,43 @@ $internal_tasks_id = @intval($_GET['internal_tasks_id']);
 $intern_id         = @intval($_GET['interns_id']);
 
 
-// 2. LOGIKA BARU: Jika sedang memfilter (lewat button Activities/info)
+// 2. LOGIKA: Jika sedang memfilter (lewat button Activities)
 if ($internal_tasks_id > 0 || $intern_id > 0) {
-  echo '<div class="panel panel-default">';
-  echo '  <div class="panel-heading">';
-  $form->roll->addReport('excel');
-  if ($internal_tasks_id > 0) {
-    $task = $db->getOne('SELECT title from interns_tasks where id = ' . $internal_tasks_id);
-    echo '<h3 class="panel-title">' . $task . '</h3>';
-  } else {
-    $user = $db->getOne('SELECT name from interns where id = ' . $intern_id);
-    echo '<h3 class="panel-title">' . $user . '</h3>';
-  }
-  echo '  </div>';
-  echo '  <div class="panel-body">';
-  echo $form->roll->getForm(); // Langsung Roll tanpa Tab
-  echo '  </div>';
-  echo '</div>';
+    
+    // Ambil nama dinamis dari DB
+    if ($intern_id > 0) {
+        $header_name = $db->getOne("SELECT name FROM interns WHERE id = " . $intern_id);
+    } else {
+        $header_name = $db->getOne("SELECT title FROM interns_tasks WHERE id = " . $internal_tasks_id);
+    }
+    $form->roll->addHeader('header_list', 'Daftar Tugas ' . $header_name);
+    
+    $form->roll->action();
+    echo $form->roll->getForm();
+
+    // --- B. FORM TAMBAH (ADD) ---
+    $form_add = _lib('pea', 'interns_tasks_list');
+    $form_add->initAdd();
+
+    // Gunakan addHeader juga di sini agar seragam dan native sesuai arahan mentor
+    $form_add->add->addHeader('header_form', 'Tambah Tugas ' . $header_name);
+
+    $form_add->add->addInput('interns_id', 'hidden');
+    $form_add->add->input->interns_id->setDefaultValue($intern_id);
+
+    $form_add->add->addInput('interns_tasks_id', 'selecttable');
+    $form_add->add->input->interns_tasks_id->setTitle('Tugas Baru');
+    $form_add->add->input->interns_tasks_id->setReferenceTable('interns_tasks');
+    $form_add->add->input->interns_tasks_id->setReferenceField('title', 'id');
+
+    $form_add->add->addInput('notes', 'textarea');
+    $form_add->add->input->notes->setTitle('Catatan');
+
+    $form_add->add->addInput('status', 'hidden');
+    $form_add->add->input->status->setDefaultValue(1);
+
+    $form_add->add->action();
+    echo $form_add->add->getForm(); 
 }
 
  else {

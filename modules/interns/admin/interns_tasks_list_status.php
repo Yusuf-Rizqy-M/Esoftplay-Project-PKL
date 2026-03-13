@@ -22,40 +22,42 @@ $form_add->edit->input->status->setTitle('Status');
 $status_aktif = intval(@$current_data['status']);
 $options      = [];
 
-if ($status_aktif == 6) {
-    $options['Cancel'] = 6;
-} else {
-    $status_labels = [1=>'To Do', 2=>'In Progress', 3=>'Submit', 4=>'Revised', 5=>'Done', 6=>'Cancel'];
-    
-    if ($status_aktif > 1 && isset($status_labels[$status_aktif])) {
-        $options[$status_labels[$status_aktif]] = $status_aktif;
-    }
+// Label status standar
+$status_labels = [1=>'To Do', 2=>'In Progress', 3=>'Submit', 4=>'Revised', 5=>'Done', 6=>'Cancel'];
 
-    switch ($status_aktif) {
-        case 1: 
-        case 4: 
-            $options['In Progress'] = 2;
-            $options['Cancel']      = 6;
-            break;
-        case 2: 
-            $options['Submit']      = 3;
-            $options['Cancel']      = 6;
-            break;
-        case 3: 
-            $options['In Progress'] = 2;
-            $options['Revised']     = 4;
-            $options['Done']        = 5;
-            $options['Cancel']      = 6;
-            break;
-        case 5: 
-            $options['Revised']     = 4;
-            $options['Cancel']      = 6;
-            break;
-        default: 
-            $options['In Progress'] = 2;
-            $options['Cancel']      = 6;
-            break;
-    }
+// 1. Tampilkan status saat ini sebagai pilihan pertama agar tidak bingung
+if (isset($status_labels[$status_aktif])) {
+    $options[$status_labels[$status_aktif]] = $status_aktif;
+}
+
+// 2. Logika alur status (State Machine)
+switch ($status_aktif) {
+    case 1: // TO DO
+        $options['In Progress'] = 2;
+        $options['Cancel']      = 6;
+        break;
+    case 2: // IN PROGRESS
+        $options['Submit']      = 3;
+        $options['Cancel']      = 6;
+        break;
+    case 3: // SUBMIT (Menunggu Review Mentor)
+        // Dari Submit, mentor hanya bisa nge-Revised atau nge-Done
+        $options['Revised']     = 4;
+        $options['Done']        = 5;
+        // Tidak ada 'In Progress' di sini agar intern tidak bisa membatalkan submit sendiri
+        break;
+    case 4: // REVISED
+        $options['In Progress'] = 2;
+        $options['Cancel']      = 6;
+        break;
+    case 5: // DONE
+        // Jika sudah Done, biasanya sudah final. 
+        // Tapi jika ingin bisa direvisi lagi:
+        $options['Revised']     = 4;
+        break;
+    case 6: // CANCEL
+        // Jika sudah cancel, biasanya tidak bisa diapa-apakan lagi
+        break;
 }
 
 foreach ($options as $label => $val) {

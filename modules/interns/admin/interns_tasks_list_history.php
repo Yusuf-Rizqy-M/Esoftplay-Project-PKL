@@ -32,6 +32,25 @@ $form->initRoll($add_sql . ' ORDER BY created DESC, id DESC', 'id');
 $form->roll->setDeleteTool(false);
 $form->roll->setSaveTool(false);
 
+// --- PERBAIKAN: LOGIKA HEADER MENGGUNAKAN addHeader NATIVE ---
+if ($is_filtered) {
+    if ($tasks_list_id > 0) {
+        $info = $db->getRow("SELECT i.name, t.title FROM interns_tasks_list l 
+                   LEFT JOIN interns i ON l.interns_id=i.id 
+                   LEFT JOIN interns_tasks t ON l.interns_tasks_id=t.id 
+                   WHERE l.id={$tasks_list_id}");
+        $header_text = $info['name'] . ' - ' . $info['title'];
+    } else {
+        $name = $db->getOne("SELECT name FROM interns WHERE id={$intern_id}");
+        $header_text = 'History User: ' . $name;
+    }
+    // Pakai fungsi dari library baris 255
+    $form->roll->addHeader('header_title', $header_text); 
+} else {
+    // Pakai fungsi dari library baris 255
+    $form->roll->addHeader('header_title', 'Daftar Semua History Tugas');
+}
+
 $form->roll->addInput('id', 'sqlplaintext');
 $form->roll->input->id->setDisplayColumn(false);
 
@@ -91,34 +110,7 @@ $form->roll->input->created->setDateFormat('d M Y, H:i');
 
 $form->roll->action();
 
-if ($is_filtered) {
-  echo '<div class="panel panel-default">';
-  echo '  <div class="panel-heading"><h3 class="panel-title">';
-  if ($tasks_list_id > 0) {
-    $info = $db->getRow("SELECT i.name, t.title FROM interns_tasks_list l 
-               LEFT JOIN interns i ON l.interns_id=i.id 
-               LEFT JOIN interns_tasks t ON l.interns_tasks_id=t.id 
-               WHERE l.id={$tasks_list_id}");
-    echo  $info['name'] . ' - ' . $info['title'];
-  } else {
-    $name = $db->getOne("SELECT name FROM interns WHERE id={$intern_id}");
-    echo 'History User: ' . $name;
-  }
-  echo '  </h3></div>';
-  echo '  <div class="panel-body">';
-
-  echo $form->roll->getForm();
-  echo '  </div>';
-  echo '</div>';
-} else {
-  echo '<div style="margin-bottom: 20px;">';
+if (!$is_filtered) {
   echo $form->search->getForm();
-  echo '</div>';
-
-  echo '<div class="panel panel-default">';
-  echo '  <div class="panel-heading"><h3 class="panel-title">Daftar Semua History Tugas</h3></div>';
-  echo '  <div class="panel-body">';
-  echo $form->roll->getForm();
-  echo '  </div>';
-  echo '</div>';
 }
+echo $form->roll->getForm();

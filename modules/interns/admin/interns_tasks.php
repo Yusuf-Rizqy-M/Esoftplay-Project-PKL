@@ -125,6 +125,9 @@ $form_list->initRoll($add_sql . ' ORDER BY id DESC', 'id');
 $form_list->roll->setSaveTool(false);
 $form_list->roll->setDeleteTool(true);
 
+$form_list->roll->addHeader('header', 'header');
+$form_list->roll->input->header->setTitle('Daftar Tugas');
+
 $form_list->roll->addInput('title', 'sqllinks');
 $form_list->roll->input->title->setLinks($Bbc->mod['circuit'] . '.interns_tasks_edit');
 $form_list->roll->input->title->setTitle('Title');
